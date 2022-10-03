@@ -9,7 +9,7 @@
 
 #include "BSOS_Config.h"
 #include "BallySternOS.h"
-#include "PinballMachineBase.h"
+#include "WildFyre2022.h"
 #include "SelfTestAndAudit.h"
 #include <EEPROM.h>
 
@@ -23,7 +23,7 @@
 SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 #endif
 
-#define PINBALL_MACHINE_BASE_MAJOR_VERSION  2021
+#define PINBALL_MACHINE_BASE_MAJOR_VERSION  2022
 #define PINBALL_MACHINE_BASE_MINOR_VERSION  1
 #define DEBUG_MESSAGES  0
 
@@ -66,9 +66,15 @@ boolean MachineStateChanged = true;
 // and other flags that carry through different modes
 #define GAME_MODE_SKILL_SHOT                        0
 #define GAME_MODE_UNSTRUCTURED_PLAY                 4
-#define GAME_MODE_WIZARD_START                      12
-#define GAME_MODE_WIZARD                            13
-#define GAME_MODE_WIZARD_FINISHED                   14
+#define GAME_MODE_WILD_READY                        5
+#define GAME_MODE_WILD                              6
+#define GAME_MODE_WILD_END                          7
+#define GAME_MODE_FYRE_READY                        8
+#define GAME_MODE_FYRE                              9
+#define GAME_MODE_FYRE_END                          10
+#define GAME_MODE_WIZARD_START                      32
+#define GAME_MODE_WIZARD                            33
+#define GAME_MODE_WIZARD_FINISHED                   34
 #define GAME_BASE_MODE                              0x0F
 
 
@@ -125,7 +131,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_BACKGROUND_3       92
 #define SOUND_EFFECT_BACKGROUND_WIZ     93
 
-#define MAX_DISPLAY_BONUS     55
+#define MAX_DISPLAY_BONUS     50
 #define TILT_WARNING_DEBOUNCE_TIME      1000
 
 
@@ -1769,7 +1775,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
               BSOS_TurnOffAllLamps();
               StopAudio();
               PlaySoundEffect(SOUND_EFFECT_TILT);
-              BSOS_SetLampState(LAMP_HEAD_TILT, 1);
+              BSOS_SetLampState(LAMP_TILT, 1);
             }
             PlaySoundEffect(SOUND_EFFECT_TILT_WARNING);
           }
