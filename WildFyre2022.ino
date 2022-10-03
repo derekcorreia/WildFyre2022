@@ -1796,6 +1796,27 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           }
           if (RolloverPhase && !(RolloverPhase % 2)) RolloverPhase = 1;
           break;
+        case SW_RIGHT_MID_LANE:
+          CurrentScores[CurrentPlayer] += 500;
+          AddToBonus(Bonus, 2);
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          break;
+        case SW_RIGHT_OUTLANE:
+          CurrentScores[CurrentPlayer] += 500;
+          // PlaySoundEffect(SOUND_EFFECT_RIGHT_OUTLANE);
+          // TKTK: logic for special being lit needs to be added
+          if ( !SpecialCollected) {
+            SpecialCollected = true;
+            // Set shoot again or give score
+            if (TournamentScoring) {
+              CurrentScores[CurrentPlayer] += (unsigned long)SpecialValue;
+            } else {
+              
+            }
+          }
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+        break;
+
         case SW_LEFT_SLINGSHOT:
         case SW_RIGHT_SLINGSHOT:
           CurrentScores[CurrentPlayer] += 10;
