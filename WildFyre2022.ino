@@ -1185,10 +1185,12 @@ void StartScoreAnimation(unsigned long scoreToAnimate) {
 
 void Reset3Bank {
   // TKTK: todo
+  BSOS_PushToTimedSolenoidStack(SOL_3BANK_RESET, 12, CurrentTime + 400);
 }
 
 void Reset4Bank {
   // TKTK: todo
+  BSOS_PushToTimedSolenoidStack(SOL_4BANK_RESET, 12, CurrentTime + 400);
 }
 
 
