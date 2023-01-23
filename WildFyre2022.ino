@@ -167,9 +167,9 @@ boolean ScrollingScores = true;
 byte CurrentPlayer = 0;
 byte CurrentBallInPlay = 1;
 byte CurrentNumPlayers = 0;
-byte Bonus = 1;
+byte Bonus;
 byte CurrentBonus;
-byte BonusX = 1;
+byte BonusX;
 byte BonusAdvanceArrows = 0;
 byte GameMode = GAME_MODE_SKILL_SHOT;
 byte MaxTiltWarnings = 2;
@@ -1231,10 +1231,10 @@ int InitGamePlay() {
   // Reset displays & game state variables
   for (int count = 0; count < 4; count++) {
     // Initialize game-specific variables
-    BonusX[count] = 1;
+    BonusX = 1;
 
     TotalSpins[count] = 0;
-    Bonus[count] = 0;
+    Bonus = 0;
   }
   memset(CurrentScores, 0, 4 * sizeof(unsigned long));
 
@@ -1560,7 +1560,6 @@ int CountdownBonus(boolean curStateChanged) {
   // If this is the first time through the countdown loop
   if (curStateChanged) {
 
-    Bonus[CurrentPlayer] = CurrentBonus;
     CountdownStartTime = CurrentTime;
     ShowBonusLamps();
 
@@ -1572,15 +1571,15 @@ int CountdownBonus(boolean curStateChanged) {
 
   if ((CurrentTime - LastCountdownReportTime) > countdownDelayTime) {
 
-    if (CurrentBonus) {
+    if (Bonus > 0) {
 
       // Only give sound & score if this isn't a tilt
       if (NumTiltWarnings <= MaxTiltWarnings) {
         PlaySoundEffect(SOUND_EFFECT_BONUS_COUNT);
-        CurrentScores[CurrentPlayer] += 1000 * ((unsigned long)BonusX[CurrentPlayer]);
+        CurrentScores[CurrentPlayer] += 2000 * ((unsigned long)BonusX);
       }
 
-      CurrentBonus -= 1;
+      Bonus -= 1;
 
       ShowBonusLamps();
     } else if (BonusCountDownEndTime == 0xFFFFFFFF) {
