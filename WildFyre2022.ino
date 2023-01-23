@@ -1288,8 +1288,10 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     }
 
     // Reset progress unless holdover awards
-    Bonus[CurrentPlayer] = 0;
-    BonusX[CurrentPlayer] = 1;
+    Bonus = 1;
+    BonusX = 1;
+    BonusAdvanceArrows = 0;
+
 
     ScoreMultiplier = 1;
     LanePhase = 0;
