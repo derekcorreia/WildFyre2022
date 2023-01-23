@@ -131,7 +131,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_BACKGROUND_3       92
 #define SOUND_EFFECT_BACKGROUND_WIZ     93
 
-#define MAX_DISPLAY_BONUS     50
+#define MAX_DISPLAY_BONUS     15  // equates to 30k
 #define TILT_WARNING_DEBOUNCE_TIME      1000
 
 
@@ -167,9 +167,9 @@ boolean ScrollingScores = true;
 byte CurrentPlayer = 0;
 byte CurrentBallInPlay = 1;
 byte CurrentNumPlayers = 0;
-byte Bonus[4];
+byte Bonus;
 byte CurrentBonus;
-byte BonusX[4];
+byte BonusX;
 byte GameMode = GAME_MODE_SKILL_SHOT;
 byte MaxTiltWarnings = 2;
 byte NumTiltWarnings = 0;
@@ -1796,14 +1796,17 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           }
           if (RolloverPhase && !(RolloverPhase % 2)) RolloverPhase = 1;
           break;
-        case SW_RIGHT_MID_LANE:
-          CurrentScores[CurrentPlayer] += 500;
-          AddToBonus(Bonus, 2);
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
-          break;
+
+        //DCO CODE INLANES 
+        case SW_LEFT_OUTLANE:
         case SW_RIGHT_OUTLANE:
           CurrentScores[CurrentPlayer] += 500;
+          AddToBonus(2);
           // PlaySoundEffect(SOUND_EFFECT_RIGHT_OUTLANE);
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          break;
+        case SW_LEFT_RETURN:
+          CurrentScores[CurrentPlayer] += 500;
           // TKTK: logic for special being lit needs to be added
           if ( !SpecialCollected) {
             SpecialCollected = true;
@@ -1814,8 +1817,21 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
               
             }
           }
+          break;
+        case SW_LEFT_MID_LANE:
+          // INFO: Playfield reads "Reset Bottom Targets"
+          CurrentScores[CurrentPlayer] += 500;
+          break;
+        case SW_RIGHT_MID_LANE:
+          CurrentScores[CurrentPlayer] += 500;
+          AddToBonus(1);
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
-        break;
+          break;
+        case SW_RIGHT_RETURN:
+          // INFO: Playfield reads "5k and EB when lit"
+          CurrentScores[CurrentPlayer] += 500;
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          break;
 
         case SW_LEFT_SLINGSHOT:
         case SW_RIGHT_SLINGSHOT:
