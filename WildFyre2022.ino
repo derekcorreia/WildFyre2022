@@ -167,9 +167,10 @@ boolean ScrollingScores = true;
 byte CurrentPlayer = 0;
 byte CurrentBallInPlay = 1;
 byte CurrentNumPlayers = 0;
-byte Bonus;
+byte Bonus = 1;
 byte CurrentBonus;
-byte BonusX;
+byte BonusX = 1;
+byte BonusAdvanceArrows = 0;
 byte GameMode = GAME_MODE_SKILL_SHOT;
 byte MaxTiltWarnings = 2;
 byte NumTiltWarnings = 0;
@@ -1152,6 +1153,15 @@ void AddToBonus(byte amountToAdd = 1) {
   }
 }
 
+void AddToBonusArrows(byte amountToAdd = 1) {
+  BonusAdvanceArrows += amountToAdd;
+  // we want 2x to come from either dropping the 3 bank or advancing arrows, and 5x to come from doing both in a ball
+  if (BonusAdvanceArrows = 3){
+    if (BonusX == 1) {BonusX = 2};
+    if (BonusX == 2) {BonusX = 5};
+  }
+}
+
 
 void SetGameMode(byte newGameMode) {
   GameMode = newGameMode | (GameMode & ~GAME_BASE_MODE);
@@ -1173,7 +1183,13 @@ void StartScoreAnimation(unsigned long scoreToAnimate) {
   LastRemainingAnimatedScoreShown = 0;
 }
 
+void Reset3Bank {
+  // TKTK: todo
+}
 
+void Reset4Bank {
+  // TKTK: todo
+}
 
 
 
@@ -1831,6 +1847,23 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           // INFO: Playfield reads "5k and EB when lit"
           CurrentScores[CurrentPlayer] += 500;
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          break;
+
+        case SW_ROLLOVER_10PT:
+          AddToBonus(1);
+          CurrentScores[CurrentPlayer] += 10;
+          break;
+
+        case SW_ADVANCE_TARGET:
+          // INFO: Playfield reads "1000 and advance bonus"
+          AddToBonus(1);
+          CurrentScores[CurrentPlayer] += 1000;
+          break;
+
+        case SW_ADVANCE_ARROW:
+          // INFO: Playfield reads "1000 and advance bonus"
+          AddToBonusArrows(1);
+          CurrentScores[CurrentPlayer] += 1000;
           break;
 
         case SW_LEFT_SLINGSHOT:
