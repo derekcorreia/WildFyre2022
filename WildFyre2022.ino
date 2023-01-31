@@ -7,6 +7,15 @@
     See <https://www.gnu.org/licenses/>.
 */
 
+/*
+  DCO Todo:
+
+  What Next:
+    BonusCountdown needs to be implemented/lamps need to be reviewed
+
+*/
+
+
 #include "BSOS_Config.h"
 #include "BallySternOS.h"
 #include "WildFyre2022.h"
@@ -363,7 +372,144 @@ void ShowBonusLamps() {
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
 
   } else {
-
+    // DCO this is a mess and crap hack, clean up
+    switch (Bonus){
+      case: 1 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 1);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 2 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 1);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 3 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 1);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 4 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 1);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 5 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 1);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 6 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 1);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 1);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 7 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 1);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 1);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 8 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 1);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 1);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 9 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 1);
+        BSOS_SetLampState(LAMP_BONUS_10K, 1);
+        BSOS_SetLampState(LAMP_BONUS_20K, 0);
+        break;
+      }
+      case: 10 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 1);
+        break;
+      }
+      case: 11 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 1);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 1);
+        break;
+      }
+      case: 12 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 1);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 1);
+        break;
+      }
+      case: 13 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 1);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 1);
+        break;
+      }
+      case: 14 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 1);
+        BSOS_SetLampState(LAMP_BONUS_10K, 0);
+        BSOS_SetLampState(LAMP_BONUS_20K, 1);
+        break;
+      }
+      case: 15 {
+        BSOS_SetLampState(LAMP_BONUS_2K, 0);
+        BSOS_SetLampState(LAMP_BONUS_4K, 0);
+        BSOS_SetLampState(LAMP_BONUS_6K, 0);
+        BSOS_SetLampState(LAMP_BONUS_8K, 0);
+        BSOS_SetLampState(LAMP_BONUS_10K, 1);
+        BSOS_SetLampState(LAMP_BONUS_20K, 1);
+        break;
+      }
+    }
   }
 }
 
