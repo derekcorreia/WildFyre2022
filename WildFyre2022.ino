@@ -11,7 +11,7 @@
   DCO Todo:
 
   What Next:
-    BonusCountdown needs to be implemented/lamps need to be reviewed
+    xxBonusCountdown needs to be implemented/lamps need to be reviewed
 
 */
 
@@ -181,6 +181,7 @@ byte CurrentBonus;
 byte BonusX;
 byte BonusAdvanceArrows = 0;
 byte GameMode = GAME_MODE_SKILL_SHOT;
+byte SpinnerLit = 0;
 byte MaxTiltWarnings = 2;
 byte NumTiltWarnings = 0;
 
@@ -372,7 +373,9 @@ void ShowBonusLamps() {
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
 
   } else {
-    // DCO this is a mess and crap hack, clean up
+    /* DCO this is a mess and crap hack, clean up
+      Since lamp value/names are ints, can use ex: LAMP_BONUS_2K+Bonus or something instead of caseing everything
+    */
     switch (Bonus){
       case: 1 {
         BSOS_SetLampState(LAMP_BONUS_2K, 1);
@@ -1308,6 +1311,19 @@ void AddToBonusArrows(byte amountToAdd = 1) {
   }
 }
 
+void Handle4BankDropSwitch (byte switchHit){
+  CurrentScores[CurrentPlayer] += 500;
+  // Lights for drops? Gotta check that
+  // we want to light the spinner if the 4 bank has been completed
+  if (  BSOS_ReadSingleSwitchState(SW_4DROP_1) &&
+        BSOS_ReadSingleSwitchState(SW_4DROP_2) &&
+        BSOS_ReadSingleSwitchState(SW_4DROP_3) &&
+        BSOS_ReadSingleSwitchState(SW_4DROP_4) && 
+        SpinnerLit == 0)
+        {
+          SpinnerLit = 1;
+        }
+}
 
 void SetGameMode(byte newGameMode) {
   GameMode = newGameMode | (GameMode & ~GAME_BASE_MODE);
@@ -1437,6 +1453,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     Bonus = 1;
     BonusX = 1;
     BonusAdvanceArrows = 0;
+    SpinnerLit = 0;
 
 
     ScoreMultiplier = 1;
@@ -2013,6 +2030,14 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           // INFO: Playfield reads "1000 and advance bonus"
           AddToBonusArrows(1);
           CurrentScores[CurrentPlayer] += 1000;
+          break;
+
+        case SW_SPINNER:
+          if (SpinnerLit == 1){
+            CurrentScores[CurrentPlayer] += 1000;  
+          } else {
+            CurrentScores[CurrentPlayer] += 100;
+          }
           break;
 
         case SW_LEFT_SLINGSHOT:
