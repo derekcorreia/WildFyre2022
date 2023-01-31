@@ -182,6 +182,8 @@ byte BonusX;
 byte BonusAdvanceArrows = 0;
 byte GameMode = GAME_MODE_SKILL_SHOT;
 byte SpinnerLit = 0;
+byte Num3BankCompletions = 0;
+byte Num4BankCompletions = 0;
 byte MaxTiltWarnings = 2;
 byte NumTiltWarnings = 0;
 
@@ -1306,8 +1308,8 @@ void AddToBonusArrows(byte amountToAdd = 1) {
   BonusAdvanceArrows += amountToAdd;
   // we want 2x to come from either dropping the 3 bank or advancing arrows, and 5x to come from doing both in a ball
   if (BonusAdvanceArrows = 3){
-    if (BonusX == 1) {BonusX = 2};
     if (BonusX == 2) {BonusX = 5};
+    if (BonusX == 1) {BonusX = 2};
   }
 }
 
@@ -1318,10 +1320,31 @@ void Handle4BankDropSwitch (byte switchHit){
   if (  BSOS_ReadSingleSwitchState(SW_4DROP_1) &&
         BSOS_ReadSingleSwitchState(SW_4DROP_2) &&
         BSOS_ReadSingleSwitchState(SW_4DROP_3) &&
-        BSOS_ReadSingleSwitchState(SW_4DROP_4) && 
-        SpinnerLit == 0)
+        BSOS_ReadSingleSwitchState(SW_4DROP_4))
         {
-          SpinnerLit = 1;
+          if (Num4BankCompletions < 1) {SpinnerLit = 1};
+          Num4BankCompletions++;
+        }
+}
+
+void Handle3BankDropSwitch (byte switchHit){
+  CurrentScores[CurrentPlayer] += 500;
+  //start with 2x lit to collect
+  //move to 4k points if not
+  if (  BSOS_ReadSingleSwitchState(SW_3DROP_1) &&
+        BSOS_ReadSingleSwitchState(SW_3DROP_2) &&
+        BSOS_ReadSingleSwitchState(SW_3DROP_3))
+        {
+          if (Num3BankCompletions < 1){
+            if (BonusX == 2) {BonusX = 5};
+            if (BonusX == 1) {BonusX = 2};
+            CurrentScores[CurrentPlayer] += 3000;
+          } 
+          if (Num3BankCompletions >=1){
+            CurrentScores[CurrentPlayer] += 7000;
+          }
+          Num3BankCompletions++;
+          Reset3Bank();
         }
 }
 
@@ -1452,8 +1475,12 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     // Reset progress unless holdover awards
     Bonus = 1;
     BonusX = 1;
+    
+    // WF specific
     BonusAdvanceArrows = 0;
     SpinnerLit = 0;
+    Num4BankCompletions = 0;
+    Num3BankCompletions = 0;
 
 
     ScoreMultiplier = 1;
