@@ -11,7 +11,15 @@
   DCO Todo:
 
   What Next:
-    xxBonusCountdown needs to be implemented/lamps need to be reviewed
+          xxBonusCountdown needs to be implemented/lamps need to be reviewed
+    EB/Special Handling
+    Decide what to do with the 4 bank/reset
+    Top lane skill shots
+    Bonus collect saucer
+    Music/Sound Effect Creation
+    Music/Sound Effect Linking
+    Code Cleanup from prior game
+
 
 */
 
