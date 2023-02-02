@@ -19,6 +19,7 @@
     Music/Sound Effect Creation
     Music/Sound Effect Linking
     Code Cleanup from prior game
+    Copy most of ManageGame from Trident
 
 
 */
@@ -213,7 +214,12 @@ unsigned long ScoreAdditionAnimationStartTime;
 unsigned long LastRemainingAnimatedScoreShown;
 unsigned long ScoreMultiplier;
 
+// byte DropTargetLampArray[] = {DROP_TARGET_1, DROP_TARGET_2, DROP_TARGET_3, DROP_TARGET_4, DROP_TARGET_5};
+byte DropTarget3BankSwitchArray[] = {SW_3DROP_1, SW_3DROP_2, SW_3DROP_3};
 
+byte DropTarget4BankSwitchArray[] = {SW_4DROP_1, SW_4DROP_2, SW_4DROP_3, SW_4DROP_4};
+byte DropTarget4BankWildLampArray [] = {LAMP_WILD_W, LAMP_WILD_I, LAMP_WILD_L, LAMP_WILD_D};
+byte DropTarget4BankFyreLampArray [] = {LAMP_FYRE_F, LAMP_FYRE_Y, LAMP_FYRE_R, LAMP_FYRE_E};
 
 /*********************************************************************
 
@@ -226,6 +232,9 @@ byte RolloverPhase;
 byte TenPointPhase;
 byte LastAwardShotCalloutPlayed;
 byte LastWizardTimer;
+
+
+
 
 boolean WizardScoring;
 
@@ -1331,8 +1340,25 @@ void Handle4BankDropSwitch (byte switchHit){
         BSOS_ReadSingleSwitchState(SW_4DROP_4))
         {
           if (Num4BankCompletions < 1) {SpinnerLit = 1};
-          Num4BankCompletions++;
+          if (Num4BankCompletions == 2) {BSOS_SetLampState(LAMP_EXTRA_BALL, 1);}
+            Num4BankCompletions++;
         }
+}
+
+void Show4BankLamps(){
+  if (Num4BankCompletions < 1){
+    for (byte count=0; count<4; count++) {
+      BSOS_SetLampState(DropTarget4BankWildLampArray[count], BSOS_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?0:1);
+    }
+    break;
+  }
+  if (Num4BankCompletions >= 1){
+    for (byte count=0; count<4; count++) {
+      BSOS_SetLampState(DropTarget4BankWildLampArray[count], 1);
+      BSOS_SetLampState(DropTarget4BankFyreLampArray[count], BSOS_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?0:1);
+    }
+    break;
+  }
 }
 
 void Handle3BankDropSwitch (byte switchHit){
@@ -1635,6 +1661,7 @@ int ManageGameMode() {
   if ( !specialAnimationRunning && NumTiltWarnings <= MaxTiltWarnings ) {
     ShowBonusLamps();
     ShowBonusXLamps();
+    Show4BankLamps();
 #if not defined (BALLY_STERN_OS_SOFTWARE_DISPLAY_INTERRUPT)
     BSOS_DataRead(0);
 #endif
@@ -1992,7 +2019,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
               BSOS_TurnOffAllLamps();
               StopAudio();
               PlaySoundEffect(SOUND_EFFECT_TILT);
-              BSOS_SetLampState(LAMP_TILT, 1);
+              BSOS_SetLampState(LAMP_HEAD_TILT, 1);
             }
             PlaySoundEffect(SOUND_EFFECT_TILT_WARNING);
           }
@@ -2048,6 +2075,10 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           // INFO: Playfield reads "5k and EB when lit"
           CurrentScores[CurrentPlayer] += 500;
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          if (BSOS_ReadLampState(LAMP_EXTRA_BALL) == 1){
+            AwardExtraBall();
+            BSOS_SetLampState(LAMP_EXTRA_BALL, 0);
+          }
           break;
 
         case SW_ROLLOVER_10PT:
@@ -2074,6 +2105,10 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             CurrentScores[CurrentPlayer] += 100;
           }
           break;
+
+        case SW_EJECT_BONUS:
+          CountdownBonus(false);
+          brea;
 
         case SW_LEFT_SLINGSHOT:
         case SW_RIGHT_SLINGSHOT:

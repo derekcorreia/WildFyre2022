@@ -24,11 +24,11 @@
 #define LAMP_FYRE_Y                         23
 #define LAMP_FYRE_R                         24
 #define LAMP_FYRE_E                         25
-#define LAMP_GAME_OVER                      26
-#define LAMP_HIGHEST_SCORE                  27
+#define LAMP_HEAD_GAME_OVER                 26
+#define LAMP_HEAD_HIGH_SCORE                27
 #define LAMP_LEFT_RETURN_SPECIAL            28
 #define LAMP_SPINNER                        29
-#define LAMP_MATCH                          30
+#define LAMP_HEAD_MATCH                     30
 #define LAMP_PLAYER_1                       31
 #define LAMP_PLAYER_2                       32
 #define LAMP_PLAYER_3                       33
@@ -37,110 +37,11 @@
 #define LAMP_4K_EJECT                       36
 #define LAMP_2X_BONUS_3BANK                 37
 #define LAMP_SHOOT_AGAIN                    38  
-#define LAMP_TILT                           39
+#define LAMP_HEAD_TILT                      39
 #define LAMP_WILD_W                         40
 #define LAMP_WILD_I                         41
 #define LAMP_WILD_L                         42
 #define LAMP_WILD_D                         43
-
-// #define LAMP_PLAYFIELD_SPELLOUT_S         0
-// #define LAMP_PLAYFIELD_SPELLOUT_I1        1
-// #define LAMP_PLAYFIELD_SPELLOUT_L1        2
-// #define LAMP_PLAYFIELD_SPELLOUT_V         3
-// #define LAMP_PLAYFIELD_SPELLOUT_E         4
-// #define LAMP_PLAYFIELD_SPELLOUT_R         5
-// #define LAMP_PLAYFIELD_SPELLOUT_B         6
-// #define LAMP_PLAYFIELD_SPELLOUT_A1        7
-// #define LAMP_PLAYFIELD_SPELLOUT_L2        8
-// #define LAMP_PLAYFIELD_SPELLOUT_L3        9
-// #define LAMP_PLAYFIELD_SPELLOUT_M         10
-// #define LAMP_PLAYFIELD_SPELLOUT_A2        11
-// #define LAMP_PLAYFIELD_SPELLOUT_N         12
-// #define LAMP_PLAYFIELD_SPELLOUT_I2        13
-// #define LAMP_PLAYFIELD_SPELLOUT_A3        14
-// #define LAMP_TOPLANE_OUTER_WHEN_LIT       15
-// #define LAMP_PLAYFIELD_STANDUP_S          16
-// #define LAMP_PLAYFIELD_STANDUP_I1         17
-// #define LAMP_PLAYFIELD_STANDUP_L1         18
-// #define LAMP_PLAYFIELD_STANDUP_V          19
-// #define LAMP_PLAYFIELD_STANDUP_E          20
-// #define LAMP_PLAYFIELD_STANDUP_R          21
-// #define LAMP_PLAYFIELD_STANDUP_B          22
-// #define LAMP_PLAYFIELD_STANDUP_A1         23
-// #define LAMP_PLAYFIELD_STANDUP_L2         24
-// #define LAMP_PLAYFIELD_STANDUP_L3         25
-// #define LAMP_PLAYFIELD_STANDUP_M          26
-// #define LAMP_PLAYFIELD_STANDUP_A2         27
-// #define LAMP_PLAYFIELD_STANDUP_N          28
-// #define LAMP_PLAYFIELD_STANDUP_I2         29
-// #define LAMP_PLAYFIELD_STANDUP_A3         30
-// #define LAMP_RIGHT_SPINNER_1000_WHEN_LIT  31
-// #define LAMP_TOPLANE_CENTER_WHEN_LIT      32
-// #define LAMP_KICKER_LAMPS                 33
-// #define LAMP_15K_BONUS                    34
-// #define LAMP_30K_BONUS                    35
-// #define LAMP_BONUS_2X                     36
-// #define LAMP_BONUS_3X                     37
-// #define LAMP_BONUS_4X                     38
-// #define LAMP_KICKER_SPECIAL               39
-// #define LAMP_BONUS_5X                     40
-// #define LAMP_HEAD_MATCH                   41
-// #define LAMP_SHOOT_AGAIN                  42
-// #define LAMP_APRON_CREDIT                 43
-// #define LAMP_HEAD_L2                      44
-// #define LAMP_HEAD_L3                      45
-// #define LAMP_EXTRA_BALL                   46
-// #define LAMP_LEFT_SPINNER_1000_WHEN_LIT   47
-// #define LAMP_HEAD_BALL_IN_PLAY            48
-// #define LAMP_HEAD_HIGH_SCORE              49
-// #define LAMP_HEAD_GAME_OVER               50
-// #define LAMP_HEAD_TILT                    51
-// #define LAMP_HEAD_S                       52
-// #define LAMP_HEAD_I1                      53
-// #define LAMP_HEAD_L1                      54
-// #define LAMP_HEAD_V                       55
-// #define LAMP_HEAD_E                       56
-// #define LAMP_HEAD_R                       57
-// #define LAMP_HEAD_B                       58
-// #define LAMP_HEAD_A                       59
-
-
-// #define SW_KICKER_ROLLOVER        0
-// #define SW_HOOP_ROLLOVER_BUTTON   1
-// #define SW_TOP_RIGHT_ROLLOVER     2
-// #define SW_TOP_CENTER_ROLLOVER    3
-// #define SW_TOP_LEFT_ROLLOVER      4
-// #define SW_CREDIT_RESET           5
-// #define SW_TILT                   6
-// #define SW_OUTHOLE                7
-// #define SW_COIN_3                 8
-// #define SW_COIN_2                 9
-// #define SW_COIN_1                 10
-// #define SW_SLAM                   15
-// #define SW_RIGHT_A_TARGET         16
-// #define SW_LEFT_B_TARGET          17
-// #define SW_LEFT_R_TARGET          18
-// #define SW_LEFT_E_TARGET          19
-// #define SW_TOP_V_TARGET           20
-// #define SW_TOP_L_TARGET           21
-// #define SW_TOP_I_TARGET           22
-// #define SW_TOP_S_TARGET           23
-// #define SW_RIGHT_SPINNER          24
-// #define SW_RIGHT_OUTLANE_A        25
-// #define SW_RIGHT_INLANE_I         26
-// #define SW_CENTER_TARGET          27
-// #define SW_LEFT_INLANE_A          28
-// #define SW_LEFT_OUTLANE_M         29
-// #define SW_LOWER_L_SIDE_TARGET    30
-// #define SW_UPPER_L_SIDE_TARGET    31
-// #define SW_LEFT_SPINNER           32
-// #define SW_REBOUNDS_AND_TOP       33
-// #define SW_BACKGLASS_SILVERBALL_SW  34
-// #define SW_RIGHT_SLINGSHOT        35
-// #define SW_LEFT_SLINGSHOT         36
-// #define SW_CENTER_BUMPER          37
-// #define SW_RIGHT_BUMPER           38
-// #define SW_LEFT_BUMPER            39
 
 // Defines for switches
 #define SW_CREDIT_RESET   5
