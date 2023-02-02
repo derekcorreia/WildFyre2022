@@ -1339,7 +1339,10 @@ void Handle4BankDropSwitch (byte switchHit){
         BSOS_ReadSingleSwitchState(SW_4DROP_3) &&
         BSOS_ReadSingleSwitchState(SW_4DROP_4))
         {
-          if (Num4BankCompletions < 1) {SpinnerLit = 1};
+          if (Num4BankCompletions < 1) {
+              SpinnerLit = 1
+              Reset4Bank();
+            };
           if (Num4BankCompletions == 2) {BSOS_SetLampState(LAMP_EXTRA_BALL, 1);}
             Num4BankCompletions++;
         }
@@ -1403,12 +1406,10 @@ void StartScoreAnimation(unsigned long scoreToAnimate) {
 }
 
 void Reset3Bank {
-  // TKTK: todo
   BSOS_PushToTimedSolenoidStack(SOL_3BANK_RESET, 12, CurrentTime + 400);
 }
 
 void Reset4Bank {
-  // TKTK: todo
   BSOS_PushToTimedSolenoidStack(SOL_4BANK_RESET, 12, CurrentTime + 400);
 }
 
@@ -2065,6 +2066,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_LEFT_MID_LANE:
           // INFO: Playfield reads "Reset Bottom Targets"
           CurrentScores[CurrentPlayer] += 500;
+          if (Num4BankCompletions > 1) {
+            Reset4Bank();
+          }
           break;
         case SW_RIGHT_MID_LANE:
           CurrentScores[CurrentPlayer] += 500;
