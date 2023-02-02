@@ -13,13 +13,16 @@
   What Next:
           xxBonusCountdown needs to be implemented/lamps need to be reviewed
     EB/Special Handling
-    Decide what to do with the 4 bank/reset
+          xxDecide what to do with the 4 bank/reset
     Top lane skill shots
+    Sharpshooter Mode
+    Wild Fyre Spinner on 2x 4bank completions
     Bonus collect saucer
     Music/Sound Effect Creation
     Music/Sound Effect Linking
     Code Cleanup from prior game
     Copy most of ManageGame from Trident
+    
 
 
 */
@@ -1344,6 +1347,7 @@ void Handle4BankDropSwitch (byte switchHit){
               Reset4Bank();
             };
           if (Num4BankCompletions == 2) {BSOS_SetLampState(LAMP_EXTRA_BALL, 1);}
+          if (Num4BankCompletions == 3) {BSOS_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
             Num4BankCompletions++;
         }
 }
@@ -1521,7 +1525,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     ScoreMultiplier = 1;
     LanePhase = 0;
     LastInlaneHitTime = 0;
-    CurrentBonus = Bonus[CurrentPlayer];
+    CurrentBonus = Bonus;
     ScoreAdditionAnimation = 0;
     ScoreAdditionAnimationStartTime = 0;
     BonusXAnimationStart = 0;
@@ -2053,14 +2057,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_LEFT_RETURN:
           CurrentScores[CurrentPlayer] += 500;
           // TKTK: logic for special being lit needs to be added
-          if ( !SpecialCollected) {
-            SpecialCollected = true;
-            // Set shoot again or give score
-            if (TournamentScoring) {
-              CurrentScores[CurrentPlayer] += (unsigned long)SpecialValue;
-            } else {
-              
-            }
+          if (BSOS_ReadLampState(LAMP_LEFT_RETURN_SPECIAL)) {
+            AwardSpecial();
+            BSOS_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 0);
           }
           break;
         case SW_LEFT_MID_LANE:
