@@ -12,7 +12,7 @@
 
   What Next:
           xxBonusCountdown needs to be implemented/lamps need to be reviewed
-    EB/Special Handling
+          xxEB/Special Handling
           xxDecide what to do with the 4 bank/reset
     Top lane skill shots
     Sharpshooter Mode
@@ -123,22 +123,21 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_BUMPER_HIT         7
 #define SOUND_EFFECT_ADD_CREDIT         10
 #define SOUND_EFFECT_BALL_OVER          19
-#define SOUND_EFFECT_GAME_OVER          20
+#define SOUND_EFFECT_GAME_OVER          100
 #define SOUND_EFFECT_EXTRA_BALL         23
 #define SOUND_EFFECT_MACHINE_START      24
 #define SOUND_EFFECT_SKILL_SHOT         25
 #define SOUND_EFFECT_TILT_WARNING       28
 #define SOUND_EFFECT_MATCH_SPIN         30
-#define SOUND_EFFECT_SPINNER_HIGH       32
-#define SOUND_EFFECT_SPINNER_LOW        33
+#define SOUND_EFFECT_SPINNER            103
 #define SOUND_EFFECT_SLING_SHOT         34
 #define SOUND_EFFECT_ROLLOVER           35
 #define SOUND_EFFECT_10PT_SWITCH        36
-#define SOUND_EFFECT_ADD_PLAYER_1       50
+#define SOUND_EFFECT_ADD_PLAYER_1       20
 #define SOUND_EFFECT_ADD_PLAYER_2       (SOUND_EFFECT_ADD_PLAYER_1+1)
 #define SOUND_EFFECT_ADD_PLAYER_3       (SOUND_EFFECT_ADD_PLAYER_1+2)
 #define SOUND_EFFECT_ADD_PLAYER_4       (SOUND_EFFECT_ADD_PLAYER_1+3)
-#define SOUND_EFFECT_PLAYER_1_UP        54
+#define SOUND_EFFECT_PLAYER_1_UP        24
 #define SOUND_EFFECT_PLAYER_2_UP        (SOUND_EFFECT_PLAYER_1_UP+1)
 #define SOUND_EFFECT_PLAYER_3_UP        (SOUND_EFFECT_PLAYER_1_UP+2)
 #define SOUND_EFFECT_PLAYER_4_UP        (SOUND_EFFECT_PLAYER_1_UP+3)
@@ -363,6 +362,12 @@ byte CheckSequentialSwitches(byte startingSwitch, byte numSwitches) {
 //  Lamp Management functions
 //
 ////////////////////////////////////////////////////////////////////////////
+void SetPlayerLamps(byte numPlayers, byte playerOffset = 0, int flashPeriod = 0) {
+  for (int count = 0; count < 4; count++) {
+    BSOS_SetLampState(PLAYER_1 + playerOffset + count, (numPlayers == (count + 1)) ? 1 : 0, 0, flashPeriod);
+  }
+}
+
 void ShowLampAnimation(byte animationNum, unsigned long divisor, unsigned long baseTime, byte subOffset, boolean dim, boolean reverse = false, byte keepLampOn = 99) {
   byte currentStep = (baseTime / divisor) % LAMP_ANIMATION_STEPS;
   if (reverse) currentStep = (LAMP_ANIMATION_STEPS - 1) - currentStep;
@@ -823,6 +828,7 @@ boolean AddPlayer(boolean resetNumPlayers = false) {
     BSOS_SetCoinLockout(false);
   }
   PlaySoundEffect(SOUND_EFFECT_ADD_PLAYER_1 + (CurrentNumPlayers - 1));
+  SetPlayerLamps(CurrentNumPlayers);
 
   BSOS_WriteULToEEProm(BSOS_TOTAL_PLAYS_EEPROM_START_BYTE, BSOS_ReadULFromEEProm(BSOS_TOTAL_PLAYS_EEPROM_START_BYTE) + 1);
 
@@ -2102,6 +2108,8 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
 
         case SW_SPINNER:
+          // todo spinner lit specific sound
+          PlaySoundEffect(SOUND_EFFECT_SPINNER);
           if (SpinnerLit == 1){
             CurrentScores[CurrentPlayer] += 1000;  
           } else {
