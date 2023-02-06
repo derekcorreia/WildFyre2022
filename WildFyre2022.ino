@@ -14,7 +14,7 @@
           xxBonusCountdown needs to be implemented/lamps need to be reviewed
           xxEB/Special Handling
           xxDecide what to do with the 4 bank/reset
-    Top lane skill shots
+    Top lane skill shots (and switch handling in general)
     Sharpshooter Mode
     Wild Fyre Spinner on 2x 4bank completions
     Bonus collect saucer
@@ -188,8 +188,7 @@ boolean ScrollingScores = true;
 byte CurrentPlayer = 0;
 byte CurrentBallInPlay = 1;
 byte CurrentNumPlayers = 0;
-byte Bonus;
-byte CurrentBonus;
+byte Bonus = 1;
 byte BonusX;
 byte BonusAdvanceArrows = 0;
 byte GameMode = GAME_MODE_SKILL_SHOT;
@@ -1273,7 +1272,7 @@ int RunAttractMode(int curState, boolean curStateChanged) {
     //ShowLampAnimation(0, 40, CurrentTime, 11, false, false);
   } else if (attractPlayfieldPhase == 2) {
     if ((CurrentTime - AttractLastLadderTime) > 200) {
-      CurrentBonus = AttractLastLadderBonus;
+      Bonus = AttractLastLadderBonus;
       ShowBonusLamps();
       AttractLastLadderBonus += 1;
       if (AttractLastLadderBonus > 20) AttractLastLadderBonus = 0;
@@ -1326,9 +1325,9 @@ byte CountBits(byte byteToBeCounted) {
 
 
 void AddToBonus(byte amountToAdd = 1) {
-  CurrentBonus += amountToAdd;
-  if (CurrentBonus >= MAX_DISPLAY_BONUS) {
-    CurrentBonus = MAX_DISPLAY_BONUS;
+  Bonus += amountToAdd;
+  if (Bonus >= MAX_DISPLAY_BONUS) {
+    Bonus = MAX_DISPLAY_BONUS;
   }
 }
 
@@ -1531,7 +1530,6 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     ScoreMultiplier = 1;
     LanePhase = 0;
     LastInlaneHitTime = 0;
-    CurrentBonus = Bonus;
     ScoreAdditionAnimation = 0;
     ScoreAdditionAnimationStartTime = 0;
     BonusXAnimationStart = 0;
@@ -1540,6 +1538,9 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     TenPointPhase = 0;
     WizardScoring = false;
   }
+
+  Reset3Bank();
+  Reset4Bank();
 
   // We should only consider the ball initialized when
   // the ball is no longer triggering the SW_OUTHOLE
@@ -1800,7 +1801,7 @@ int CountdownBonus(boolean curStateChanged) {
     BonusCountDownEndTime = 0xFFFFFFFF;
   }
 
-  unsigned long countdownDelayTime = 250 - (CurrentBonus * 3);
+  unsigned long countdownDelayTime = 250 - (Bonus * 3);
 
   if ((CurrentTime - LastCountdownReportTime) > countdownDelayTime) {
 
@@ -2083,14 +2084,13 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
 
         case SW_ADVANCE_TARGET:
-          // INFO: Playfield reads "1000 and advance bonus"
-          AddToBonus(1);
+          // INFO: Playfield reads "1000 and advance arrow"
+          AddToBonusArrows(1);
           CurrentScores[CurrentPlayer] += 1000;
           break;
 
         case SW_ADVANCE_ARROW:
-        case SW_ADVANCE_TARGET:
-          // INFO: Playfield reads "1000 and advance bonus"
+          // INFO: Playfield reads "1000 and advance arrow"
           AddToBonusArrows(1);
           CurrentScores[CurrentPlayer] += 1000;
           break;
