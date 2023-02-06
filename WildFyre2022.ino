@@ -399,9 +399,9 @@ void SetPlayerLamps(byte numPlayers, byte playerOffset = 0, int flashPeriod = 0)
 
 
 void ShowBonusLamps() {
-  if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
+  // if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
 
-  } else {
+  // } else {
     /* DCO this is a mess and crap hack, clean up
       Since lamp value/names are ints, can use ex: LAMP_BONUS_2K+Bonus or something instead of caseing everything
     */
@@ -541,7 +541,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 1);
         break;
       }
-    }
+    // }
   }
 }
 
@@ -1574,9 +1574,6 @@ int ManageGameMode() {
 
   boolean specialAnimationRunning = false;
 
-  if (TotalSpins[CurrentPlayer] > SPINNER_MAX_GOAL) {
-  }
-
   byte currentWizardTimer;
 
   switch ( (GameMode & GAME_BASE_MODE) ) {
@@ -2079,7 +2076,8 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           }
           break;
 
-        case SW_ROLLOVER_10PT:
+        case SW_AB_LEFT:
+        case SW_AB_TOP:
           AddToBonus(1);
           CurrentScores[CurrentPlayer] += 10;
           break;
@@ -2091,6 +2089,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
 
         case SW_ADVANCE_ARROW:
+        case SW_ADVANCE_TARGET:
           // INFO: Playfield reads "1000 and advance bonus"
           AddToBonusArrows(1);
           CurrentScores[CurrentPlayer] += 1000;

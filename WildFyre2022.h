@@ -59,12 +59,13 @@
 #define SW_RIGHT_MID_LANE 12
 #define SW_LEFT_MID_LANE  26
 
-#define SW_EB_ROLLOVER    31
+#define SW_ADVANCE_ARROW    31
 
-#define SW_ADVANCE_ARROW    4
-#define SW_ADVANCE_TARGET   17
+//#define SW_ADVANCE_ARROW    4
+#define SW_ADVANCE_TARGET   4
 
-#define SW_ROLLOVER_10PT  16
+#define SW_AB_LEFT        16
+#define SW_AB_TOP         17
 #define SW_10PT           19
 
 #define SW_EJECT_3        21
@@ -86,30 +87,45 @@
 #define SW_RIGHT_SLINGSHOT  37
 #define SW_LEFT_SLINGSHOT   38
 
-#define SW_SPINNER        14
+#define SW_SPINNER          14
+#define SW_ABOVE_AD_TARGET  18
 
 
 
 
+// These defines are correct in non-BSOS mode...
+// #define SOL_KNOCKER       16
+// #define SOL_OUTHOLE       9
+// #define SOL_RIGHT_BUMPER  7
+// #define SOL_LEFT_BUMPER   6
+// #define SOL_CENTER_BUMPER 8
+// #define SOL_LEFT_SLINGSHOT   15
+// #define SOL_RIGHT_SLINGSHOT    10
+// #define SOL_SOUND_10      0
+// #define SOL_SOUND_100     1
+// #define SOL_SOUND_1K      2
+// #define SOL_SOUND_10K     3
+// #define SOL_EJECT_BONUS     11
+// #define SOL_EJECT_TOP       13
+// #define SOL_3BANK_RESET     12
+// #define SOL_4BANK_RESET     14
 
-#define SOL_KNOCKER       16
-#define SOL_OUTHOLE       9
-#define SOL_RIGHT_BUMPER  7
-#define SOL_LEFT_BUMPER   6
-#define SOL_CENTER_BUMPER 8
-#define SOL_LEFT_SLINGSHOT   15
-#define SOL_RIGHT_SLINGSHOT    10
+// These are correct in BSOS mode.... ???
+#define SOL_KNOCKER       5
+#define SOL_OUTHOLE       6
+#define SOL_RIGHT_BUMPER  11
+#define SOL_LEFT_BUMPER   10
+#define SOL_CENTER_BUMPER 12
+#define SOL_LEFT_SLINGSHOT   14
+#define SOL_RIGHT_SLINGSHOT    13
 #define SOL_SOUND_10      0
 #define SOL_SOUND_100     1
 #define SOL_SOUND_1K      2
 #define SOL_SOUND_10K     3
-
-#define SOL_EJECT_BONUS     11
-#define SOL_EJECT_TOP       13
-
-#define SOL_3BANK_RESET     12
-#define SOL_4BANK_RESET     14
-
+#define SOL_EJECT_BONUS     8
+#define SOL_EJECT_TOP       7
+#define SOL_3BANK_RESET     4
+#define SOL_4BANK_RESET     9
 
 //#define SOL_NONE          15
 
