@@ -61,7 +61,7 @@
 
 #define SW_EB_ROLLOVER    31
 
-#define SW_ADVANCE_ARROW    5
+#define SW_ADVANCE_ARROW    4
 #define SW_ADVANCE_TARGET   17
 
 #define SW_ROLLOVER_10PT  16

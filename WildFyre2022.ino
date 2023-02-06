@@ -179,6 +179,7 @@ boolean TournamentScoring = false;
 boolean ScrollingScores = true;
 
 
+
 /*********************************************************************
 
     Game State
@@ -364,36 +365,37 @@ byte CheckSequentialSwitches(byte startingSwitch, byte numSwitches) {
 ////////////////////////////////////////////////////////////////////////////
 void SetPlayerLamps(byte numPlayers, byte playerOffset = 0, int flashPeriod = 0) {
   for (int count = 0; count < 4; count++) {
-    BSOS_SetLampState(PLAYER_1 + playerOffset + count, (numPlayers == (count + 1)) ? 1 : 0, 0, flashPeriod);
+    BSOS_SetLampState(LAMP_PLAYER_1 + playerOffset + count, (numPlayers == (count + 1)) ? 1 : 0, 0, flashPeriod);
   }
 }
 
-void ShowLampAnimation(byte animationNum, unsigned long divisor, unsigned long baseTime, byte subOffset, boolean dim, boolean reverse = false, byte keepLampOn = 99) {
-  byte currentStep = (baseTime / divisor) % LAMP_ANIMATION_STEPS;
-  if (reverse) currentStep = (LAMP_ANIMATION_STEPS - 1) - currentStep;
+// void ShowLampAnimation(byte animationNum, unsigned long divisor, unsigned long baseTime, byte subOffset, boolean dim, boolean reverse = false, byte keepLampOn = 99) {
+//   byte LAMP_ANIMATION_STEPS = 3;
+//   byte currentStep = (baseTime / divisor) % LAMP_ANIMATION_STEPS;
+//   if (reverse) currentStep = (LAMP_ANIMATION_STEPS - 1) - currentStep;
 
-  byte lampNum = 0;
-  for (int byteNum = 0; byteNum < 8; byteNum++) {
-    for (byte bitNum = 0; bitNum < 8; bitNum++) {
+//   byte lampNum = 0;
+//   for (int byteNum = 0; byteNum < 8; byteNum++) {
+//     for (byte bitNum = 0; bitNum < 8; bitNum++) {
 
-      // if there's a subOffset, turn off lights at that offset
-      if (subOffset) {
-        byte lampOff = true;
-        lampOff = LampAnimations[animationNum][(currentStep + subOffset) % LAMP_ANIMATION_STEPS][byteNum] & (1 << bitNum);
-        if (lampOff && lampNum != keepLampOn) BSOS_SetLampState(lampNum, 0);
-      }
+//       // if there's a subOffset, turn off lights at that offset
+//       if (subOffset) {
+//         byte lampOff = true;
+//         lampOff = LampAnimations[animationNum][(currentStep + subOffset) % LAMP_ANIMATION_STEPS][byteNum] & (1 << bitNum);
+//         if (lampOff && lampNum != keepLampOn) BSOS_SetLampState(lampNum, 0);
+//       }
 
-      byte lampOn = false;
-      lampOn = LampAnimations[animationNum][currentStep][byteNum] & (1 << bitNum);
-      if (lampOn) BSOS_SetLampState(lampNum, 1, dim);
+//       byte lampOn = false;
+//       lampOn = LampAnimations[animationNum][currentStep][byteNum] & (1 << bitNum);
+//       if (lampOn) BSOS_SetLampState(lampNum, 1, dim);
 
-      lampNum += 1;
-    }
-#if not defined (BALLY_STERN_OS_SOFTWARE_DISPLAY_INTERRUPT)
-    if (byteNum % 2) BSOS_DataRead(0);
-#endif
-  }
-}
+//       lampNum += 1;
+//     }
+// #if not defined (BALLY_STERN_OS_SOFTWARE_DISPLAY_INTERRUPT)
+//     if (byteNum % 2) BSOS_DataRead(0);
+// #endif
+//   }
+// }
 
 
 void ShowBonusLamps() {
@@ -404,7 +406,7 @@ void ShowBonusLamps() {
       Since lamp value/names are ints, can use ex: LAMP_BONUS_2K+Bonus or something instead of caseing everything
     */
     switch (Bonus){
-      case: 1 {
+      case 1: {
         BSOS_SetLampState(LAMP_BONUS_2K, 1);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -413,7 +415,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 2 {
+      case 2: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 1);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -422,7 +424,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 3 {
+      case 3: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 1);
@@ -431,7 +433,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 4 {
+      case 4: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -440,7 +442,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 5 {
+      case 5: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -449,7 +451,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 6 {
+      case 6: {
         BSOS_SetLampState(LAMP_BONUS_2K, 1);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -458,7 +460,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 7 {
+      case 7: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 1);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -467,7 +469,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 8 {
+      case 8: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 1);
@@ -476,7 +478,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 9 {
+      case 9: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -485,7 +487,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 0);
         break;
       }
-      case: 10 {
+      case 10: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -494,7 +496,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 1);
         break;
       }
-      case: 11 {
+      case 11: {
         BSOS_SetLampState(LAMP_BONUS_2K, 1);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -503,7 +505,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 1);
         break;
       }
-      case: 12 {
+      case 12: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 1);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -512,7 +514,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 1);
         break;
       }
-      case: 13 {
+      case 13: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 1);
@@ -521,7 +523,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 1);
         break;
       }
-      case: 14 {
+      case 14: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -530,7 +532,7 @@ void ShowBonusLamps() {
         BSOS_SetLampState(LAMP_BONUS_20K, 1);
         break;
       }
-      case: 15 {
+      case 15: {
         BSOS_SetLampState(LAMP_BONUS_2K, 0);
         BSOS_SetLampState(LAMP_BONUS_4K, 0);
         BSOS_SetLampState(LAMP_BONUS_6K, 0);
@@ -1162,7 +1164,7 @@ void PlaySoundEffect(byte soundEffectNum) {
 #if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
 
 #ifndef USE_WAV_TRIGGER_1p3
-  if (  soundEffectNum == SOUND_EFFECT_THUMPER_BUMPER_HIT ||
+  if (  soundEffectNum == SOUND_EFFECT_BUMPER_HIT ||
         SOUND_EFFECT_SPINNER ) wTrig.trackStop(soundEffectNum);
 #endif
   wTrig.trackPlayPoly(soundEffectNum);
@@ -1266,9 +1268,9 @@ int RunAttractMode(int curState, boolean curStateChanged) {
   }
 
   if (attractPlayfieldPhase < 2) {
-    ShowLampAnimation(1, 40, CurrentTime, 14, false, false);
+    //ShowLampAnimation(1, 40, CurrentTime, 14, false, false);
   } else if (attractPlayfieldPhase == 3) {
-    ShowLampAnimation(0, 40, CurrentTime, 11, false, false);
+    //ShowLampAnimation(0, 40, CurrentTime, 11, false, false);
   } else if (attractPlayfieldPhase == 2) {
     if ((CurrentTime - AttractLastLadderTime) > 200) {
       CurrentBonus = AttractLastLadderBonus;
@@ -1281,7 +1283,7 @@ int RunAttractMode(int curState, boolean curStateChanged) {
     BSOS_DataRead(0);
 #endif
   } else {
-    ShowLampAnimation(2, 40, CurrentTime, 14, false, false);
+    //ShowLampAnimation(2, 40, CurrentTime, 14, false, false);
   }
 
   byte switchHit;
@@ -1334,8 +1336,8 @@ void AddToBonusArrows(byte amountToAdd = 1) {
   BonusAdvanceArrows += amountToAdd;
   // we want 2x to come from either dropping the 3 bank or advancing arrows, and 5x to come from doing both in a ball
   if (BonusAdvanceArrows = 3){
-    if (BonusX == 2) {BonusX = 5};
-    if (BonusX == 1) {BonusX = 2};
+    if (BonusX == 2) {BonusX = 5;}
+    if (BonusX == 1) {BonusX = 2;}
   }
 }
 
@@ -1349,7 +1351,7 @@ void Handle4BankDropSwitch (byte switchHit){
         BSOS_ReadSingleSwitchState(SW_4DROP_4))
         {
           if (Num4BankCompletions < 1) {
-              SpinnerLit = 1
+              SpinnerLit = 1;
               Reset4Bank();
             };
           if (Num4BankCompletions == 2) {BSOS_SetLampState(LAMP_EXTRA_BALL, 1);}
@@ -1363,14 +1365,12 @@ void Show4BankLamps(){
     for (byte count=0; count<4; count++) {
       BSOS_SetLampState(DropTarget4BankWildLampArray[count], BSOS_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?0:1);
     }
-    break;
   }
   if (Num4BankCompletions >= 1){
     for (byte count=0; count<4; count++) {
       BSOS_SetLampState(DropTarget4BankWildLampArray[count], 1);
       BSOS_SetLampState(DropTarget4BankFyreLampArray[count], BSOS_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?0:1);
     }
-    break;
   }
 }
 
@@ -1383,8 +1383,8 @@ void Handle3BankDropSwitch (byte switchHit){
         BSOS_ReadSingleSwitchState(SW_3DROP_3))
         {
           if (Num3BankCompletions < 1){
-            if (BonusX == 2) {BonusX = 5};
-            if (BonusX == 1) {BonusX = 2};
+            if (BonusX == 2) {BonusX = 5;}
+            if (BonusX == 1) {BonusX = 2;}
             CurrentScores[CurrentPlayer] += 3000;
           } 
           if (Num3BankCompletions >=1){
@@ -1415,11 +1415,11 @@ void StartScoreAnimation(unsigned long scoreToAnimate) {
   LastRemainingAnimatedScoreShown = 0;
 }
 
-void Reset3Bank {
+void Reset3Bank() {
   BSOS_PushToTimedSolenoidStack(SOL_3BANK_RESET, 12, CurrentTime + 400);
 }
 
-void Reset4Bank {
+void Reset4Bank() {
   BSOS_PushToTimedSolenoidStack(SOL_4BANK_RESET, 12, CurrentTime + 400);
 }
 
@@ -1428,12 +1428,12 @@ void Reset4Bank {
 
 void IncreaseBonusX() {
   boolean soundPlayed = false;
-  if (BonusX[CurrentPlayer] < 5) {
-    BonusX[CurrentPlayer] += 1;
+  if (BonusX < 5) {
+    BonusX += 1;
     BonusXAnimationStart = CurrentTime;
 
-    if (BonusX[CurrentPlayer] == 4) {
-      BonusX[CurrentPlayer] += 1;
+    if (BonusX == 4) {
+      BonusX += 1;
     }
   }
 
@@ -1615,7 +1615,7 @@ int ManageGameMode() {
       }
 
       specialAnimationRunning = true;
-      ShowLampAnimation(1, 80, CurrentTime, 1, false, false);
+      //ShowLampAnimation(1, 80, CurrentTime, 1, false, false);
 
       if (CurrentTime > GameModeEndTime) {
         SetGameMode(GAME_MODE_WIZARD);
@@ -1640,7 +1640,7 @@ int ManageGameMode() {
       }
 
       specialAnimationRunning = true;
-      ShowLampAnimation(0, 80, CurrentTime, 14, false, false);
+      //ShowLampAnimation(0, 80, CurrentTime, 14, false, false);
 
       if (CurrentTime > GameModeEndTime) {
         SetGameMode(GAME_MODE_WIZARD_FINISHED);
@@ -1658,7 +1658,7 @@ int ManageGameMode() {
       }
 
       specialAnimationRunning = true;
-      ShowLampAnimation(1, 80, CurrentTime, 15, false, false);
+      //ShowLampAnimation(1, 80, CurrentTime, 15, false, false);
 
       if (CurrentTime > GameModeEndTime) {
         //        PlayBackgroundSongBasedOnLevel(StarLevel[CurrentPlayer]);
@@ -2040,17 +2040,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           SetLastSelfTestChangedTime(CurrentTime);
           break;
         //        case SW_10_PTS:
-        case SW_REBOUNDS_AND_TOP:
-          TenPointPhase += 1;
-          PlaySoundEffect(SOUND_EFFECT_10PT_SWITCH);
-          CurrentScores[CurrentPlayer] += (ScoreMultiplier) * 10;
-          if (LanePhase) {
-            LanePhase += 1;
-            if (LanePhase == 3) LanePhase = 1;
-            else if (LanePhase == 5) LanePhase = 3;
-          }
-          if (RolloverPhase && !(RolloverPhase % 2)) RolloverPhase = 1;
-          break;
 
         //DCO CODE INLANES 
         case SW_LEFT_OUTLANE:
@@ -2119,7 +2108,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
 
         case SW_EJECT_BONUS:
           CountdownBonus(false);
-          brea;
+          break;
 
         case SW_LEFT_SLINGSHOT:
         case SW_RIGHT_SLINGSHOT:
