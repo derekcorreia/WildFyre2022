@@ -1746,7 +1746,9 @@ int CountdownBonus(boolean curStateChanged) {
     BonusCountDownEndTime = 0xFFFFFFFF;
   }
 
-  unsigned long countdownDelayTime = 250 - (Bonus * 3);
+  //we want more slow jamz
+  //unsigned long countdownDelayTime = 250 - (Bonus * 3);
+  unsigned long countdownDelayTime = 350;
 
   if ((CurrentTime - LastCountdownReportTime) > countdownDelayTime) {
 
