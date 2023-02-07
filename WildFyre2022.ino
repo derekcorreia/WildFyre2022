@@ -130,6 +130,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_TILT_WARNING       28
 #define SOUND_EFFECT_MATCH_SPIN         30
 #define SOUND_EFFECT_SPINNER            103
+#define SOUND_EFFECT_POP                104
 #define SOUND_EFFECT_SLING_SHOT         34
 #define SOUND_EFFECT_ROLLOVER           35
 #define SOUND_EFFECT_10PT_SWITCH        36
@@ -1422,6 +1423,10 @@ void Reset4Bank() {
   BSOS_PushToTimedSolenoidStack(SOL_4BANK_RESET, 12, CurrentTime + 400);
 }
 
+void EjectTopSaucers() {
+  BSOS_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 600);
+}
+
 
 
 
@@ -1598,70 +1603,6 @@ int ManageGameMode() {
       // If this is the first time in this mode
       if (GameModeStartTime == 0) {
         GameModeStartTime = CurrentTime;
-      }
-      break;
-
-    case GAME_MODE_WIZARD_START:
-      if (GameModeStartTime == 0) {
-        BSOS_TurnOffAllLamps();
-        StopAudio();
-        GameModeStartTime = CurrentTime;
-        GameModeEndTime = CurrentTime + WIZARD_START_DURATION;
-        PlaySoundEffect(SOUND_EFFECT_WIZARD_MODE_START);
-        StartScoreAnimation(WIZARD_MODE_REWARD_SCORE);
-        WizardScoring = true;
-      }
-
-      specialAnimationRunning = true;
-      //ShowLampAnimation(1, 80, CurrentTime, 1, false, false);
-
-      if (CurrentTime > GameModeEndTime) {
-        SetGameMode(GAME_MODE_WIZARD);
-        LastWizardTimer = 0xFF;
-      }
-      break;
-
-    case GAME_MODE_WIZARD:
-      if (GameModeStartTime == 0) {
-        PlayBackgroundSong(SOUND_EFFECT_BACKGROUND_WIZ);
-        GameModeStartTime = CurrentTime;
-        GameModeEndTime = CurrentTime + WIZARD_DURATION;
-      }
-
-      currentWizardTimer = (byte)((CurrentTime - GameModeStartTime) / 1000);
-      if (currentWizardTimer != LastWizardTimer) {
-        LastWizardTimer = currentWizardTimer;
-        for (byte count = 0; count < 4; count++) {
-          if (count != CurrentPlayer) OverrideScoreDisplay(count, WIZARD_DURATION_SECONDS - LastWizardTimer, true);
-        }
-        PlaySoundEffect(SOUND_EFFECT_SLING_SHOT);
-      }
-
-      specialAnimationRunning = true;
-      //ShowLampAnimation(0, 80, CurrentTime, 14, false, false);
-
-      if (CurrentTime > GameModeEndTime) {
-        SetGameMode(GAME_MODE_WIZARD_FINISHED);
-      }
-      break;
-
-    case GAME_MODE_WIZARD_FINISHED:
-      if (GameModeStartTime == 0) {
-        BSOS_TurnOffAllLamps();
-        StopAudio();
-        GameModeStartTime = CurrentTime;
-        GameModeEndTime = CurrentTime + WIZARD_FINISHED_DURATION;
-        PlaySoundEffect(SOUND_EFFECT_WIZARD_MODE_FINISHED);
-        ShowPlayerScores(0xFF, false, false);
-      }
-
-      specialAnimationRunning = true;
-      //ShowLampAnimation(1, 80, CurrentTime, 15, false, false);
-
-      if (CurrentTime > GameModeEndTime) {
-        //        PlayBackgroundSongBasedOnLevel(StarLevel[CurrentPlayer]);
-        SetGameMode(GAME_MODE_UNSTRUCTURED_PLAY);
-        WizardScoring = false;
       }
       break;
 
@@ -2054,6 +1995,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             AwardSpecial();
             BSOS_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 0);
           }
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
         case SW_LEFT_MID_LANE:
           // INFO: Playfield reads "Reset Bottom Targets"
@@ -2061,6 +2003,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (Num4BankCompletions > 1) {
             Reset4Bank();
           }
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
         case SW_RIGHT_MID_LANE:
           CurrentScores[CurrentPlayer] += 500;
@@ -2077,22 +2020,38 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           }
           break;
 
+        case SW_EJECT_1:
+        case SW_EJECT_2:
+        case SW_EJECT_3:
+          CurrentScores[CurrentPlayer] += 3000;
+          EjectTopSaucers();
+          /*todo lamps:
+            Eject 1 L18 S23
+            Eject 2 L19 S22
+            Eject 3 L20 S21
+          */
+         if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          break;
+
         case SW_AB_LEFT:
         case SW_AB_TOP:
           AddToBonus(1);
           CurrentScores[CurrentPlayer] += 10;
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
         case SW_ADVANCE_TARGET:
           // INFO: Playfield reads "1000 and advance arrow"
           AddToBonusArrows(1);
           CurrentScores[CurrentPlayer] += 1000;
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
         case SW_ADVANCE_ARROW:
           // INFO: Playfield reads "1000 and advance arrow"
           AddToBonusArrows(1);
           CurrentScores[CurrentPlayer] += 1000;
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
         case SW_SPINNER:
@@ -2103,10 +2062,20 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           } else {
             CurrentScores[CurrentPlayer] += 100;
           }
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
         case SW_EJECT_BONUS:
           CountdownBonus(false);
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          break;
+
+        case SW_LEFT_BUMPER:
+        case SW_CENTER_BUMPER:
+        case SW_RIGHT_BUMPER:
+          PlaySoundEffect(SOUND_EFFECT_POP + CurrentTime%4);
+          CurrentScores[CurrentPlayer] += 100;
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
         case SW_LEFT_SLINGSHOT:
