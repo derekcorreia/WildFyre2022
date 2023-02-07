@@ -15,6 +15,7 @@
 #define LAMP_BONUS_20K                      5
 #define LAMP_5X_BONUS                       19
 #define LAMP_2X_BONUS                       23
+// check center saucer special
 #define LAMP_CENTER_SAUCER_SPECIAL          17
 #define LAMP_TOP_EJECT_1                    28
 #define LAMP_TOP_EJECT_2                    29
@@ -33,6 +34,7 @@
 #define LAMP_PLAYER_2                       53
 #define LAMP_PLAYER_3                       54
 #define LAMP_PLAYER_4                       55
+// check 4k3b
 #define LAMP_4K_3BANK                       35
 #define LAMP_4K_EJECT                       31
 #define LAMP_2X_BONUS_3BANK                 43

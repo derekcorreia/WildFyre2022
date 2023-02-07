@@ -554,9 +554,26 @@ void ShowBonusLamps() {
 void ShowBonusXLamps() {
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
   } else {
+    if (BonusX == 2) {BSOS_SetLampState(LAMP_2X_BONUS, 1); }
+    if (BonusX == 5) {BSOS_SetLampState(LAMP_5X_BONUS, 1); }
+    if (BonusX != 2 || BonusX != 5){
+      BSOS_SetLampState(LAMP_2X_BONUS, 0);
+      BSOS_SetLampState(LAMP_5X_BONUS, 0);
+    }
     //    BSOS_SetLampState(LAMP_BONUS_2X, BonusX[CurrentPlayer]==2);
     //    BSOS_SetLampState(LAMP_BONUS_3X, BonusX[CurrentPlayer]==2);
     //    BSOS_SetLampState(LAMP_BONUS_5X, BonusX[CurrentPlayer]==2);
+  }
+}
+
+void ShowSpinnerLamp(){
+  if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
+  } else {
+    if (SpinnerLit){
+      BSOS_SetLampState(LAMP_SPINNER, 1);
+    } else {
+      BSOS_SetLampState(LAMP_SPINNER, 0);
+    }
   }
 }
 
@@ -1618,6 +1635,7 @@ int ManageGameMode() {
     ShowBonusLamps();
     ShowBonusXLamps();
     Show4BankLamps();
+    ShowSpinnerLamp();
 #if not defined (BALLY_STERN_OS_SOFTWARE_DISPLAY_INTERRUPT)
     BSOS_DataRead(0);
 #endif
@@ -2076,8 +2094,11 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
 
         case SW_EJECT_BONUS:
-          CountdownBonus(false);
+          //For now, let's add bonus and eject until we can get some thought around rules
+          //CountdownBonus(false);
+          CurrentScores[CurrentPlayer] += (Bonus * 2000);
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1000);
           break;
 
         case SW_3DROP_1:
