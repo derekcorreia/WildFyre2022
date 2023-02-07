@@ -1335,7 +1335,7 @@ void AddToBonus(byte amountToAdd = 1) {
 void AddToBonusArrows(byte amountToAdd = 1) {
   BonusAdvanceArrows += amountToAdd;
   // we want 2x to come from either dropping the 3 bank or advancing arrows, and 5x to come from doing both in a ball
-  if (BonusAdvanceArrows = 3){
+  if (BonusAdvanceArrows == 3){
     if (BonusX == 2) {BonusX = 5;}
     if (BonusX == 1) {BonusX = 2;}
   }
@@ -1582,7 +1582,7 @@ int ManageGameMode() {
 
   byte currentWizardTimer;
 
-  switch ( (GameMode & GAME_BASE_MODE) ) {
+  switch (GameMode) {
     case GAME_MODE_SKILL_SHOT:
       if (GameModeStartTime == 0) {
         GameModeStartTime = CurrentTime;
