@@ -228,6 +228,8 @@ byte DropTarget3BankSwitchArray[] = {SW_3DROP_1, SW_3DROP_2, SW_3DROP_3};
 byte DropTarget4BankSwitchArray[] = {SW_4DROP_1, SW_4DROP_2, SW_4DROP_3, SW_4DROP_4};
 byte DropTarget4BankWildLampArray [] = {LAMP_WILD_W, LAMP_WILD_I, LAMP_WILD_L, LAMP_WILD_D};
 byte DropTarget4BankFyreLampArray [] = {LAMP_FYRE_F, LAMP_FYRE_Y, LAMP_FYRE_R, LAMP_FYRE_E};
+byte EjectSwitchArray[] = {SW_EJECT_1, SW_EJECT_2, SW_EJECT_3};
+byte EjectLampArray[] = {LAMP_TOP_EJECT_1, LAMP_TOP_EJECT_2, LAMP_TOP_EJECT_3};
 
 /*********************************************************************
 
@@ -240,6 +242,7 @@ byte RolloverPhase;
 byte TenPointPhase;
 byte LastAwardShotCalloutPlayed;
 byte LastWizardTimer;
+byte SkillShotEject = 0;
 
 
 
@@ -574,6 +577,17 @@ void ShowSpinnerLamp(){
     } else {
       BSOS_SetLampState(LAMP_SPINNER, 0);
     }
+  }
+}
+
+void ShowEjectLamps(){
+  if (GameMode == GAME_MODE_SKILL_SHOT){
+    //BSOS_SetLampState(DROP_TARGET_1, BSOS_ReadSingleSwitchState(SW_DROP_TARGET_1)?0:1);
+    for (byte count=0; count<3; count++) {
+      BSOS_SetLampState(LAMP_TOP_EJECT_1 + count, (count == SkillShotEject), 0, (count == SkillShotEject)?200:0 );
+    }
+  } else {
+
   }
 }
 
@@ -1383,6 +1397,24 @@ void Handle4BankDropSwitch (byte switchHit){
         }
 }
 
+void HandleTopEjectHit (byte switchHit){
+  if (GameMode == GAME_MODE_SKILL_SHOT){
+    if (switchHit == EjectSwitchArray[SkillShotEject]){
+      CurrentScores[CurrentPlayer] += 10000;
+    } else {
+      CurrentScores[CurrentPlayer] += 3000;
+    }
+  } else {
+    CurrentScores[CurrentPlayer] += 3000;
+  }
+  EjectTopSaucers();
+          /*todo lamps:
+            Eject 1 L18 S23
+            Eject 2 L19 S22
+            Eject 3 L20 S21
+          */
+}
+
 void Show4BankLamps(){
   if (Num4BankCompletions < 1){
     for (byte count=0; count<4; count++) {
@@ -1530,6 +1562,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     BallTimeInTrough = 0;
     NumTiltWarnings = 0;
     LastTiltWarningTime = 0;
+    SkillShotEject = (0 + CurrentTime%3);
 
     // Initialize game-specific start-of-ball lights & variables
     GameModeStartTime = 0;
@@ -1636,6 +1669,7 @@ int ManageGameMode() {
     ShowBonusXLamps();
     Show4BankLamps();
     ShowSpinnerLamp();
+    ShowEjectLamps();
 #if not defined (BALLY_STERN_OS_SOFTWARE_DISPLAY_INTERRUPT)
     BSOS_DataRead(0);
 #endif
@@ -2051,14 +2085,8 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_1:
         case SW_EJECT_2:
         case SW_EJECT_3:
-          CurrentScores[CurrentPlayer] += 3000;
-          EjectTopSaucers();
-          /*todo lamps:
-            Eject 1 L18 S23
-            Eject 2 L19 S22
-            Eject 3 L20 S21
-          */
-         if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          HandleTopEjectHit(switchHit);
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
         case SW_AB_LEFT:
