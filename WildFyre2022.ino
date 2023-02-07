@@ -135,6 +135,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_POP2               105
 #define SOUND_EFFECT_POP3               106
 #define SOUND_EFFECT_POP4               107
+#define SOUND_EFFECT_WILD4_COMPLETE     110
 
 #define SOUND_EFFECT_SLING_SHOT         34
 #define SOUND_EFFECT_ROLLOVER           35
@@ -1355,6 +1356,7 @@ void Handle4BankDropSwitch (byte switchHit){
         BSOS_ReadSingleSwitchState(SW_4DROP_4))
         {
           if (Num4BankCompletions < 1) {
+              PlaySoundEffect(SOUND_EFFECT_WILD4_COMPLETE);
               SpinnerLit = 1;
               Reset4Bank();
             };
@@ -2066,7 +2068,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           // todo spinner lit specific sound
           PlaySoundEffect(SOUND_EFFECT_SPINNER);
           if (SpinnerLit == 1){
-            CurrentScores[CurrentPlayer] += 1000;  
+            CurrentScores[CurrentPlayer] += 500;  
           } else {
             CurrentScores[CurrentPlayer] += 100;
           }
@@ -2096,8 +2098,8 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_LEFT_BUMPER:
         case SW_CENTER_BUMPER:
         case SW_RIGHT_BUMPER:
-          //PlaySoundEffect(SOUND_EFFECT_POP + CurrentTime%4);
-          PlaySoundEffect(SOUND_EFFECT_POP3);
+          PlaySoundEffect(SOUND_EFFECT_POP + CurrentTime%4);
+          //PlaySoundEffect(SOUND_EFFECT_POP3);
           CurrentScores[CurrentPlayer] += 100;
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
