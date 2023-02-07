@@ -129,8 +129,13 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_SKILL_SHOT         25
 #define SOUND_EFFECT_TILT_WARNING       28
 #define SOUND_EFFECT_MATCH_SPIN         30
+#define SOUND_EFFECT_BONUSCOUNTDOWN     101
 #define SOUND_EFFECT_SPINNER            103
 #define SOUND_EFFECT_POP                104
+#define SOUND_EFFECT_POP2               105
+#define SOUND_EFFECT_POP3               106
+#define SOUND_EFFECT_POP4               107
+
 #define SOUND_EFFECT_SLING_SHOT         34
 #define SOUND_EFFECT_ROLLOVER           35
 #define SOUND_EFFECT_10PT_SWITCH        36
@@ -178,7 +183,6 @@ boolean HighScoreReplay = true;
 boolean MatchFeature = true;
 boolean TournamentScoring = false;
 boolean ScrollingScores = true;
-
 
 
 /*********************************************************************
@@ -1734,7 +1738,7 @@ int CountdownBonus(boolean curStateChanged) {
 
   // If this is the first time through the countdown loop
   if (curStateChanged) {
-
+    PlayBackgroundSong(SOUND_EFFECT_BONUSCOUNTDOWN);
     CountdownStartTime = CurrentTime;
     ShowBonusLamps();
 
@@ -1750,7 +1754,7 @@ int CountdownBonus(boolean curStateChanged) {
 
       // Only give sound & score if this isn't a tilt
       if (NumTiltWarnings <= MaxTiltWarnings) {
-        PlaySoundEffect(SOUND_EFFECT_BONUS_COUNT);
+        //PlaySoundEffect(SOUND_EFFECT_BONUS_COUNT);
         CurrentScores[CurrentPlayer] += 2000 * ((unsigned long)BonusX);
       }
 
@@ -1767,6 +1771,8 @@ int CountdownBonus(boolean curStateChanged) {
 
     // Reset any lights & variables of goals that weren't completed
     BonusCountDownEndTime = 0xFFFFFFFF;
+    PlayBackgroundSong(SOUND_EFFECT_NONE);
+    StopAudio();
     return MACHINE_STATE_BALL_OVER;
   }
 
@@ -2084,11 +2090,12 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           Handle4BankDropSwitch(switchHit);
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
-          
+
         case SW_LEFT_BUMPER:
         case SW_CENTER_BUMPER:
         case SW_RIGHT_BUMPER:
-          PlaySoundEffect(SOUND_EFFECT_POP + CurrentTime%4);
+          //PlaySoundEffect(SOUND_EFFECT_POP + CurrentTime%4);
+          PlaySoundEffect(SOUND_EFFECT_POP3);
           CurrentScores[CurrentPlayer] += 100;
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
