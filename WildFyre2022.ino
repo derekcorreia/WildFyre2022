@@ -2070,6 +2070,21 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
+        case SW_3DROP_1:
+        case SW_3DROP_2:
+        case SW_3DROP_3:
+          Handle3BankDropSwitch(switchHit);
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          break;
+
+        case SW_4DROP_1:
+        case SW_4DROP_2:
+        case SW_4DROP_3:
+        case SW_4DROP_4:
+          Handle4BankDropSwitch(switchHit);
+          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          break;
+          
         case SW_LEFT_BUMPER:
         case SW_CENTER_BUMPER:
         case SW_RIGHT_BUMPER:
