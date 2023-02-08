@@ -44,8 +44,8 @@
 SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 #endif
 
-#define PINBALL_MACHINE_BASE_MAJOR_VERSION  2022
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  1
+#define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  010
 #define DEBUG_MESSAGES  0
 
 
@@ -1565,6 +1565,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     BSOS_SetDisableFlippers(false);
     BSOS_EnableSolenoidStack();
     BSOS_SetDisplayCredits(Credits, true);
+    SetPlayerLamps(playerNum + 1, 4);
     if (CurrentNumPlayers > 1 && (ballNum != 1 || playerNum != 0) && !SamePlayerShootsAgain) PlaySoundEffect(SOUND_EFFECT_PLAYER_1_UP + playerNum);
     SamePlayerShootsAgain = false;
 
