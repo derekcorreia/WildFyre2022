@@ -130,7 +130,11 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_GAME_OVER          100
 #define SOUND_EFFECT_EXTRA_BALL         23
 #define SOUND_EFFECT_MACHINE_START      24
-#define SOUND_EFFECT_SKILL_SHOT         25
+#define SOUND_EFFECT_SKILL_SHOT         220
+#define SOUND_EFFECT_SKILL_SHOTA1       (SOUND_EFFECT_SKILL_SHOT+1)
+#define SOUND_EFFECT_SKILL_SHOTA2       (SOUND_EFFECT_SKILL_SHOT+2)
+#define SOUND_EFFECT_SKILL_SHOTA3       (SOUND_EFFECT_SKILL_SHOT+3)
+#define SOUND_EFFECT_SKILL_SHOTA4       (SOUND_EFFECT_SKILL_SHOT+4)
 #define SOUND_EFFECT_TILT_WARNING       28
 #define SOUND_EFFECT_MATCH_SPIN         30
 #define SOUND_EFFECT_BONUSCOUNTDOWN     101
@@ -148,10 +152,30 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_ADD_PLAYER_2       (SOUND_EFFECT_ADD_PLAYER_1+1)
 #define SOUND_EFFECT_ADD_PLAYER_3       (SOUND_EFFECT_ADD_PLAYER_1+2)
 #define SOUND_EFFECT_ADD_PLAYER_4       (SOUND_EFFECT_ADD_PLAYER_1+3)
-#define SOUND_EFFECT_PLAYER_1_UP        24
-#define SOUND_EFFECT_PLAYER_2_UP        (SOUND_EFFECT_PLAYER_1_UP+1)
-#define SOUND_EFFECT_PLAYER_3_UP        (SOUND_EFFECT_PLAYER_1_UP+2)
-#define SOUND_EFFECT_PLAYER_4_UP        (SOUND_EFFECT_PLAYER_1_UP+3)
+#define SOUND_EFFECT_PLAYER_1_UP        310
+#define SOUND_EFFECT_PLAYER_1_UPA1      (SOUND_EFFECT_PLAYER_1_UP+1)
+#define SOUND_EFFECT_PLAYER_1_UPA2      (SOUND_EFFECT_PLAYER_1_UP+2)
+#define SOUND_EFFECT_PLAYER_1_UPA3      (SOUND_EFFECT_PLAYER_1_UP+3)
+#define SOUND_EFFECT_PLAYER_1_UPA4      (SOUND_EFFECT_PLAYER_1_UP+4)
+#define SOUND_EFFECT_PLAYER_1_UPA5      (SOUND_EFFECT_PLAYER_1_UP+5)
+#define SOUND_EFFECT_PLAYER_2_UP        320
+#define SOUND_EFFECT_PLAYER_2_UPA1      (SOUND_EFFECT_PLAYER_2_UP+1)
+#define SOUND_EFFECT_PLAYER_2_UPA2      (SOUND_EFFECT_PLAYER_2_UP+2)
+#define SOUND_EFFECT_PLAYER_2_UPA3      (SOUND_EFFECT_PLAYER_2_UP+3)
+#define SOUND_EFFECT_PLAYER_2_UPA4      (SOUND_EFFECT_PLAYER_2_UP+4)
+#define SOUND_EFFECT_PLAYER_2_UPA5      (SOUND_EFFECT_PLAYER_2_UP+5)
+#define SOUND_EFFECT_PLAYER_3_UP        330
+#define SOUND_EFFECT_PLAYER_3_UPA1      (SOUND_EFFECT_PLAYER_3_UP+1)
+#define SOUND_EFFECT_PLAYER_3_UPA2      (SOUND_EFFECT_PLAYER_3_UP+2)
+#define SOUND_EFFECT_PLAYER_3_UPA3      (SOUND_EFFECT_PLAYER_3_UP+3)
+#define SOUND_EFFECT_PLAYER_3_UPA4      (SOUND_EFFECT_PLAYER_3_UP+4)
+#define SOUND_EFFECT_PLAYER_3_UPA5      (SOUND_EFFECT_PLAYER_3_UP+5)
+#define SOUND_EFFECT_PLAYER_4_UP        340
+#define SOUND_EFFECT_PLAYER_4_UPA1      (SOUND_EFFECT_PLAYER_4_UP+1)
+#define SOUND_EFFECT_PLAYER_4_UPA2      (SOUND_EFFECT_PLAYER_4_UP+2)
+#define SOUND_EFFECT_PLAYER_4_UPA3      (SOUND_EFFECT_PLAYER_4_UP+3)
+#define SOUND_EFFECT_PLAYER_4_UPA4      (SOUND_EFFECT_PLAYER_4_UP+4)
+#define SOUND_EFFECT_PLAYER_4_UPA5      (SOUND_EFFECT_PLAYER_4_UP+5)
 #define SOUND_EFFECT_SHOOT_AGAIN        60
 #define SOUND_EFFECT_TILT               61
 #define SOUND_EFFECT_VOICE_EXTRA_BALL             81
@@ -1410,6 +1434,7 @@ void Handle4BankDropSwitch (byte switchHit){
 void HandleTopEjectHit (byte switchHit){
   if (GameMode == GAME_MODE_SKILL_SHOT){
     if (switchHit == EjectSwitchArray[SkillShotEject]){
+      PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT = CurrentTime%5);
       CurrentScores[CurrentPlayer] += 10000;
     } else {
       CurrentScores[CurrentPlayer] += 3000;
@@ -1566,7 +1591,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     BSOS_EnableSolenoidStack();
     BSOS_SetDisplayCredits(Credits, true);
     SetPlayerLamps(playerNum + 1, 4);
-    if (CurrentNumPlayers > 1 && (ballNum != 1 || playerNum != 0) && !SamePlayerShootsAgain) PlaySoundEffect(SOUND_EFFECT_PLAYER_1_UP + playerNum);
+    if (CurrentNumPlayers > 1 && (ballNum != 1 || playerNum != 0) && !SamePlayerShootsAgain) PlaySoundEffect(SOUND_EFFECT_PLAYER_1_UP + (playerNum * 10) + CurrentTime%6);
     SamePlayerShootsAgain = false;
 
     BSOS_SetDisplayBallInPlay(ballNum);
