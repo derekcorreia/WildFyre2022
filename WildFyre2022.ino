@@ -566,7 +566,7 @@ void ShowBonusXLamps() {
   } else {
     if (BonusX == 2) {BSOS_SetLampState(LAMP_2X_BONUS, 1); }
     if (BonusX == 5) {BSOS_SetLampState(LAMP_5X_BONUS, 1); }
-    if (BonusX != 2 || BonusX != 5){
+    if (BonusX == 1){
       BSOS_SetLampState(LAMP_2X_BONUS, 0);
       BSOS_SetLampState(LAMP_5X_BONUS, 0);
     }
