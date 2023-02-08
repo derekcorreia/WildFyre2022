@@ -99,6 +99,10 @@ boolean MachineStateChanged = true;
 #define GAME_BASE_MODE                              0x0F
 
 
+#define EJECT_1_MASK     0x04
+#define EJECT_2_MASK     0x02
+#define EJECT_3_MASK     0x01
+
 
 #define EEPROM_BALL_SAVE_BYTE           100
 #define EEPROM_FREE_PLAY_BYTE           101
@@ -243,8 +247,11 @@ byte TenPointPhase;
 byte LastAwardShotCalloutPlayed;
 byte LastWizardTimer;
 byte SkillShotEject = 0;
+byte CurrentEjectsHit = 0;
+byte NumEjectSets = 0;
 
-
+unsigned long TopEjectHitTime;
+unsigned long BonusEjectHitTime;
 
 
 boolean WizardScoring;
@@ -587,7 +594,10 @@ void ShowEjectLamps(){
       BSOS_SetLampState(LAMP_TOP_EJECT_1 + count, (count == SkillShotEject), 0, (count == SkillShotEject)?200:0 );
     }
   } else {
-
+    //BSOS_SetLampState(STAND_UP_PURPLE, CurrentStandupsHit&STANDUP_PURPLE_MASK);
+    BSOS_SetLampState(LAMP_TOP_EJECT_1, CurrentEjectsHit&EJECT_1_MASK);
+    BSOS_SetLampState(LAMP_TOP_EJECT_2, CurrentEjectsHit&EJECT_2_MASK);
+    BSOS_SetLampState(LAMP_TOP_EJECT_3, CurrentEjectsHit&EJECT_3_MASK);
   }
 }
 
@@ -1407,6 +1417,13 @@ void HandleTopEjectHit (byte switchHit){
   } else {
     CurrentScores[CurrentPlayer] += 3000;
   }
+  byte switchMask = (1<<(switchHit-21));
+  CurrentEjectsHit |= switchMask;
+
+  if (CurrentEjectsHit==0x07){
+    NumEjectSets++;
+    CurrentEjectsHit = 0;
+  }
   EjectTopSaucers();
           /*todo lamps:
             Eject 1 L18 S23
@@ -1564,6 +1581,9 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     LastTiltWarningTime = 0;
     SkillShotEject = (0 + CurrentTime%3);
 
+    TopEjectHitTime = 0;
+    BonusEjectHitTime = 0;
+
     // Initialize game-specific start-of-ball lights & variables
     GameModeStartTime = 0;
     GameModeEndTime = 0;
@@ -1586,6 +1606,8 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     SpinnerLit = 0;
     Num4BankCompletions = 0;
     Num3BankCompletions = 0;
+    NumEjectSets = 0;
+    CurrentEjectsHit = 0;
 
 
     ScoreMultiplier = 1;
@@ -2085,7 +2107,11 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_1:
         case SW_EJECT_2:
         case SW_EJECT_3:
-          HandleTopEjectHit(switchHit);
+          //if (SaucerHitTime==0 || (CurrentTime-SaucerHitTime)>500) {
+          if (TopEjectHitTime==0 || (CurrentTime-TopEjectHitTime)>500){
+            TopEjectHitTime = CurrentTime;
+            HandleTopEjectHit(switchHit);
+          }
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
@@ -2124,9 +2150,12 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_BONUS:
           //For now, let's add bonus and eject until we can get some thought around rules
           //CountdownBonus(false);
-          CurrentScores[CurrentPlayer] += (Bonus * 2000);
+          if (BonusEjectHitTime==0 || (CurrentTime-BonusEjectHitTime)>500){
+            BonusEjectHitTime = CurrentTime;
+            CurrentScores[CurrentPlayer] += (Bonus * 2000);
+          }
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
-          BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1000);
+          BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 1, CurrentTime + 1000);
           break;
 
         case SW_3DROP_1:
