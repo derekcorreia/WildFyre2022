@@ -1434,7 +1434,7 @@ void Handle4BankDropSwitch (byte switchHit){
 void HandleTopEjectHit (byte switchHit){
   if (GameMode == GAME_MODE_SKILL_SHOT){
     if (switchHit == EjectSwitchArray[SkillShotEject]){
-      PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT = CurrentTime%5);
+      PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
       CurrentScores[CurrentPlayer] += 10000;
     } else {
       CurrentScores[CurrentPlayer] += 3000;
