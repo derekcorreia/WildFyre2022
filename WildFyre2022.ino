@@ -1433,7 +1433,7 @@ void AddToBonusArrows(byte amountToAdd = 1) {
 
 void Handle4BankDropSwitch (byte switchHit){
   CurrentScores[CurrentPlayer] += 500;
-  PlayBackgroundSong(SOUND_EFFECT_4BANK + Num4BankTargets%4);
+  PlaySoundEffect(SOUND_EFFECT_4BANK + Num4BankTargets%4);
   Num4BankTargets++;
   // Lights for drops? Gotta check that
   // we want to light the spinner if the 4 bank has been completed
@@ -1495,7 +1495,7 @@ void Show4BankLamps(){
 
 void Handle3BankDropSwitch (byte switchHit){
   CurrentScores[CurrentPlayer] += 500;
-  PlayBackgroundSong(SOUND_EFFECT_3BANK + Num3BankTargets%3);
+  PlaySoundEffect(SOUND_EFFECT_3BANK + Num3BankTargets%3);
   Num3BankTargets++;
   //start with 2x lit to collect
   //move to 4k points if not
