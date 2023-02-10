@@ -625,6 +625,12 @@ void ShowEjectLamps(){
   }
 }
 
+void ShowDropTargetLamps(){
+  if (Num3BankCompletions == 1){
+    BSOS_SetLampState(LAMP_2X_BONUS_3BANK, 1);
+  }
+}
+
 
 void ShowLaneAndRolloverLamps() {
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
@@ -1479,7 +1485,7 @@ void Handle3BankDropSwitch (byte switchHit){
         BSOS_ReadSingleSwitchState(SW_3DROP_2) &&
         BSOS_ReadSingleSwitchState(SW_3DROP_3))
         {
-          if (Num3BankCompletions < 1){
+          if (Num3BankCompletions < 2){
             if (BonusX == 2) {BonusX = 5;}
             if (BonusX == 1) {BonusX = 2;}
             CurrentScores[CurrentPlayer] += 3000;
@@ -1729,6 +1735,7 @@ int ManageGameMode() {
     Show4BankLamps();
     ShowSpinnerLamp();
     ShowEjectLamps();
+    ShowDropTargetLamps();
 #if not defined (BALLY_STERN_OS_SOFTWARE_DISPLAY_INTERRUPT)
     BSOS_DataRead(0);
 #endif
