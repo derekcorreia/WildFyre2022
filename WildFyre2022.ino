@@ -136,7 +136,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_SKILL_SHOTA3       223
 #define SOUND_EFFECT_SKILL_SHOTA4       224
 #define SOUND_EFFECT_TILT_WARNING       28
-#define SOUND_EFFECT_MATCH_SPIN         30
+#define SOUND_EFFECT_MATCH_SPIN         29
 #define SOUND_EFFECT_BONUSCOUNTDOWN     201
 #define SOUND_EFFECT_SPINNER            203
 #define SOUND_EFFECT_POP                204
@@ -144,6 +144,16 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_POP3               206
 #define SOUND_EFFECT_POP4               207
 #define SOUND_EFFECT_WILD4_COMPLETE     210
+#define SOUND_EFFECT_LANES              30
+#define SOUND_EFFECT_LANESA1            31
+#define SOUND_EFFECT_LANESA2            32
+#define SOUND_EFFECT_4BANK              33
+#define SOUND_EFFECT_4BANKA1            34
+#define SOUND_EFFECT_4BANKA2            35
+#define SOUND_EFFECT_4BANKA3            36
+#define SOUND_EFFECT_3BANK              37
+#define SOUND_EFFECT_3BANKA1            38
+#define SOUND_EFFECT_3BANKA2            39
 
 #define SOUND_EFFECT_SLING_SHOT         34
 #define SOUND_EFFECT_ROLLOVER           35
@@ -273,6 +283,8 @@ byte LastWizardTimer;
 byte SkillShotEject = 0;
 byte CurrentEjectsHit = 0;
 byte NumEjectSets = 0;
+byte Num3BankTargets = 0;
+byte Num4BankTargets = 0;
 
 unsigned long TopEjectHitTime;
 unsigned long BonusEjectHitTime;
@@ -1419,6 +1431,8 @@ void AddToBonusArrows(byte amountToAdd = 1) {
 
 void Handle4BankDropSwitch (byte switchHit){
   CurrentScores[CurrentPlayer] += 500;
+  PlayBackgroundSong(SOUND_EFFECT_4BANK + Num4BankTargets%4);
+  Num4BankTargets++;
   // Lights for drops? Gotta check that
   // we want to light the spinner if the 4 bank has been completed
   if (  BSOS_ReadSingleSwitchState(SW_4DROP_1) &&
@@ -1479,6 +1493,8 @@ void Show4BankLamps(){
 
 void Handle3BankDropSwitch (byte switchHit){
   CurrentScores[CurrentPlayer] += 500;
+  PlayBackgroundSong(SOUND_EFFECT_3BANK + Num3BankTargets%3);
+  Num3BankTargets++;
   //start with 2x lit to collect
   //move to 4k points if not
   if (  BSOS_ReadSingleSwitchState(SW_3DROP_1) &&
@@ -1649,6 +1665,8 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     SpinnerLit = 0;
     Num4BankCompletions = 0;
     Num3BankCompletions = 0;
+    Num3BankTargets = 0;
+    Num4BankTargets = 0;
     NumEjectSets = 0;
     CurrentEjectsHit = 0;
 
