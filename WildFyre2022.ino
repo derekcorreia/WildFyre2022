@@ -14,12 +14,13 @@
           xxBonusCountdown needs to be implemented/lamps need to be reviewed
           xxEB/Special Handling
           xxDecide what to do with the 4 bank/reset
-    Top lane skill shots (and switch handling in general)
+          xxTop lane skill shots (and switch handling in general)
     Sharpshooter Mode
     Wild Fyre Spinner on 2x 4bank completions
     Bonus collect saucer
     Music/Sound Effect Creation
     Music/Sound Effect Linking
+    Attract Mode
     Code Cleanup from prior game
     Copy most of ManageGame from Trident
     
@@ -646,7 +647,6 @@ void ShowDropTargetLamps(){
 }
 
 void ShowBonusXArrowLamps(){
-  //BSOS_SetLampState(DropTarget4BankWildLampArray[count], BSOS_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?0:1);
   for (byte count=0; count<3; count++) {
     BSOS_SetLampState(LAMP_SAUCER_ARROW_1 + count, (BonusAdvanceArrows == count)?1:0);
   }
@@ -1552,7 +1552,7 @@ void Reset4Bank() {
 }
 
 void EjectTopSaucers() {
-  BSOS_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 600);
+  BSOS_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 1200);
 }
 
 
