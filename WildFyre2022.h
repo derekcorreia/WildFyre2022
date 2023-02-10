@@ -2,10 +2,10 @@
 #define LAMP_PLAYER_2_UP                    57
 #define LAMP_PLAYER_3_UP                    58
 #define LAMP_PLAYER_4_UP                    59
-#define LAMP_10K_ROLLOVER                   11
 #define LAMP_SAUCER_ARROW_1                 8
 #define LAMP_SAUCER_ARROW_2                 9
 #define LAMP_SAUCER_ARROW_3                 10
+#define LAMP_10K_ROLLOVER                   11
 #define LAMP_BALL_IN_PLAY                   48
 #define LAMP_BONUS_2K                       0
 #define LAMP_BONUS_4K                       1
