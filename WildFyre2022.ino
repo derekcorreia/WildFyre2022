@@ -45,7 +45,7 @@ SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  010
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  212
 #define DEBUG_MESSAGES  1
 
 
