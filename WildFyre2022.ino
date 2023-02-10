@@ -640,6 +640,8 @@ void ShowEjectLamps(){
 void ShowDropTargetLamps(){
   if (Num3BankCompletions == 1){
     BSOS_SetLampState(LAMP_2X_BONUS_3BANK, 1);
+  } else {
+    BSOS_SetLampState(LAMP_2X_BONUS_3BANK, 0);
   }
 }
 
