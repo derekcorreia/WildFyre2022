@@ -1,5 +1,5 @@
 {
-    "port": "/dev/tty.usbserial-110",
+    "port": "/dev/tty.wchusbserial10",
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
     "sketch": "WildFyre2022.ino"

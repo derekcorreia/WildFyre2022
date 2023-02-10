@@ -46,7 +46,7 @@ SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
 #define PINBALL_MACHINE_BASE_MINOR_VERSION  010
-#define DEBUG_MESSAGES  0
+#define DEBUG_MESSAGES  1
 
 
 
@@ -127,7 +127,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_BUMPER_HIT         7
 #define SOUND_EFFECT_ADD_CREDIT         10
 #define SOUND_EFFECT_BALL_OVER          19
-#define SOUND_EFFECT_GAME_OVER          100
+#define SOUND_EFFECT_GAME_OVER          200
 #define SOUND_EFFECT_EXTRA_BALL         23
 #define SOUND_EFFECT_MACHINE_START      24
 #define SOUND_EFFECT_SKILL_SHOT         220
@@ -137,13 +137,13 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_SKILL_SHOTA4       224
 #define SOUND_EFFECT_TILT_WARNING       28
 #define SOUND_EFFECT_MATCH_SPIN         30
-#define SOUND_EFFECT_BONUSCOUNTDOWN     101
-#define SOUND_EFFECT_SPINNER            103
-#define SOUND_EFFECT_POP                104
-#define SOUND_EFFECT_POP2               105
-#define SOUND_EFFECT_POP3               106
-#define SOUND_EFFECT_POP4               107
-#define SOUND_EFFECT_WILD4_COMPLETE     110
+#define SOUND_EFFECT_BONUSCOUNTDOWN     201
+#define SOUND_EFFECT_SPINNER            203
+#define SOUND_EFFECT_POP                204
+#define SOUND_EFFECT_POP2               205
+#define SOUND_EFFECT_POP3               206
+#define SOUND_EFFECT_POP4               207
+#define SOUND_EFFECT_WILD4_COMPLETE     210
 
 #define SOUND_EFFECT_SLING_SHOT         34
 #define SOUND_EFFECT_ROLLOVER           35
@@ -152,30 +152,30 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_ADD_PLAYER_2       (SOUND_EFFECT_ADD_PLAYER_1+1)
 #define SOUND_EFFECT_ADD_PLAYER_3       (SOUND_EFFECT_ADD_PLAYER_1+2)
 #define SOUND_EFFECT_ADD_PLAYER_4       (SOUND_EFFECT_ADD_PLAYER_1+3)
-#define SOUND_EFFECT_PLAYER_1_UP        310
-#define SOUND_EFFECT_PLAYER_1_UPA1      311
-#define SOUND_EFFECT_PLAYER_1_UPA2      312
-#define SOUND_EFFECT_PLAYER_1_UPA3      313
-#define SOUND_EFFECT_PLAYER_1_UPA4      314
-#define SOUND_EFFECT_PLAYER_1_UPA5      315
-#define SOUND_EFFECT_PLAYER_2_UP        320
-#define SOUND_EFFECT_PLAYER_2_UPA1      321
-#define SOUND_EFFECT_PLAYER_2_UPA2      322
-#define SOUND_EFFECT_PLAYER_2_UPA3      323
-#define SOUND_EFFECT_PLAYER_2_UPA4      324
-#define SOUND_EFFECT_PLAYER_2_UPA5      325
-#define SOUND_EFFECT_PLAYER_3_UP        330
-#define SOUND_EFFECT_PLAYER_3_UPA1      331
-#define SOUND_EFFECT_PLAYER_3_UPA2      332
-#define SOUND_EFFECT_PLAYER_3_UPA3      333
-#define SOUND_EFFECT_PLAYER_3_UPA4      334
-#define SOUND_EFFECT_PLAYER_3_UPA5      335
-#define SOUND_EFFECT_PLAYER_4_UP        340
-#define SOUND_EFFECT_PLAYER_4_UPA1      341
-#define SOUND_EFFECT_PLAYER_4_UPA2      342
-#define SOUND_EFFECT_PLAYER_4_UPA3      343
-#define SOUND_EFFECT_PLAYER_4_UPA4      344
-#define SOUND_EFFECT_PLAYER_4_UPA5      345
+#define SOUND_EFFECT_PLAYER_1_UP        110
+#define SOUND_EFFECT_PLAYER_1_UPA1      111
+#define SOUND_EFFECT_PLAYER_1_UPA2      112
+#define SOUND_EFFECT_PLAYER_1_UPA3      113
+#define SOUND_EFFECT_PLAYER_1_UPA4      114
+#define SOUND_EFFECT_PLAYER_1_UPA5      115
+#define SOUND_EFFECT_PLAYER_2_UP        120
+#define SOUND_EFFECT_PLAYER_2_UPA1      121
+#define SOUND_EFFECT_PLAYER_2_UPA2      122
+#define SOUND_EFFECT_PLAYER_2_UPA3      123
+#define SOUND_EFFECT_PLAYER_2_UPA4      124
+#define SOUND_EFFECT_PLAYER_2_UPA5      125
+#define SOUND_EFFECT_PLAYER_3_UP        130
+#define SOUND_EFFECT_PLAYER_3_UPA1      131
+#define SOUND_EFFECT_PLAYER_3_UPA2      132
+#define SOUND_EFFECT_PLAYER_3_UPA3      133
+#define SOUND_EFFECT_PLAYER_3_UPA4      134
+#define SOUND_EFFECT_PLAYER_3_UPA5      135
+#define SOUND_EFFECT_PLAYER_4_UP        140
+#define SOUND_EFFECT_PLAYER_4_UPA1      141
+#define SOUND_EFFECT_PLAYER_4_UPA2      142
+#define SOUND_EFFECT_PLAYER_4_UPA3      143
+#define SOUND_EFFECT_PLAYER_4_UPA4      144
+#define SOUND_EFFECT_PLAYER_4_UPA5      145
 #define SOUND_EFFECT_SHOOT_AGAIN        60
 #define SOUND_EFFECT_TILT               61
 #define SOUND_EFFECT_VOICE_EXTRA_BALL             81
@@ -1586,13 +1586,24 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
   if (curStateChanged) {
     BSOS_TurnOffAllLamps();
     BallFirstSwitchHitTime = 0;
+    byte PlayerNumMask (playerNum * 10);
+    byte RandoSound = ((SOUND_EFFECT_PLAYER_1_UP) + (PlayerNumMask) + (CurrentTime%6));
+    if (DEBUG_MESSAGES) {
+        char buf[129];
+        sprintf(buf, "CurTime int %d\nPlayer pn mask int %d\nPlayer sound int %d\n", CurrentTime%6, PlayerNumMask, RandoSound);
+        // sprintf(buf, "Player pn mask int %d\n", PlayerNumMask);
+        // sprintf(buf, "Player sound int %d\n", RandoSound);
+        Serial.write(buf);
+    }
 
     BSOS_SetDisableFlippers(false);
     BSOS_EnableSolenoidStack();
     BSOS_SetDisplayCredits(Credits, true);
     SetPlayerLamps(playerNum + 1, 4);
-    if (CurrentNumPlayers > 1 && (ballNum != 1 || playerNum != 0) && !SamePlayerShootsAgain) PlaySoundEffect(SOUND_EFFECT_PLAYER_1_UP + (playerNum * 10) + CurrentTime%6);
+    if (CurrentNumPlayers > 1 && (ballNum != 1 || playerNum != 0) && !SamePlayerShootsAgain) PlaySoundEffect(RandoSound);
     SamePlayerShootsAgain = false;
+
+    
 
     BSOS_SetDisplayBallInPlay(ballNum);
     BSOS_SetLampState(LAMP_HEAD_TILT, 0);
@@ -2181,7 +2192,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             CurrentScores[CurrentPlayer] += (Bonus * 2000);
           }
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
-          BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 1, CurrentTime + 1000);
+          BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1000);
           break;
 
         case SW_3DROP_1:
