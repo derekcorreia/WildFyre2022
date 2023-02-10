@@ -2131,11 +2131,12 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_RIGHT_OUTLANE:
           CurrentScores[CurrentPlayer] += 500;
           AddToBonus(2);
-          // PlaySoundEffect(SOUND_EFFECT_RIGHT_OUTLANE);
+          PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
         case SW_LEFT_RETURN:
           CurrentScores[CurrentPlayer] += 500;
+          PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           // TKTK: logic for special being lit needs to be added
           if (BSOS_ReadLampState(LAMP_LEFT_RETURN_SPECIAL)) {
             AwardSpecial();
@@ -2145,6 +2146,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
         case SW_LEFT_MID_LANE:
           // INFO: Playfield reads "Reset Bottom Targets"
+          PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           CurrentScores[CurrentPlayer] += 500;
           if (Num4BankCompletions > 1) {
             Reset4Bank();
@@ -2153,12 +2155,14 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
         case SW_RIGHT_MID_LANE:
           CurrentScores[CurrentPlayer] += 500;
+          PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           AddToBonus(1);
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
         case SW_RIGHT_RETURN:
           // INFO: Playfield reads "5k and EB when lit"
           CurrentScores[CurrentPlayer] += 500;
+          PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           if (BSOS_ReadLampState(LAMP_EXTRA_BALL) == 1){
             AwardExtraBall();
