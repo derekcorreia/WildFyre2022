@@ -645,6 +645,13 @@ void ShowDropTargetLamps(){
   }
 }
 
+void ShowBonusXArrowLamps(){
+  //BSOS_SetLampState(DropTarget4BankWildLampArray[count], BSOS_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?0:1);
+  for (byte count=0; count<3; count++) {
+    BSOS_SetLampState(LAMP_SAUCER_ARROW_1 + count, (BonusAdvanceArrows == count)?1:0);
+  }
+}
+
 
 void ShowLaneAndRolloverLamps() {
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
@@ -1423,7 +1430,7 @@ void AddToBonus(byte amountToAdd = 1) {
 }
 
 void AddToBonusArrows(byte amountToAdd = 1) {
-  BonusAdvanceArrows += amountToAdd;
+  if (BonusAdvanceArrows < 3) {BonusAdvanceArrows += amountToAdd;}
   // we want 2x to come from either dropping the 3 bank or advancing arrows, and 5x to come from doing both in a ball
   if (BonusAdvanceArrows == 3){
     if (BonusX == 2) {BonusX = 5;}
@@ -1756,6 +1763,7 @@ int ManageGameMode() {
     ShowSpinnerLamp();
     ShowEjectLamps();
     ShowDropTargetLamps();
+    ShowBonusXArrowLamps();
 #if not defined (BALLY_STERN_OS_SOFTWARE_DISPLAY_INTERRUPT)
     BSOS_DataRead(0);
 #endif
