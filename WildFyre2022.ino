@@ -213,8 +213,8 @@ byte Credits = 0;
 boolean FreePlayMode = false;
 byte MusicLevel = 3;
 byte BallSaveNumSeconds = 0;
-unsigned long ExtraBallValue = 0;
-unsigned long SpecialValue = 0;
+unsigned long ExtraBallValue = 30000;
+unsigned long SpecialValue = 30000;
 unsigned long CurrentTime = 0;
 byte MaximumCredits = 40;
 byte BallsPerGame = 3;
@@ -222,7 +222,7 @@ byte DimLevel = 2;
 byte ScoreAwardReplay = 0;
 boolean HighScoreReplay = true;
 boolean MatchFeature = true;
-boolean TournamentScoring = false;
+boolean TournamentScoring = true;
 boolean ScrollingScores = true;
 
 
