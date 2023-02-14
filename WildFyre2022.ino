@@ -1466,8 +1466,8 @@ void Handle4BankDropSwitch (byte switchHit){
               SpinnerLit = 1;
               Reset4Bank();
             };
-          if (Num4BankCompletions == 2) {BSOS_SetLampState(LAMP_EXTRA_BALL, 1);}
-          if (Num4BankCompletions == 3) {BSOS_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
+          if (Num4BankCompletions == 3) {BSOS_SetLampState(LAMP_EXTRA_BALL, 1);}
+          if (Num4BankCompletions == 4) {BSOS_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
             Num4BankCompletions++;
         }
 }
