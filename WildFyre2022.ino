@@ -287,6 +287,7 @@ byte CurrentEjectsHit = 0;
 byte NumEjectSets = 0;
 byte Num3BankTargets = 0;
 byte Num4BankTargets = 0;
+byte AdvancedViaArrows = 0;
 
 
 unsigned long TopEjectHitTime;
@@ -620,7 +621,7 @@ void ShowBonusXLamps() {
 void ShowSpinnerLamp(){
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
   } else {
-    if (RightInlaneLastHitTime > CurrentTime - 3000){
+    if (CurrentTime < RightInlaneLastHitTime + 3000){
       BSOS_SetLampState(LAMP_SPINNER, 1, 0, 100);
     } else {
       if (SpinnerLit){
@@ -656,7 +657,7 @@ void ShowDropTargetLamps(){
 
 void ShowBonusXArrowLamps(){
   for (byte count=0; count<4; count++) {
-    if (CurrentTime < RightInlaneLastHitTime + 3000){
+    if (CurrentTime < LeftInlaneLastHitTime + 3000){
       BSOS_SetLampState(LAMP_SAUCER_ARROW_1 + count, 1, 0, 100);
     } else {
       BSOS_SetLampState(LAMP_SAUCER_ARROW_1 + count, (BonusAdvanceArrows == count)?1:0);
@@ -1444,9 +1445,10 @@ void AddToBonus(byte amountToAdd = 1) {
 }
 
 void AddToBonusArrows(byte amountToAdd = 1) {
-  if (BonusAdvanceArrows < 3) {BonusAdvanceArrows += amountToAdd;}
+  //if (BonusAdvanceArrows < 3) {BonusAdvanceArrows += amountToAdd;}
   // we want 2x to come from either dropping the 3 bank or advancing arrows, and 5x to come from doing both in a ball
-  if (BonusAdvanceArrows == 3){
+  if (BonusAdvanceArrows == 3 && AdvancedViaArrows == 0){
+    AdvancedViaArrows = 1;
     if (BonusX == 2) {BonusX = 5;}
     if (BonusX == 1) {BonusX = 2;}
   }
@@ -1692,6 +1694,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     Num4BankTargets = 0;
     NumEjectSets = 0;
     CurrentEjectsHit = 0;
+    AdvancedViaArrows = 0;
 
 
     ScoreMultiplier = 1;
