@@ -155,6 +155,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_3BANK              37
 #define SOUND_EFFECT_3BANKA1            38
 #define SOUND_EFFECT_3BANKA2            39
+#define SOUND_EFFECT_BALL_SAVE          40
 
 #define SOUND_EFFECT_SLING_SHOT         34
 #define SOUND_EFFECT_ROLLOVER           35
@@ -1865,7 +1866,7 @@ int ManageGameMode() {
           if (!BallSaveUsed && ((CurrentTime - BallFirstSwitchHitTime)) < ((unsigned long)BallSaveNumSeconds * 1000)) {
             BSOS_PushToTimedSolenoidStack(SOL_OUTHOLE, 4, CurrentTime + 100);
             BallSaveUsed = true;
-            //            PlaySoundEffect(SOUND_EFFECT_SHOOT_AGAIN);
+            PlaySoundEffect(SOUND_EFFECT_BALL_SAVE);
             BSOS_SetLampState(LAMP_SHOOT_AGAIN, 0);
             BallTimeInTrough = CurrentTime;
             returnState = MACHINE_STATE_NORMAL_GAMEPLAY;
