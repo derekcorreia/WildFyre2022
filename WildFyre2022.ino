@@ -1076,9 +1076,9 @@ int RunSelfTest(int curState, boolean curStateChanged) {
           AdjustmentType = ADJ_TYPE_LIST;
           NumAdjustmentValues = 5;
           AdjustmentValues[1] = 5;
-          AdjustmentValues[2] = 10;
-          AdjustmentValues[3] = 15;
-          AdjustmentValues[4] = 20;
+          AdjustmentValues[2] = 8;
+          AdjustmentValues[3] = 10;
+          AdjustmentValues[4] = 15;
           CurrentAdjustmentByte = &BallSaveNumSeconds;
           CurrentAdjustmentStorageByte = EEPROM_BALL_SAVE_BYTE;
           break;
@@ -1093,7 +1093,9 @@ int RunSelfTest(int curState, boolean curStateChanged) {
           CurrentAdjustmentStorageByte = EEPROM_TOURNAMENT_SCORING_BYTE;
           break;
         case MACHINE_STATE_ADJUST_TILT_WARNING:
-          AdjustmentValues[1] = 2;
+          NumAdjustmentValues = 2;
+          AdjustmentValues[1] = 1;
+          AdjustmentValues[2] = 2;
           CurrentAdjustmentByte = &MaxTiltWarnings;
           CurrentAdjustmentStorageByte = EEPROM_TILT_WARNING_BYTE;
           break;
