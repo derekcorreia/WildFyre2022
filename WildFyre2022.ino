@@ -46,7 +46,7 @@ SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  212
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  218
 #define DEBUG_MESSAGES  1
 
 
@@ -88,12 +88,12 @@ boolean MachineStateChanged = true;
 // and other flags that carry through different modes
 #define GAME_MODE_SKILL_SHOT                        0
 #define GAME_MODE_UNSTRUCTURED_PLAY                 4
-#define GAME_MODE_WILD_READY                        5
-#define GAME_MODE_WILD                              6
-#define GAME_MODE_WILD_END                          7
-#define GAME_MODE_FYRE_READY                        8
-#define GAME_MODE_FYRE                              9
-#define GAME_MODE_FYRE_END                          10
+#define GAME_MODE_WILDFYRE_READY                    5
+#define GAME_MODE_WILDFYRE                          6
+#define GAME_MODE_WILDFYRE_END                      7
+#define GAME_MODE_SS_READY                          8
+#define GAME_MODE_SS                                9
+#define GAME_MODE_SS_END                            10
 #define GAME_MODE_WIZARD_START                      32
 #define GAME_MODE_WIZARD                            33
 #define GAME_MODE_WIZARD_FINISHED                   34
@@ -287,8 +287,11 @@ byte NumEjectSets = 0;
 byte Num3BankTargets = 0;
 byte Num4BankTargets = 0;
 
+
 unsigned long TopEjectHitTime;
 unsigned long BonusEjectHitTime;
+unsigned long RightInlaneLastHitTime = 0;
+unsigned long LeftInlaneLastHitTime = 0;
 
 
 boolean WizardScoring;
@@ -616,10 +619,14 @@ void ShowBonusXLamps() {
 void ShowSpinnerLamp(){
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
   } else {
-    if (SpinnerLit){
-      BSOS_SetLampState(LAMP_SPINNER, 1);
+    if (RightInlaneLastHitTime > CurrentTime - 3000){
+      BSOS_SetLampState(LAMP_SPINNER, 1, 0, 100);
     } else {
-      BSOS_SetLampState(LAMP_SPINNER, 0);
+      if (SpinnerLit){
+        BSOS_SetLampState(LAMP_SPINNER, 1);
+      } else {
+        BSOS_SetLampState(LAMP_SPINNER, 0);
+      }
     }
   }
 }
@@ -647,8 +654,12 @@ void ShowDropTargetLamps(){
 }
 
 void ShowBonusXArrowLamps(){
-  for (byte count=0; count<3; count++) {
-    BSOS_SetLampState(LAMP_SAUCER_ARROW_1 + count, (BonusAdvanceArrows == count)?1:0);
+  for (byte count=0; count<4; count++) {
+    if (CurrentTime < RightInlaneLastHitTime + 3000){
+      BSOS_SetLampState(LAMP_SAUCER_ARROW_1 + count, 1, 0, 100);
+    } else {
+      BSOS_SetLampState(LAMP_SAUCER_ARROW_1 + count, (BonusAdvanceArrows == count)?1:0);
+    }
   }
 }
 
@@ -2146,6 +2157,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
         case SW_LEFT_RETURN:
           CurrentScores[CurrentPlayer] += 500;
+          LeftInlaneLastHitTime = CurrentTime;
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           // TKTK: logic for special being lit needs to be added
           if (BSOS_ReadLampState(LAMP_LEFT_RETURN_SPECIAL)) {
@@ -2172,6 +2184,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_RIGHT_RETURN:
           // INFO: Playfield reads "5k and EB when lit"
           CurrentScores[CurrentPlayer] += 500;
+          RightInlaneLastHitTime = CurrentTime;
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           if (BSOS_ReadLampState(LAMP_EXTRA_BALL) == 1){
@@ -2208,17 +2221,20 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_ADVANCE_ARROW:
           // INFO: Playfield reads "1000 and advance arrow"
           AddToBonusArrows(1);
+          if (CurrentTime < LeftInlaneLastHitTime + 3000) {AddToBonusArrows(1);}
           CurrentScores[CurrentPlayer] += 1000;
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
         case SW_SPINNER:
           // todo spinner lit specific sound
+          byte inlaneMultiplier = 1;
+          if (CurrentTime < RightInlaneLastHitTime + 3000) {inlaneMultiplier = 2;}
           PlaySoundEffect(SOUND_EFFECT_SPINNER);
           if (SpinnerLit == 1){
-            CurrentScores[CurrentPlayer] += 500;  
+            CurrentScores[CurrentPlayer] += ( 500 * inlaneMultiplier);  
           } else {
-            CurrentScores[CurrentPlayer] += 100;
+            CurrentScores[CurrentPlayer] += ( 100 * inlaneMultiplier);
           }
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
