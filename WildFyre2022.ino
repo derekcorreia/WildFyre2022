@@ -288,6 +288,7 @@ byte NumEjectSets = 0;
 byte Num3BankTargets = 0;
 byte Num4BankTargets = 0;
 byte AdvancedViaArrows = 0;
+byte inlaneMultiplier = 1;
 
 
 unsigned long TopEjectHitTime;
@@ -663,6 +664,7 @@ void ShowBonusXArrowLamps(){
       BSOS_SetLampState(LAMP_SAUCER_ARROW_1 + count, (BonusAdvanceArrows == count)?1:0);
     }
   }
+  BSOS_SetLampState(LAMP_10K_ROLLOVER, (BonusAdvanceArrows >= 3)?1:0);
 }
 
 
@@ -1445,9 +1447,9 @@ void AddToBonus(byte amountToAdd = 1) {
 }
 
 void AddToBonusArrows(byte amountToAdd = 1) {
-  //if (BonusAdvanceArrows < 3) {BonusAdvanceArrows += amountToAdd;}
+  BonusAdvanceArrows += amountToAdd;
   // we want 2x to come from either dropping the 3 bank or advancing arrows, and 5x to come from doing both in a ball
-  if (BonusAdvanceArrows == 3 && AdvancedViaArrows == 0){
+  if (BonusAdvanceArrows >= 3 && AdvancedViaArrows == 0){
     AdvancedViaArrows = 1;
     if (BonusX == 2) {BonusX = 5;}
     if (BonusX == 1) {BonusX = 2;}
@@ -2229,13 +2231,14 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           AddToBonusArrows(1);
           if (CurrentTime < LeftInlaneLastHitTime + 3000) {AddToBonusArrows(1);}
           CurrentScores[CurrentPlayer] += 1000;
+          if (BonusAdvanceArrows >=4 ) {CurrentScores[CurrentPlayer] += 9000;}
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
           break;
 
         case SW_SPINNER:
           // todo spinner lit specific sound
-          byte inlaneMultiplier = 1;
-          if (CurrentTime < RightInlaneLastHitTime + 3000) {inlaneMultiplier = 2;}
+          //byte inlaneMultiplier = 1;
+          if (CurrentTime < RightInlaneLastHitTime + 3000) {inlaneMultiplier = 2;} else {inlaneMultiplier = 1;}
           PlaySoundEffect(SOUND_EFFECT_SPINNER);
           if (SpinnerLit == 1){
             CurrentScores[CurrentPlayer] += ( 500 * inlaneMultiplier);  
