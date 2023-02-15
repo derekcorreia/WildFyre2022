@@ -1570,7 +1570,7 @@ void Reset4Bank() {
 }
 
 void EjectTopSaucers() {
-  BSOS_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 1200);
+  BSOS_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 1500);
 }
 
 
@@ -2256,7 +2256,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             CurrentScores[CurrentPlayer] += (Bonus * 2000);
           }
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
-          BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1000);
+          BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
           break;
 
         case SW_3DROP_1:
