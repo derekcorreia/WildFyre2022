@@ -1528,12 +1528,12 @@ void Handle3BankDropSwitch (byte switchHit){
         BSOS_ReadSingleSwitchState(SW_3DROP_2) &&
         BSOS_ReadSingleSwitchState(SW_3DROP_3))
         {
-          if (Num3BankCompletions < 2){
+          if (Num3BankCompletions == 1){
             if (BonusX == 2) {BonusX = 5;}
             if (BonusX == 1) {BonusX = 2;}
             CurrentScores[CurrentPlayer] += 3000;
           } 
-          if (Num3BankCompletions >=1){
+          if (Num3BankCompletions >=2){
             CurrentScores[CurrentPlayer] += 7000;
           }
           Num3BankCompletions++;
