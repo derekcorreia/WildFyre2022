@@ -1497,11 +1497,6 @@ void HandleTopEjectHit (byte switchHit){
     CurrentEjectsHit = 0;
   }
   EjectTopSaucers();
-          /*todo lamps:
-            Eject 1 L18 S23
-            Eject 2 L19 S22
-            Eject 3 L20 S21
-          */
 }
 
 void Show4BankLamps(){
@@ -2324,6 +2319,13 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           returnState = MACHINE_STATE_TEST_LIGHTS;
           SetLastSelfTestChangedTime(CurrentTime);
           break;
+        case SW_EJECT_BONUS:
+          BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 200);
+          break;
+        case SW_EJECT_1:
+        case SW_EJECT_2:
+        case SW_EJECT_3:
+          EjectTopSaucers();
         case SW_COIN_1:
         case SW_COIN_2:
         case SW_COIN_3:
