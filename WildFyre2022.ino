@@ -2263,11 +2263,11 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (BonusEjectHitTime==0 || (CurrentTime-BonusEjectHitTime)>500){
             BonusEjectHitTime = CurrentTime;
             CurrentScores[CurrentPlayer] += (Bonus * 2000);
+            if (StallBallMode) {
+              PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
+          }
           }
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
-          if (StallBallMode) {
-            PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
-          }
           BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
           break;
 
