@@ -198,6 +198,10 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_BACKGROUND_3       92
 #define SOUND_EFFECT_BACKGROUND_WIZ     93
 
+#define SOUND_EFFECT_STALLBALL_MODE     161
+#define SOUND_EFFECT_STALLBALL_STALL    160
+#define SOUND_EFFECT_STALLBALL_ELIM     162
+
 #define MAX_DISPLAY_BONUS     15  // equates to 30k
 #define TILT_WARNING_DEBOUNCE_TIME      1000
 
@@ -289,7 +293,9 @@ byte Num3BankTargets = 0;
 byte Num4BankTargets = 0;
 byte AdvancedViaArrows = 0;
 byte inlaneMultiplier = 1;
+byte StartButtonHits = 0;
 
+boolean StallBallMode = false;
 
 unsigned long TopEjectHitTime;
 unsigned long BonusEjectHitTime;
@@ -1480,7 +1486,7 @@ void Handle4BankDropSwitch (byte switchHit){
 
 void HandleTopEjectHit (byte switchHit){
   if (GameMode == GAME_MODE_SKILL_SHOT){
-    if (switchHit == EjectSwitchArray[SkillShotEject]){
+    if (switchHit == EjectSwitchArray[SkillShotEject] && StallBallMode == false){
       PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
       CurrentScores[CurrentPlayer] += 10000;
     } else {
@@ -1491,6 +1497,10 @@ void HandleTopEjectHit (byte switchHit){
   }
   byte switchMask = (1<<(switchHit-21));
   CurrentEjectsHit |= switchMask;
+
+  if (StallBallMode){
+    PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
+  }
 
   if (CurrentEjectsHit==0x07){
     NumEjectSets++;
@@ -1595,6 +1605,8 @@ int InitGamePlay() {
     Serial.write("Starting game\n\r");
   }
 
+  StallBallMode = false;
+  StartButtonHits = 0;
   // The start button has been hit only once to get
   // us into this mode, so we assume a 1-player game
   // at the moment
@@ -1646,6 +1658,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     SetPlayerLamps(playerNum + 1, 4);
     if (CurrentNumPlayers > 1 && (ballNum != 1 || playerNum != 0) && !SamePlayerShootsAgain) PlaySoundEffect(RandoSound);
     SamePlayerShootsAgain = false;
+    StartButtonHits = 0;
 
     
 
@@ -1876,7 +1889,7 @@ int ManageGameMode() {
             ShowPlayerScores(0xFF, false, false);
             PlayBackgroundSong(SOUND_EFFECT_NONE);
             StopAudio();
-
+            if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM);
             if (CurrentBallInPlay < BallsPerGame) PlaySoundEffect(SOUND_EFFECT_BALL_OVER);
             returnState = MACHINE_STATE_COUNTDOWN_BONUS;
           }
@@ -2098,6 +2111,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
     }
   } else if (curState == MACHINE_STATE_MATCH_MODE) {
     returnState = ShowMatchSequence(curStateChanged);
+    StallBallMode = false;
   }
 
   byte switchHit;
@@ -2251,6 +2265,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             CurrentScores[CurrentPlayer] += (Bonus * 2000);
           }
           if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          if (StallBallMode) {
+            PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
+          }
           BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
           break;
 
@@ -2294,6 +2311,11 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (CurrentBallInPlay < 2) {
             // If we haven't finished the first ball, we can add players
             AddPlayer();
+            StartButtonHits++;
+            if (StartButtonHits == 10){
+              StallBallMode = true;
+              PlaySoundEffect(SOUND_EFFECT_STALLBALL_MODE);
+            }
           } else {
             // If the first ball is over, pressing start again resets the game
             if (Credits >= 1 || FreePlayMode) {
