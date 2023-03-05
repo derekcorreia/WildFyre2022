@@ -46,7 +46,7 @@ SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  218
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  305
 #define DEBUG_MESSAGES  1
 
 
@@ -651,6 +651,11 @@ void ShowEjectLamps(){
     BSOS_SetLampState(LAMP_TOP_EJECT_1, CurrentEjectsHit&EJECT_1_MASK);
     BSOS_SetLampState(LAMP_TOP_EJECT_2, CurrentEjectsHit&EJECT_2_MASK);
     BSOS_SetLampState(LAMP_TOP_EJECT_3, CurrentEjectsHit&EJECT_3_MASK);
+  }
+  if (NumEjectSets > 0){
+    BSOS_SetLampState(LAMP_4K_EJECT, 1);
+  } else {
+    BSOS_SetLampState(LAMP_4K_EJECT, 0);
   }
 }
 
@@ -1495,6 +1500,11 @@ void HandleTopEjectHit (byte switchHit){
   } else {
     CurrentScores[CurrentPlayer] += 3000;
   }
+
+  if (switchHit == SW_EJECT_1 && NumEjectSets > 0 ){
+    CurrentScores[CurrentPlayer] += 4000;
+  }  
+
   byte switchMask = (1<<(switchHit-21));
   CurrentEjectsHit |= switchMask;
 
