@@ -2313,6 +2313,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             AddPlayer();
             StartButtonHits++;
             if (StartButtonHits == 10){
+              if (DEBUG_MESSAGES) {
+                Serial.write("Stallballmode\n\r");
+              }
               StallBallMode = true;
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_MODE);
             }
