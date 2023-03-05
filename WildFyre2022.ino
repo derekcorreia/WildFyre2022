@@ -665,6 +665,11 @@ void ShowDropTargetLamps(){
   } else {
     BSOS_SetLampState(LAMP_2X_BONUS_3BANK, 0);
   }
+  if (Num3BankCompletions > 1){
+    BSOS_SetLampState(LAMP_4K_3BANK, 1);
+  } else {
+    BSOS_SetLampState(LAMP_2X_BONUS_3BANK, 0);
+  }
 }
 
 void ShowBonusXArrowLamps(){
