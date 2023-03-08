@@ -2089,6 +2089,10 @@ int ShowMatchSequence(boolean curStateChanged) {
   return MACHINE_STATE_MATCH_MODE;
 }
 
+void ValidatePlayfield (){
+  if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+  TiltThroughTime = CurrentTime;
+}
 
 
 
@@ -2196,7 +2200,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           CurrentScores[CurrentPlayer] += 500;
           AddToBonus(2);
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
         case SW_LEFT_RETURN:
           CurrentScores[CurrentPlayer] += 500;
@@ -2207,7 +2211,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             AwardSpecial();
             BSOS_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 0);
           }
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
         case SW_LEFT_MID_LANE:
           // INFO: Playfield reads "Reset Bottom Targets"
@@ -2216,20 +2220,20 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (Num4BankCompletions > 1) {
             Reset4Bank();
           }
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
         case SW_RIGHT_MID_LANE:
           CurrentScores[CurrentPlayer] += 500;
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           AddToBonus(1);
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
         case SW_RIGHT_RETURN:
           // INFO: Playfield reads "5k and EB when lit"
           CurrentScores[CurrentPlayer] += 500;
           RightInlaneLastHitTime = CurrentTime;
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           if (BSOS_ReadLampState(LAMP_EXTRA_BALL) == 1){
             AwardExtraBall();
             BSOS_SetLampState(LAMP_EXTRA_BALL, 0);
@@ -2244,21 +2248,21 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             TopEjectHitTime = CurrentTime;
             HandleTopEjectHit(switchHit);
           }
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
 
         case SW_AB_LEFT:
         case SW_AB_TOP:
           AddToBonus(1);
           CurrentScores[CurrentPlayer] += 10;
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
 
         case SW_ADVANCE_TARGET:
           // INFO: Playfield reads "1000 and advance arrow"
           AddToBonusArrows(1);
           CurrentScores[CurrentPlayer] += 1000;
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
 
         case SW_ADVANCE_ARROW:
@@ -2267,7 +2271,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (CurrentTime < LeftInlaneLastHitTime + 3000) {AddToBonusArrows(1);}
           CurrentScores[CurrentPlayer] += 1000;
           if (BonusAdvanceArrows >=4 ) {CurrentScores[CurrentPlayer] += 9000;}
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
 
         case SW_SPINNER:
@@ -2280,7 +2284,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           } else {
             CurrentScores[CurrentPlayer] += ( 100 * inlaneMultiplier);
           }
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
 
         case SW_EJECT_BONUS:
@@ -2293,7 +2297,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
           }
           }
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
           break;
 
@@ -2301,7 +2305,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_3DROP_2:
         case SW_3DROP_3:
           Handle3BankDropSwitch(switchHit);
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
 
         case SW_4DROP_1:
@@ -2309,7 +2313,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_4DROP_3:
         case SW_4DROP_4:
           Handle4BankDropSwitch(switchHit);
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
 
         case SW_LEFT_BUMPER:
@@ -2318,14 +2322,14 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           PlaySoundEffect(SOUND_EFFECT_POP + CurrentTime%4);
           //PlaySoundEffect(SOUND_EFFECT_POP3);
           CurrentScores[CurrentPlayer] += 100;
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
 
         case SW_LEFT_SLINGSHOT:
         case SW_RIGHT_SLINGSHOT:
           CurrentScores[CurrentPlayer] += 10;
           PlaySoundEffect(SOUND_EFFECT_SLING_SHOT);
-          if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
+          ValidatePlayfield();
           break;
         case SW_COIN_1:
         case SW_COIN_2:
