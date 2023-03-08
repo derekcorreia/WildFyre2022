@@ -204,6 +204,7 @@ boolean MachineStateChanged = true;
 
 #define MAX_DISPLAY_BONUS     15  // equates to 30k
 #define TILT_WARNING_DEBOUNCE_TIME      1000
+#define TILT_THROUGH_DEBOUNCE_TIME      8000
 
 
 /*********************************************************************
@@ -220,6 +221,7 @@ byte BallSaveNumSeconds = 0;
 unsigned long ExtraBallValue = 30000;
 unsigned long SpecialValue = 30000;
 unsigned long CurrentTime = 0;
+unsigned long TiltThroughTime = 0;
 byte MaximumCredits = 40;
 byte BallsPerGame = 3;
 byte DimLevel = 2;
@@ -228,6 +230,7 @@ boolean HighScoreReplay = true;
 boolean MatchFeature = true;
 boolean TournamentScoring = true;
 boolean ScrollingScores = true;
+boolean PriorPlayerTilted = false;
 
 
 /*********************************************************************
@@ -1698,6 +1701,13 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     GameModeEndTime = 0;
     GameMode = GAME_MODE_SKILL_SHOT;
 
+    // Check prior player tilt, set tilt thru time
+    TiltThroughTime = CurrentTime;
+    if (PriorPlayerTilted){
+      PriorPlayerTilted = false;
+      TiltThroughTime = CurrentTime + TILT_THROUGH_DEBOUNCE_TIME;
+    }
+
     ExtraBallCollected = false;
     SpecialCollected = false;
 
@@ -2159,7 +2169,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
         case SW_TILT:
           // This should be debounced
-          if ((CurrentTime - LastTiltWarningTime) > TILT_WARNING_DEBOUNCE_TIME) {
+          if ((CurrentTime - LastTiltWarningTime) > TILT_WARNING_DEBOUNCE_TIME && CurrentTime > TiltThroughTime) {
             LastTiltWarningTime = CurrentTime;
             NumTiltWarnings += 1;
             if (NumTiltWarnings > MaxTiltWarnings) {
@@ -2169,6 +2179,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
               StopAudio();
               PlaySoundEffect(SOUND_EFFECT_TILT);
               BSOS_SetLampState(LAMP_HEAD_TILT, 1);
+              PriorPlayerTilted = true;
             }
             PlaySoundEffect(SOUND_EFFECT_TILT_WARNING);
           }
