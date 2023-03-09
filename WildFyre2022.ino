@@ -2109,8 +2109,12 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
   } else if (curState == MACHINE_STATE_NORMAL_GAMEPLAY) {
     returnState = ManageGameMode();
   } else if (curState == MACHINE_STATE_COUNTDOWN_BONUS) {
+    if (PriorPlayerTilted) {
+      returnState = MACHINE_STATE_BALL_OVER;
+    } else {
     returnState = CountdownBonus(curStateChanged);
     ShowPlayerScores(0xFF, false, false);
+    }
   } else if (curState == MACHINE_STATE_BALL_OVER) {
     BSOS_SetDisplayCredits(Credits);
 
