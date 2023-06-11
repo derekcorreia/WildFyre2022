@@ -156,6 +156,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_3BANKA1            38
 #define SOUND_EFFECT_3BANKA2            39
 #define SOUND_EFFECT_BALL_SAVE          40
+#define SOUND_EFFECT_FIRE               50
 
 #define SOUND_EFFECT_SLING_SHOT         34
 #define SOUND_EFFECT_ROLLOVER           35
@@ -1508,6 +1509,7 @@ void HandleTopEjectHit (byte switchHit){
       PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
       CurrentScores[CurrentPlayer] += 10000;
     } else {
+      PlaySoundEffect(SOUND_EFFECT_FIRE);
       CurrentScores[CurrentPlayer] += 3000;
     }
   } else {
@@ -2304,7 +2306,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             CurrentScores[CurrentPlayer] += (Bonus * 2000);
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
-          }
+            } else {
+              PlaySoundEffect(SOUND_EFFECT_FIRE);
+            }
           }
           ValidatePlayfield();
           BSOS_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
