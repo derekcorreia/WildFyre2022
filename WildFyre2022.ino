@@ -1938,7 +1938,7 @@ int CountdownBonus(boolean curStateChanged) {
 
   // If this is the first time through the countdown loop
   if (curStateChanged) {
-    PlayBackgroundSong(SOUND_EFFECT_BONUSCOUNTDOWN);
+    if (!StallballMode) { PlayBackgroundSong(SOUND_EFFECT_BONUSCOUNTDOWN) };
     CountdownStartTime = CurrentTime;
     ShowBonusLamps();
 
