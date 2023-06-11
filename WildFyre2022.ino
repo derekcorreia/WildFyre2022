@@ -198,9 +198,11 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_BACKGROUND_3       92
 #define SOUND_EFFECT_BACKGROUND_WIZ     93
 
-#define SOUND_EFFECT_STALLBALL_MODE     161
+#define SOUND_EFFECT_STALLBALL_MODE     165
 #define SOUND_EFFECT_STALLBALL_STALL    160
-#define SOUND_EFFECT_STALLBALL_ELIM     162
+#define SOUND_EFFECT_STALLBALL_ELIM     166
+#define SOUND_EFFECT_STALLBALL_ELIM_2   167
+#define SOUND_EFFECT_STALLBALL_ELIM_3   168
 
 #define MAX_DISPLAY_BONUS     15  // equates to 30k
 #define TILT_WARNING_DEBOUNCE_TIME      1000
@@ -1917,7 +1919,7 @@ int ManageGameMode() {
             ShowPlayerScores(0xFF, false, false);
             PlayBackgroundSong(SOUND_EFFECT_NONE);
             StopAudio();
-            if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM);
+            if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%3);
             if (CurrentBallInPlay < BallsPerGame) PlaySoundEffect(SOUND_EFFECT_BALL_OVER);
             returnState = MACHINE_STATE_COUNTDOWN_BONUS;
           }
