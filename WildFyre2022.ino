@@ -46,7 +46,7 @@ SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  305
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  611
 #define DEBUG_MESSAGES  1
 
 
@@ -130,7 +130,7 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_BALL_OVER          19
 #define SOUND_EFFECT_GAME_OVER          200
 #define SOUND_EFFECT_EXTRA_BALL         23
-#define SOUND_EFFECT_MACHINE_START      24
+#define SOUND_EFFECT_MACHINE_START      210
 #define SOUND_EFFECT_SKILL_SHOT         220
 #define SOUND_EFFECT_SKILL_SHOTA1       221
 #define SOUND_EFFECT_SKILL_SHOTA2       222
