@@ -403,6 +403,9 @@ void setup() {
   StopAudio();
   CurrentTime = millis();
   PlaySoundEffect(SOUND_EFFECT_MACHINE_START);
+  // Clear saucers if ball left in there, just in case...
+  BSOS_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
+  BSOS_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
 }
 
 byte ReadSetting(byte setting, byte defaultValue) {
