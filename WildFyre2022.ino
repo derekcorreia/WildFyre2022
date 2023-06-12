@@ -387,6 +387,9 @@ void setup() {
 
   // Set up the chips and interrupts
   BSOS_InitializeMPU();
+  // Clear saucers if ball left in there, just in case...
+  BSOS_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
+  BSOS_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
   BSOS_DisableSolenoidStack();
   BSOS_SetDisableFlippers(true);
 
@@ -402,16 +405,13 @@ void setup() {
 #if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
   // WAV Trigger startup at 57600
   wTrig.start();
-  wTrig.stopAllTracks();
   delayMicroseconds(10000);
+  wTrig.stopAllTracks();
 #endif
 
   StopAudio();
   CurrentTime = millis();
   PlaySoundEffect(SOUND_EFFECT_MACHINE_START);
-  // Clear saucers if ball left in there, just in case...
-  BSOS_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
-  BSOS_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
 }
 
 byte ReadSetting(byte setting, byte defaultValue) {
@@ -1254,7 +1254,7 @@ void PlayBackgroundSong(byte songNum) {
         wTrig.trackPlayPoly(songNum);
 #endif
         wTrig.trackLoop(songNum, true);
-        wTrig.trackGain(songNum, -4);
+        wTrig.trackGain(songNum, -6);
       }
       CurrentBackgroundSong = songNum;
     }
@@ -1487,6 +1487,7 @@ void HandleTopEjectHit (byte switchHit){
       CurrentScores[CurrentPlayer] += 3000;
     }
   } else {
+    PlaySoundEffect(SOUND_EFFECT_FIRE);
     CurrentScores[CurrentPlayer] += 3000;
   }
 
@@ -1919,7 +1920,7 @@ int CountdownBonus(boolean curStateChanged) {
 
   // If this is the first time through the countdown loop
   if (curStateChanged) {
-    if (!StallballMode) { PlayBackgroundSong(SOUND_EFFECT_BONUSCOUNTDOWN) };
+    if (!StallBallMode) { PlayBackgroundSong(SOUND_EFFECT_BONUSCOUNTDOWN); }
     CountdownStartTime = CurrentTime;
     ShowBonusLamps();
 
