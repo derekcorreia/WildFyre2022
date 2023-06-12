@@ -445,35 +445,6 @@ void SetPlayerLamps(byte numPlayers, byte playerOffset = 0, int flashPeriod = 0)
   }
 }
 
-// void ShowLampAnimation(byte animationNum, unsigned long divisor, unsigned long baseTime, byte subOffset, boolean dim, boolean reverse = false, byte keepLampOn = 99) {
-//   byte LAMP_ANIMATION_STEPS = 3;
-//   byte currentStep = (baseTime / divisor) % LAMP_ANIMATION_STEPS;
-//   if (reverse) currentStep = (LAMP_ANIMATION_STEPS - 1) - currentStep;
-
-//   byte lampNum = 0;
-//   for (int byteNum = 0; byteNum < 8; byteNum++) {
-//     for (byte bitNum = 0; bitNum < 8; bitNum++) {
-
-//       // if there's a subOffset, turn off lights at that offset
-//       if (subOffset) {
-//         byte lampOff = true;
-//         lampOff = LampAnimations[animationNum][(currentStep + subOffset) % LAMP_ANIMATION_STEPS][byteNum] & (1 << bitNum);
-//         if (lampOff && lampNum != keepLampOn) BSOS_SetLampState(lampNum, 0);
-//       }
-
-//       byte lampOn = false;
-//       lampOn = LampAnimations[animationNum][currentStep][byteNum] & (1 << bitNum);
-//       if (lampOn) BSOS_SetLampState(lampNum, 1, dim);
-
-//       lampNum += 1;
-//     }
-// #if not defined (BALLY_STERN_OS_SOFTWARE_DISPLAY_INTERRUPT)
-//     if (byteNum % 2) BSOS_DataRead(0);
-// #endif
-//   }
-// }
-
-
 void ShowBonusLamps() {
   // if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
 
@@ -2104,9 +2075,6 @@ void ValidatePlayfield (){
   TiltThroughTime = CurrentTime;
   PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
 }
-
-
-
 
 int RunGamePlayMode(int curState, boolean curStateChanged) {
   int returnState = curState;
