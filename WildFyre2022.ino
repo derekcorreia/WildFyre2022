@@ -205,6 +205,9 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_STALLBALL_ELIM_2   167
 #define SOUND_EFFECT_STALLBALL_ELIM_3   168
 
+#define SOUND_EFFECT_SHOOTER_GROOVE     101
+#define SOUND_EFFECT_BG_SOUND           102
+
 #define MAX_DISPLAY_BONUS     15  // equates to 30k
 #define TILT_WARNING_DEBOUNCE_TIME      1000
 #define TILT_THROUGH_DEBOUNCE_TIME      8000
@@ -1685,7 +1688,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     SamePlayerShootsAgain = false;
     StartButtonHits = 0;
 
-    
+    PlayBackgroundSong(SOUND_EFFECT_SHOOTER_GROOVE);
 
     BSOS_SetDisplayBallInPlay(ballNum);
     BSOS_SetLampState(LAMP_HEAD_TILT, 0);
@@ -2099,6 +2102,7 @@ int ShowMatchSequence(boolean curStateChanged) {
 void ValidatePlayfield (){
   if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
   TiltThroughTime = CurrentTime;
+  PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
 }
 
 
