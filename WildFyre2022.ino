@@ -308,6 +308,7 @@ boolean StallBallMode = false;
 
 unsigned long TopEjectHitTime;
 unsigned long BonusEjectHitTime;
+unsigned long BonusTargetHitTime;
 unsigned long RightInlaneLastHitTime = 0;
 unsigned long LeftInlaneLastHitTime = 0;
 
@@ -1677,6 +1678,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
 
     TopEjectHitTime = 0;
     BonusEjectHitTime = 0;
+    BonusTargetHitTime = 0;
 
     // Initialize game-specific start-of-ball lights & variables
     GameModeStartTime = 0;
@@ -2244,8 +2246,11 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
 
         case SW_ADVANCE_TARGET:
           // INFO: Playfield reads "1000 and advance arrow"
-          AddToBonusArrows(1);
-          CurrentScores[CurrentPlayer] += 1000;
+          if (BonusTargetHitTime == 0 || (CurrentTime-BonusTargetHitTime)>500) {
+            BonusTargetHitTime = CurrentTime;
+            AddToBonusArrows(1);
+            CurrentScores[CurrentPlayer] += 1000;
+          }
           ValidatePlayfield();
           break;
 
