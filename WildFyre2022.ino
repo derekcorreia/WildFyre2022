@@ -31,11 +31,12 @@
 #include "RPU.h"
 #include "WildFyre2022.h"
 #include "SelfTestAndAudit.h"
+#include "AudioHandler.h"
 #include <EEPROM.h>
 
 #define USE_SCORE_OVERRIDES
 
-#if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
 #include "SendOnlyWavTrigger.h"
 SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 #endif
@@ -398,7 +399,7 @@ void setup() {
   CurrentScores[2] = RPU_OS_MAJOR_VERSION;
   CurrentScores[3] = RPU_OS_MINOR_VERSION;
 
-#if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
   // WAV Trigger startup at 57600
   wTrig.start();
   delayMicroseconds(10000);
@@ -760,12 +761,12 @@ void ShowPlayerScores(byte displayToUpdate, boolean flashCurrent, boolean dashCu
       if (displayScore != DISPLAY_OVERRIDE_BLANK_SCORE) {
         byte numDigits = MagnitudeOfScore(displayScore);
         if (numDigits == 0) numDigits = 1;
-        if (numDigits < (BALLY_STERN_OS_NUM_DIGITS - 1) && (ScoreOverrideStatus & (0x01 << scoreCount))) {
+        if (numDigits < (RPU_OS_NUM_DIGITS - 1) && (ScoreOverrideStatus & (0x01 << scoreCount))) {
           // This score is going to be animated (back and forth)
           if (overrideAnimationSeed != LastTimeOverrideAnimated) {
             updateLastTimeAnimated = true;
-            byte shiftDigits = (overrideAnimationSeed) % (((BALLY_STERN_OS_NUM_DIGITS + 1) - numDigits) + ((BALLY_STERN_OS_NUM_DIGITS - 1) - numDigits));
-            if (shiftDigits >= ((BALLY_STERN_OS_NUM_DIGITS + 1) - numDigits)) shiftDigits = (BALLY_STERN_OS_NUM_DIGITS - numDigits) * 2 - shiftDigits;
+            byte shiftDigits = (overrideAnimationSeed) % (((RPU_OS_NUM_DIGITS + 1) - numDigits) + ((RPU_OS_NUM_DIGITS - 1) - numDigits));
+            if (shiftDigits >= ((RPU_OS_NUM_DIGITS + 1) - numDigits)) shiftDigits = (RPU_OS_NUM_DIGITS - numDigits) * 2 - shiftDigits;
             byte digitCount;
             displayMask = GetDisplayMask(numDigits);
             for (digitCount = 0; digitCount < shiftDigits; digitCount++) {
@@ -791,7 +792,7 @@ void ShowPlayerScores(byte displayToUpdate, boolean flashCurrent, boolean dashCu
       else displayScore = allScoresShowValue;
 
       // If we're updating all displays, or the one currently matching the loop, or if we have to scroll
-      if (displayToUpdate == 0xFF || displayToUpdate == scoreCount || displayScore > BALLY_STERN_OS_MAX_DISPLAY_SCORE) {
+      if (displayToUpdate == 0xFF || displayToUpdate == scoreCount || displayScore > RPU_OS_MAX_DISPLAY_SCORE) {
 
         // Don't show this score if it's not a current player score (even if it's scrollable)
         if (displayToUpdate == 0xFF && (scoreCount >= CurrentNumPlayers && CurrentNumPlayers != 0) && allScoresShowValue == 0) {
@@ -799,11 +800,11 @@ void ShowPlayerScores(byte displayToUpdate, boolean flashCurrent, boolean dashCu
           continue;
         }
 
-        if (displayScore > BALLY_STERN_OS_MAX_DISPLAY_SCORE) {
+        if (displayScore > RPU_OS_MAX_DISPLAY_SCORE) {
           // Score needs to be scrolled
           if ((CurrentTime - LastTimeScoreChanged) < 4000) {
-            RPU_SetDisplay(scoreCount, displayScore % (BALLY_STERN_OS_MAX_DISPLAY_SCORE + 1), false);
-            RPU_SetDisplayBlank(scoreCount, BALLY_STERN_OS_ALL_DIGITS_MASK);
+            RPU_SetDisplay(scoreCount, displayScore % (RPU_OS_MAX_DISPLAY_SCORE + 1), false);
+            RPU_SetDisplayBlank(scoreCount, RPU_OS_ALL_DIGITS_MASK);
           } else {
 
             // Scores are scrolled 10 digits and then we wait for 6
@@ -812,10 +813,10 @@ void ShowPlayerScores(byte displayToUpdate, boolean flashCurrent, boolean dashCu
 
               // Figure out top part of score
               unsigned long tempScore = displayScore;
-              if (scrollPhase < BALLY_STERN_OS_NUM_DIGITS) {
-                displayMask = BALLY_STERN_OS_ALL_DIGITS_MASK;
+              if (scrollPhase < RPU_OS_NUM_DIGITS) {
+                displayMask = RPU_OS_ALL_DIGITS_MASK;
                 for (byte scrollCount = 0; scrollCount < scrollPhase; scrollCount++) {
-                  displayScore = (displayScore % (BALLY_STERN_OS_MAX_DISPLAY_SCORE + 1)) * 10;
+                  displayScore = (displayScore % (RPU_OS_MAX_DISPLAY_SCORE + 1)) * 10;
                   displayMask = displayMask >> 1;
                 }
               } else {
@@ -1218,19 +1219,19 @@ int RunSelfTest(int curState, boolean curStateChanged) {
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
 byte CurrentBackgroundSong = SOUND_EFFECT_NONE;
 #endif
 
 void StopAudio() {
-#if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
   wTrig.stopAllTracks();
   CurrentBackgroundSong = SOUND_EFFECT_NONE;
 #endif
 }
 
 void ResumeBackgroundSong() {
-#if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
   byte curSong = CurrentBackgroundSong;
   CurrentBackgroundSong = SOUND_EFFECT_NONE;
   PlayBackgroundSong(curSong);
@@ -1239,12 +1240,12 @@ void ResumeBackgroundSong() {
 
 void PlayBackgroundSong(byte songNum) {
 
-#if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
   if (MusicLevel > 1) {
     if (CurrentBackgroundSong != songNum) {
       if (CurrentBackgroundSong != SOUND_EFFECT_NONE) wTrig.trackStop(CurrentBackgroundSong);
       if (songNum != SOUND_EFFECT_NONE) {
-#ifdef USE_WAV_TRIGGER_1p3
+#ifdef RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3
         wTrig.trackPlayPoly(songNum, true);
 #else
         wTrig.trackPlayPoly(songNum);
@@ -1270,9 +1271,9 @@ void PlaySoundEffect(byte soundEffectNum) {
 
   if (MusicLevel == 0) return;
 
-#if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
 
-#ifndef USE_WAV_TRIGGER_1p3
+#ifndef RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3
   if (  soundEffectNum == SOUND_EFFECT_BUMPER_HIT ||
         SOUND_EFFECT_SPINNER ) wTrig.trackStop(soundEffectNum);
 #endif
@@ -1291,7 +1292,7 @@ void PlaySoundEffect(byte soundEffectNum) {
 }
 
 inline void StopSoundEffect(byte soundEffectNum) {
-#if defined(USE_WAV_TRIGGER) || defined(USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
   wTrig.trackStop(soundEffectNum);
 #else
   if (DEBUG_MESSAGES) {
@@ -2377,8 +2378,8 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
     }
   }
 
-  if (!ScrollingScores && CurrentScores[CurrentPlayer] > BALLY_STERN_OS_MAX_DISPLAY_SCORE) {
-    CurrentScores[CurrentPlayer] -= BALLY_STERN_OS_MAX_DISPLAY_SCORE;
+  if (!ScrollingScores && CurrentScores[CurrentPlayer] > RPU_OS_MAX_DISPLAY_SCORE) {
+    CurrentScores[CurrentPlayer] -= RPU_OS_MAX_DISPLAY_SCORE;
   }
 
   if (scoreAtTop != CurrentScores[CurrentPlayer]) {
