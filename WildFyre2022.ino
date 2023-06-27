@@ -31,12 +31,12 @@
 #include "RPU.h"
 #include "WildFyre2022.h"
 #include "SelfTestAndAudit.h"
-#include "AudioHandler.h"
+//#include "AudioHandler.h"
 #include <EEPROM.h>
 
 #define USE_SCORE_OVERRIDES
 
-#if defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
 #include "SendOnlyWavTrigger.h"
 SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
 #endif
