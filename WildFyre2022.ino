@@ -31,14 +31,14 @@
 #include "RPU.h"
 #include "WildFyre2022.h"
 #include "SelfTestAndAudit.h"
-//#include "AudioHandler.h"
+#include "AudioHandler.h"
 #include <EEPROM.h>
 
 #define USE_SCORE_OVERRIDES
 
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
-#include "SendOnlyWavTrigger.h"
-SendOnlyWavTrigger wTrig;             // Our WAV Trigger object
+//#include "SendOnlyWavTrigger.h"
+wavTrigger wTrig;             // Our WAV Trigger object
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  22023
@@ -399,7 +399,7 @@ void setup() {
   CurrentScores[2] = RPU_OS_MAJOR_VERSION;
   CurrentScores[3] = RPU_OS_MINOR_VERSION;
 
-#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   // WAV Trigger startup at 57600
   wTrig.start();
   delayMicroseconds(10000);
