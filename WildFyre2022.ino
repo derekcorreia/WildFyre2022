@@ -42,7 +42,7 @@ wavTrigger wTrig;             // Our WAV Trigger object
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  22023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  623
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  711
 #define DEBUG_MESSAGES  0
 
 
