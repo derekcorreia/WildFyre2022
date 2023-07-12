@@ -38,7 +38,8 @@
 
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
 //#include "SendOnlyWavTrigger.h"
-wavTrigger wTrig;             // Our WAV Trigger object
+//wavTrigger wTrig;             // Our WAV Trigger object
+AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  22023
@@ -401,9 +402,9 @@ void setup() {
 
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   // WAV Trigger startup at 57600
-  wTrig.start();
+  Audio.InitDevices(AUDIO_PLAY_TYPE_WAV_TRIGGER | AUDIO_PLAY_TYPE_ORIGINAL_SOUNDS);
   delayMicroseconds(10000);
-  wTrig.stopAllTracks();
+  Audio.StopAllAudio();
 #endif
 
   StopAudio();
@@ -1225,7 +1226,7 @@ byte CurrentBackgroundSong = SOUND_EFFECT_NONE;
 
 void StopAudio() {
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
-  wTrig.stopAllTracks();
+  Audio.StopAllAudio();
   CurrentBackgroundSong = SOUND_EFFECT_NONE;
 #endif
 }
@@ -1243,15 +1244,10 @@ void PlayBackgroundSong(byte songNum) {
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   if (MusicLevel > 1) {
     if (CurrentBackgroundSong != songNum) {
-      if (CurrentBackgroundSong != SOUND_EFFECT_NONE) wTrig.trackStop(CurrentBackgroundSong);
+      if (CurrentBackgroundSong != SOUND_EFFECT_NONE) Audio.StopSound(CurrentBackgroundSong);
       if (songNum != SOUND_EFFECT_NONE) {
-#ifdef RPU_OS_USE_WAV_TRIGGER_1p3
-        wTrig.trackPlayPoly(songNum, true);
-#else
-        wTrig.trackPlayPoly(songNum);
-#endif
-        wTrig.trackLoop(songNum, true);
-        wTrig.trackGain(songNum, -6);
+        Audio.SetMusicDuckingGain(8);
+        Audio.PlayBackgroundSong(songNum, true);
       }
       CurrentBackgroundSong = songNum;
     }
@@ -1277,7 +1273,7 @@ void PlaySoundEffect(byte soundEffectNum) {
   if (  soundEffectNum == SOUND_EFFECT_BUMPER_HIT ||
         SOUND_EFFECT_SPINNER ) wTrig.trackStop(soundEffectNum);
 #endif
-  wTrig.trackPlayPoly(soundEffectNum);
+  Audio.PlaySound(soundEffectNum, AUDIO_PLAY_TYPE_WAV_TRIGGER);
   //  char buf[128];
   //  sprintf(buf, "s=%d\n", soundEffectNum);
   //  Serial.write(buf);
@@ -1293,7 +1289,7 @@ void PlaySoundEffect(byte soundEffectNum) {
 
 inline void StopSoundEffect(byte soundEffectNum) {
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
-  wTrig.trackStop(soundEffectNum);
+  Audio.StopSound(soundEffectNum);
 #else
   if (DEBUG_MESSAGES) {
     char buf[129];
