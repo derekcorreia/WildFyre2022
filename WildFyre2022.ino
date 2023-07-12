@@ -1219,19 +1219,19 @@ int RunSelfTest(int curState, boolean curStateChanged) {
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
 byte CurrentBackgroundSong = SOUND_EFFECT_NONE;
 #endif
 
 void StopAudio() {
-#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   wTrig.stopAllTracks();
   CurrentBackgroundSong = SOUND_EFFECT_NONE;
 #endif
 }
 
 void ResumeBackgroundSong() {
-#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   byte curSong = CurrentBackgroundSong;
   CurrentBackgroundSong = SOUND_EFFECT_NONE;
   PlayBackgroundSong(curSong);
@@ -1240,12 +1240,12 @@ void ResumeBackgroundSong() {
 
 void PlayBackgroundSong(byte songNum) {
 
-#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   if (MusicLevel > 1) {
     if (CurrentBackgroundSong != songNum) {
       if (CurrentBackgroundSong != SOUND_EFFECT_NONE) wTrig.trackStop(CurrentBackgroundSong);
       if (songNum != SOUND_EFFECT_NONE) {
-#ifdef RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3
+#ifdef RPU_OS_USE_WAV_TRIGGER_1p3
         wTrig.trackPlayPoly(songNum, true);
 #else
         wTrig.trackPlayPoly(songNum);
@@ -1271,9 +1271,9 @@ void PlaySoundEffect(byte soundEffectNum) {
 
   if (MusicLevel == 0) return;
 
-#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
 
-#ifndef RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3
+#ifndef RPU_OS_USE_WAV_TRIGGER_1p3
   if (  soundEffectNum == SOUND_EFFECT_BUMPER_HIT ||
         SOUND_EFFECT_SPINNER ) wTrig.trackStop(soundEffectNum);
 #endif
@@ -1292,7 +1292,7 @@ void PlaySoundEffect(byte soundEffectNum) {
 }
 
 inline void StopSoundEffect(byte soundEffectNum) {
-#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_RPU_OS_USE_WAV_TRIGGER_1p3)
+#if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   wTrig.trackStop(soundEffectNum);
 #else
   if (DEBUG_MESSAGES) {
