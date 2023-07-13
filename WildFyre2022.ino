@@ -43,7 +43,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  22023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  711
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  713
 #define DEBUG_MESSAGES  1
 
 
@@ -85,12 +85,9 @@ boolean MachineStateChanged = true;
 // and other flags that carry through different modes
 #define GAME_MODE_SKILL_SHOT                        0
 #define GAME_MODE_UNSTRUCTURED_PLAY                 4
-#define GAME_MODE_WILDFYRE_READY                    5
 #define GAME_MODE_WILDFYRE                          6
-#define GAME_MODE_WILDFYRE_END                      7
 #define GAME_MODE_SS_READY                          8
 #define GAME_MODE_SS                                9
-#define GAME_MODE_SS_END                            10
 #define GAME_MODE_WIZARD_START                      32
 #define GAME_MODE_WIZARD                            33
 #define GAME_MODE_WIZARD_FINISHED                   34
@@ -1941,12 +1938,17 @@ int CountdownBonus(boolean curStateChanged) {
   }
 
   if (CurrentTime > BonusCountDownEndTime) {
-
-    // Reset any lights & variables of goals that weren't completed
     BonusCountDownEndTime = 0xFFFFFFFF;
-    PlayBackgroundSong(SOUND_EFFECT_NONE);
-    StopAudio();
-    return MACHINE_STATE_BALL_OVER;
+    if (RPU_ReadSingleSwitchState(SW_EJECT_BONUS)){
+      StopAudio();
+      PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
+      return MACHINE_STATE_NORMAL_GAMEPLAY;
+    } else {
+      // Reset any lights & variables of goals that weren't completed
+      PlayBackgroundSong(SOUND_EFFECT_NONE);
+      StopAudio();
+      return MACHINE_STATE_BALL_OVER;
+    }
   }
 
   return MACHINE_STATE_COUNTDOWN_BONUS;
@@ -2234,6 +2236,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_ADVANCE_TARGET:
           // INFO: Playfield reads "1000 and advance arrow"
           if (BonusTargetHitTime == 0 || (CurrentTime-BonusTargetHitTime)>500) {
+            if (CurrentTime < LeftInlaneLastHitTime + 3000) {AddToBonusArrows(1);}
             BonusTargetHitTime = CurrentTime;
             AddToBonusArrows(1);
             CurrentScores[CurrentPlayer] += 1000;
@@ -2244,9 +2247,15 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_ADVANCE_ARROW:
           // INFO: Playfield reads "1000 and advance arrow"
           AddToBonusArrows(1);
-          if (CurrentTime < LeftInlaneLastHitTime + 3000) {AddToBonusArrows(1);}
-          CurrentScores[CurrentPlayer] += 1000;
-          if (BonusAdvanceArrows >=4 ) {CurrentScores[CurrentPlayer] += 9000;}
+          if (CurrentTime < LeftInlaneLastHitTime + 3000) {
+            AddToBonusArrows(1);
+            CurrentScores[CurrentPlayer] += (Bonus * 2000);
+            // todo: bonus collect whoop below
+            PlaySoundEffect(SOUND_EFFECT_FIRE);
+          } else {
+            CurrentScores[CurrentPlayer] += 1000;
+            if (BonusAdvanceArrows >=4 ) {CurrentScores[CurrentPlayer] += 4000;}
+          }
           ValidatePlayfield();
           break;
 
@@ -2268,7 +2277,8 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           //CountdownBonus(false);
           if (BonusEjectHitTime==0 || (CurrentTime-BonusEjectHitTime)>500){
             BonusEjectHitTime = CurrentTime;
-            CurrentScores[CurrentPlayer] += (Bonus * 2000);
+            //CurrentScores[CurrentPlayer] += (Bonus * 2000);
+            CountdownBonus(false);
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
             } else {
