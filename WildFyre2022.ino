@@ -402,12 +402,11 @@ void setup() {
 
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   // WAV Trigger startup at 57600
-  Audio.InitDevices(AUDIO_PLAY_TYPE_WAV_TRIGGER | AUDIO_PLAY_TYPE_ORIGINAL_SOUNDS);
+  Audio.InitDevices(AUDIO_PLAY_TYPE_WAV_TRIGGER);
   delayMicroseconds(10000);
   Audio.StopAllAudio();
 #endif
 
-  StopAudio();
   CurrentTime = millis();
   PlaySoundEffect(SOUND_EFFECT_MACHINE_START);
 }
@@ -1269,10 +1268,6 @@ void PlaySoundEffect(byte soundEffectNum) {
 
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
 
-#ifndef RPU_OS_USE_WAV_TRIGGER_1p3
-  if (  soundEffectNum == SOUND_EFFECT_BUMPER_HIT ||
-        SOUND_EFFECT_SPINNER ) wTrig.trackStop(soundEffectNum);
-#endif
   Audio.PlaySound(soundEffectNum, AUDIO_PLAY_TYPE_WAV_TRIGGER);
   //  char buf[128];
   //  sprintf(buf, "s=%d\n", soundEffectNum);
