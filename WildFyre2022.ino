@@ -402,7 +402,7 @@ void setup() {
 
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
   // WAV Trigger startup at 57600
-  Audio.InitDevices(AUDIO_PLAY_TYPE_WAV_TRIGGER);
+  Audio.InitDevices(AUDIO_PLAY_TYPE_WAV_TRIGGER | AUDIO_PLAY_TYPE_ORIGINAL_SOUNDS);
   delayMicroseconds(10000);
   Audio.StopAllAudio();
 #endif
