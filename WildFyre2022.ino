@@ -253,6 +253,7 @@ byte Num4BankCompletions = 0;
 byte MaxTiltWarnings = 2;
 byte NumTiltWarnings = 0;
 byte WildFyreMultiplier = 1;
+byte DropsUntilWildFyre = 2;
 
 boolean SamePlayerShootsAgain = false;
 boolean BallSaveUsed = false;
@@ -1464,6 +1465,8 @@ void Handle4BankDropSwitch (byte switchHit){
           if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
           if (Num4BankCompletions == 4) {RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
             Num4BankCompletions++;
+
+          if (Num4BankCompletions == DropsUntilWildFyre) {GameMode = GAME_MODE_WILDFYRE;}
         }
 }
 
@@ -1673,6 +1676,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     GameModeStartTime = 0;
     GameModeEndTime = 0;
     WildFyreMultiplier = 1;
+    DropsUntilWildFyre = 2;
     GameMode = GAME_MODE_SKILL_SHOT;
 
     // Check prior player tilt, set tilt thru time
@@ -1808,6 +1812,7 @@ int ManageGameMode() {
     case GAME_MODE_WILDFYRE_END:
     //todo light show and sound effect to end
       GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
+      DropsUntilWildFyre = (Num4BankCompletions + 3);
       PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
       break;
   }
