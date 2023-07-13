@@ -203,6 +203,8 @@ boolean MachineStateChanged = true;
 
 #define SOUND_EFFECT_SHOOTER_GROOVE     101
 #define SOUND_EFFECT_BG_SOUND           102
+#define SOUND_EFFECT_WF_BG              60
+#define SOUND_EFFECT_WF_END             61
 
 #define MAX_DISPLAY_BONUS     15  // equates to 30k
 #define TILT_WARNING_DEBOUNCE_TIME      1000
@@ -1457,6 +1459,11 @@ void Handle4BankDropSwitch (byte switchHit){
         RPU_ReadSingleSwitchState(SW_4DROP_3) &&
         RPU_ReadSingleSwitchState(SW_4DROP_4))
         {
+          if (GameMode == GAME_MODE_WILDFYRE){
+            GameModeEndTime = (GameModeEndTime + WILDFYRE_EXTEND_TIME);
+            //todo change to time extended callout
+            PlaySoundEffect(SOUND_EFFECT_FIRE); 
+          }
           if (Num4BankCompletions < 1) {
               PlaySoundEffect(SOUND_EFFECT_WILD4_COMPLETE);
               SpinnerLit = 1;
@@ -1790,7 +1797,7 @@ int ManageGameMode() {
         GameModeStartTime = CurrentTime;
         GameModeEndTime = CurrentTime + WILDFYRE_DOUBLE_TIME;
         WildFyreMultiplier = 2;
-        //todo sound effect to start wildfyre scoring
+        PlayBackgroundSong(SOUND_EFFECT_WF_BG);
       }
 
       if ((CurrentTime-GameModeStartTime)>MODE_START_DISPLAY_DURATION) {
@@ -1812,6 +1819,7 @@ int ManageGameMode() {
     case GAME_MODE_WILDFYRE_END:
     //todo light show and sound effect to end
       GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
+      PlaySoundEffect(SOUND_EFFECT_WF_END);
       DropsUntilWildFyre = (Num4BankCompletions + 3);
       PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
       break;
@@ -2301,7 +2309,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
 
         case SW_SPINNER:
-          // todo spinner lit specific sound
           //byte inlaneMultiplier = 1;
           if (CurrentTime < RightInlaneLastHitTime + 3000) {inlaneMultiplier = 2;} else {inlaneMultiplier = 1;}
           PlaySoundEffect(SOUND_EFFECT_SPINNER);
