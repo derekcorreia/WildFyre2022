@@ -86,8 +86,10 @@ boolean MachineStateChanged = true;
 #define GAME_MODE_SKILL_SHOT                        0
 #define GAME_MODE_UNSTRUCTURED_PLAY                 4
 #define GAME_MODE_WILDFYRE                          6
+#define GAME_MODE_WILDFYRE_END                      7
 #define GAME_MODE_SS_READY                          8
 #define GAME_MODE_SS                                9
+#define GAME_MODE_SS_END                            10
 #define GAME_MODE_WIZARD_START                      32
 #define GAME_MODE_WIZARD                            33
 #define GAME_MODE_WIZARD_FINISHED                   34
@@ -250,6 +252,7 @@ byte Num3BankCompletions = 0;
 byte Num4BankCompletions = 0;
 byte MaxTiltWarnings = 2;
 byte NumTiltWarnings = 0;
+byte WildFyreMultiplier = 1;
 
 boolean SamePlayerShootsAgain = false;
 boolean BallSaveUsed = false;
@@ -319,6 +322,8 @@ unsigned long LastSpinnerHit;
 #define WIZARD_FINISHED_DURATION          5000
 #define WIZARD_SWITCH_SCORE               5000
 #define WIZARD_MODE_REWARD_SCORE          250000
+#define WILDFYRE_DOUBLE_TIME              15000
+#define WILDFYRE_EXTEND_TIME              20000
 
 #define SPINNER_MAX_GOAL                  100
 
@@ -1441,7 +1446,7 @@ void AddToBonusArrows(byte amountToAdd = 1) {
 }
 
 void Handle4BankDropSwitch (byte switchHit){
-  CurrentScores[CurrentPlayer] += 500;
+  CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
   PlaySoundEffect(SOUND_EFFECT_4BANK + Num4BankTargets%4);
   Num4BankTargets++;
   // Lights for drops? Gotta check that
@@ -1469,15 +1474,15 @@ void HandleTopEjectHit (byte switchHit){
       CurrentScores[CurrentPlayer] += 10000;
     } else {
       PlaySoundEffect(SOUND_EFFECT_FIRE);
-      CurrentScores[CurrentPlayer] += 3000;
+      CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
     }
   } else {
     PlaySoundEffect(SOUND_EFFECT_FIRE);
-    CurrentScores[CurrentPlayer] += 3000;
+    CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
   }
 
   if (switchHit == SW_EJECT_1 && NumEjectSets > 0 ){
-    CurrentScores[CurrentPlayer] += 4000;
+    CurrentScores[CurrentPlayer] += (4000 * WildFyreMultiplier);
   }  
 
   byte switchMask = (1<<(switchHit-21));
@@ -1509,7 +1514,7 @@ void Show4BankLamps(){
 }
 
 void Handle3BankDropSwitch (byte switchHit){
-  CurrentScores[CurrentPlayer] += 500;
+  CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
   PlaySoundEffect(SOUND_EFFECT_3BANK + Num3BankTargets%3);
   Num3BankTargets++;
   //start with 2x lit to collect
@@ -1521,10 +1526,10 @@ void Handle3BankDropSwitch (byte switchHit){
           if (Num3BankCompletions == 1){
             if (BonusX == 2) {BonusX = 5;}
             if (BonusX == 1) {BonusX = 2;}
-            CurrentScores[CurrentPlayer] += 3000;
+            CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
           } 
           if (Num3BankCompletions >=2){
-            CurrentScores[CurrentPlayer] += 7000;
+            CurrentScores[CurrentPlayer] += (7000 * WildFyreMultiplier);
           }
           Num3BankCompletions++;
           Reset3Bank();
@@ -1667,6 +1672,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     // Initialize game-specific start-of-ball lights & variables
     GameModeStartTime = 0;
     GameModeEndTime = 0;
+    WildFyreMultiplier = 1;
     GameMode = GAME_MODE_SKILL_SHOT;
 
     // Check prior player tilt, set tilt thru time
@@ -1758,6 +1764,7 @@ int ManageGameMode() {
       }
 
       if (BallFirstSwitchHitTime != 0) {
+        GameModeStartTime = 0;
         SetGameMode(GAME_MODE_UNSTRUCTURED_PLAY);
       }
 
@@ -1773,7 +1780,36 @@ int ManageGameMode() {
         GameModeStartTime = CurrentTime;
       }
       break;
+    
+    case GAME_MODE_WILDFYRE:
+      if (GameModeStartTime == 0) {
+        GameModeStartTime = CurrentTime;
+        GameModeEndTime = CurrentTime + WILDFYRE_DOUBLE_TIME;
+        WildFyreMultiplier = 2;
+        //todo sound effect to start wildfyre scoring
+      }
 
+      if ((CurrentTime-GameModeStartTime)>MODE_START_DISPLAY_DURATION) {
+        for (byte count=0; count<4; count++) {
+          if (count!=CurrentPlayer) OverrideScoreDisplay(count, (GameModeEndTime-CurrentTime)/1000, true);
+        }
+      }
+
+      if (CurrentTime>GameModeEndTime) {
+        GameModeEndTime = 0;
+        GameModeStartTime = 0;
+        WildFyreMultiplier = 1;
+        ShowPlayerScores(0xFF, false, false);
+        PlayBackgroundSong(SOUND_EFFECT_NONE);
+        GameMode = GAME_MODE_WILDFYRE_END;
+      }
+      break;
+    
+    case GAME_MODE_WILDFYRE_END:
+    //todo light show and sound effect to end
+      GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
+      PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
+      break;
   }
 
   if ( !specialAnimationRunning && NumTiltWarnings <= MaxTiltWarnings ) {
@@ -2172,13 +2208,13 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         //DCO CODE INLANES 
         case SW_LEFT_OUTLANE:
         case SW_RIGHT_OUTLANE:
-          CurrentScores[CurrentPlayer] += 500;
+          CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           AddToBonus(2);
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           ValidatePlayfield();
           break;
         case SW_LEFT_RETURN:
-          CurrentScores[CurrentPlayer] += 500;
+          CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           LeftInlaneLastHitTime = CurrentTime;
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           // TKTK: logic for special being lit needs to be added
@@ -2191,21 +2227,21 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_LEFT_MID_LANE:
           // INFO: Playfield reads "Reset Bottom Targets"
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
-          CurrentScores[CurrentPlayer] += 500;
+          CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           if (Num4BankCompletions > 1) {
             Reset4Bank();
           }
           ValidatePlayfield();
           break;
         case SW_RIGHT_MID_LANE:
-          CurrentScores[CurrentPlayer] += 500;
+          CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           AddToBonus(1);
           ValidatePlayfield();
           break;
         case SW_RIGHT_RETURN:
           // INFO: Playfield reads "5k and EB when lit"
-          CurrentScores[CurrentPlayer] += 500;
+          CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           RightInlaneLastHitTime = CurrentTime;
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           ValidatePlayfield();
@@ -2229,7 +2265,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_AB_LEFT:
         case SW_AB_TOP:
           AddToBonus(1);
-          CurrentScores[CurrentPlayer] += 10;
+          CurrentScores[CurrentPlayer] += (10 * WildFyreMultiplier);
           ValidatePlayfield();
           break;
 
@@ -2239,7 +2275,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             if (CurrentTime < LeftInlaneLastHitTime + 3000) {AddToBonusArrows(1);}
             BonusTargetHitTime = CurrentTime;
             AddToBonusArrows(1);
-            CurrentScores[CurrentPlayer] += 1000;
+            CurrentScores[CurrentPlayer] += (1000 * WildFyreMultiplier);
           }
           ValidatePlayfield();
           break;
@@ -2249,12 +2285,12 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           AddToBonusArrows(1);
           if (CurrentTime < LeftInlaneLastHitTime + 3000) {
             AddToBonusArrows(1);
-            CurrentScores[CurrentPlayer] += (Bonus * 2000);
+            CurrentScores[CurrentPlayer] += (Bonus * 2000 * WildFyreMultiplier);
             // todo: bonus collect whoop below
             PlaySoundEffect(SOUND_EFFECT_FIRE);
           } else {
-            CurrentScores[CurrentPlayer] += 1000;
-            if (BonusAdvanceArrows >=4 ) {CurrentScores[CurrentPlayer] += 4000;}
+            CurrentScores[CurrentPlayer] += (1000 * WildFyreMultiplier);
+            if (BonusAdvanceArrows >=4 ) {CurrentScores[CurrentPlayer] += (4000 * WildFyreMultiplier);}
           }
           ValidatePlayfield();
           break;
@@ -2265,9 +2301,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (CurrentTime < RightInlaneLastHitTime + 3000) {inlaneMultiplier = 2;} else {inlaneMultiplier = 1;}
           PlaySoundEffect(SOUND_EFFECT_SPINNER);
           if (SpinnerLit == 1){
-            CurrentScores[CurrentPlayer] += ( 500 * inlaneMultiplier);  
+            CurrentScores[CurrentPlayer] += ( 500 * inlaneMultiplier * WildFyreMultiplier);  
           } else {
-            CurrentScores[CurrentPlayer] += ( 100 * inlaneMultiplier);
+            CurrentScores[CurrentPlayer] += ( 100 * inlaneMultiplier * WildFyreMultiplier);
           }
           ValidatePlayfield();
           break;
@@ -2309,13 +2345,13 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_RIGHT_BUMPER:
           PlaySoundEffect(SOUND_EFFECT_POP + CurrentTime%4);
           //PlaySoundEffect(SOUND_EFFECT_POP3);
-          CurrentScores[CurrentPlayer] += 100;
+          CurrentScores[CurrentPlayer] += (100 * WildFyreMultiplier);
           ValidatePlayfield();
           break;
 
         case SW_LEFT_SLINGSHOT:
         case SW_RIGHT_SLINGSHOT:
-          CurrentScores[CurrentPlayer] += 10;
+          CurrentScores[CurrentPlayer] += (10 * WildFyreMultiplier);
           PlaySoundEffect(SOUND_EFFECT_SLING_SHOT);
           ValidatePlayfield();
           break;
