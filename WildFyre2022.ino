@@ -210,7 +210,11 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_STALLBALL_ELIM_6   171
 
 #define SOUND_EFFECT_SHOOTER_GROOVE     101
-#define SOUND_EFFECT_BG_SOUND           102
+#define SOUND_EFFECT_SHOOTER_GROOVE2    102
+#define SOUND_EFFECT_SHOOTER_GROOVE3    103
+#define SOUND_EFFECT_BG_SOUND           106
+#define SOUND_EFFECT_BG_SOUND2          107
+#define SOUND_EFFECT_BG_SOUND3          108
 #define SOUND_EFFECT_WF_BG              60
 #define SOUND_EFFECT_WF_END             61
 
@@ -312,6 +316,7 @@ byte Num4BankTargets = 0;
 byte AdvancedViaArrows = 0;
 byte inlaneMultiplier = 1;
 byte StartButtonHits = 0;
+byte BGSoundTracker = 0;
 
 boolean StallBallMode = false;
 
@@ -1639,6 +1644,7 @@ int InitGamePlay() {
   CurrentBallInPlay = 1;
   CurrentNumPlayers = 1;
   CurrentPlayer = 0;
+  BGSoundTracker = 0;
   ShowPlayerScores(0xFF, false, false);
 
   return MACHINE_STATE_INIT_NEW_BALL;
@@ -1670,7 +1676,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     SamePlayerShootsAgain = false;
     StartButtonHits = 0;
 
-    PlayBackgroundSong(SOUND_EFFECT_SHOOTER_GROOVE);
+    PlayBackgroundSong(SOUND_EFFECT_SHOOTER_GROOVE + BGSoundTracker);
 
     RPU_SetDisplayBallInPlay(ballNum);
     RPU_SetLampState(LAMP_HEAD_TILT, 0);
@@ -1694,6 +1700,8 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     GameModeEndTime = 0;
     WildFyreMultiplier = 1;
     DropsUntilWildFyre = 2;
+    BGSoundTracker = (CurrentBallInPlay - 1);
+    if (BGSoundTracker > 3) {BGSoundTracker = 0;}
     GameMode = GAME_MODE_SKILL_SHOT;
 
     // Check prior player tilt, set tilt thru time
@@ -1831,7 +1839,7 @@ int ManageGameMode() {
       GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
       PlaySoundEffect(SOUND_EFFECT_WF_END);
       DropsUntilWildFyre = (Num4BankCompletions + 3);
-      PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
+      PlayBackgroundSong(SOUND_EFFECT_BG_SOUND + BGSoundTracker);
       break;
   }
 
@@ -2000,7 +2008,7 @@ int CountdownBonus(boolean curStateChanged) {
     BonusCountDownEndTime = 0xFFFFFFFF;
     if (RPU_ReadSingleSwitchState(SW_EJECT_BONUS)){
       StopAudio();
-      PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
+      PlayBackgroundSong(SOUND_EFFECT_BG_SOUND + BGSoundTracker);
       return MACHINE_STATE_NORMAL_GAMEPLAY;
     } else {
       // Reset any lights & variables of goals that weren't completed
@@ -2125,7 +2133,7 @@ void ValidatePlayfield (){
   if (BallFirstSwitchHitTime == 0) {
     BallFirstSwitchHitTime = CurrentTime;
     TiltThroughTime = CurrentTime;
-    PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
+    PlayBackgroundSong(SOUND_EFFECT_BG_SOUND + BGSoundTracker);
   }
 }
 
