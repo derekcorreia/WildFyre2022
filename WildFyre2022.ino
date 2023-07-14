@@ -1679,6 +1679,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     SamePlayerShootsAgain = false;
     StartButtonHits = 0;
 
+    BGSoundTracker = (CurrentBallInPlay - 1);
     PlayBackgroundSong(SOUND_EFFECT_SHOOTER_GROOVE + BGSoundTracker);
 
     RPU_SetDisplayBallInPlay(ballNum);
@@ -1703,7 +1704,6 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     GameModeEndTime = 0;
     WildFyreMultiplier = 1;
     DropsUntilWildFyre = 2;
-    BGSoundTracker = (CurrentBallInPlay - 1);
     if (BGSoundTracker > 3) {BGSoundTracker = 0;}
     GameMode = GAME_MODE_SKILL_SHOT;
 
