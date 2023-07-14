@@ -202,6 +202,9 @@ boolean MachineStateChanged = true;
 
 #define SOUND_EFFECT_STALLBALL_MODE     165
 #define SOUND_EFFECT_STALLBALL_STALL    160
+#define SOUND_EFFECT_STALLBALL_STALL2   161
+#define SOUND_EFFECT_STALLBALL_STALL3   162
+#define SOUND_EFFECT_STALLBALL_STALL4   163
 #define SOUND_EFFECT_STALLBALL_ELIM     166
 #define SOUND_EFFECT_STALLBALL_ELIM_2   167
 #define SOUND_EFFECT_STALLBALL_ELIM_3   168
@@ -1514,7 +1517,7 @@ void HandleTopEjectHit (byte switchHit){
   CurrentEjectsHit |= switchMask;
 
   if (StallBallMode){
-    PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
+    PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL + CurrentTime%4);
   }
 
   if (CurrentEjectsHit==0x07){
@@ -2349,7 +2352,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             Bonus = 1;
             BonusX = 1;
             if (StallBallMode) {
-              PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
+              PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL + CurrentTime%4);
             } else {
               //todo bonus collect whoop
               PlaySoundEffect(SOUND_EFFECT_BONUS_COLLECT);
