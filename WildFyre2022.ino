@@ -200,6 +200,9 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_STALLBALL_ELIM     166
 #define SOUND_EFFECT_STALLBALL_ELIM_2   167
 #define SOUND_EFFECT_STALLBALL_ELIM_3   168
+#define SOUND_EFFECT_STALLBALL_ELIM_4   169
+#define SOUND_EFFECT_STALLBALL_ELIM_5   170
+#define SOUND_EFFECT_STALLBALL_ELIM_6   171
 
 #define SOUND_EFFECT_SHOOTER_GROOVE     101
 #define SOUND_EFFECT_BG_SOUND           102
@@ -1933,7 +1936,7 @@ int ManageGameMode() {
             ShowPlayerScores(0xFF, false, false);
             PlayBackgroundSong(SOUND_EFFECT_NONE);
             StopAudio();
-            if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%3);
+            if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%7);
             if (CurrentBallInPlay < BallsPerGame) PlaySoundEffect(SOUND_EFFECT_BALL_OVER);
             returnState = MACHINE_STATE_COUNTDOWN_BONUS;
           }
