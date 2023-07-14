@@ -1506,23 +1506,24 @@ void Handle4BankDropSwitch (byte switchHit){
 }
 
 void HandleTopEjectHit (byte switchHit){
-  if (GameMode == GAME_MODE_SKILL_SHOT){
-    if (switchHit == EjectSwitchArray[SkillShotEject] && StallBallMode == false){
-      PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
-      CurrentScores[CurrentPlayer] += 10000;
+  if (!StallBallMode){
+    if (GameMode == GAME_MODE_SKILL_SHOT){
+      if (switchHit == EjectSwitchArray[SkillShotEject] && StallBallMode == false){
+        PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
+        CurrentScores[CurrentPlayer] += 10000;
+      } else {
+        PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
+        CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
+      }
     } else {
       PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
       CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
     }
-  } else {
-    PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
-    CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
+
+    if (switchHit == SW_EJECT_1 && NumEjectSets > 0 ){
+      CurrentScores[CurrentPlayer] += (4000 * WildFyreMultiplier);
+    }  
   }
-
-  if (switchHit == SW_EJECT_1 && NumEjectSets > 0 ){
-    CurrentScores[CurrentPlayer] += (4000 * WildFyreMultiplier);
-  }  
-
   byte switchMask = (1<<(switchHit-21));
   CurrentEjectsHit |= switchMask;
 
