@@ -416,7 +416,10 @@ void setup() {
   RPU_SetupGameSwitches(NUM_SWITCHES_WITH_TRIGGERS, NUM_PRIORITY_SWITCHES_WITH_TRIGGERS, SolenoidAssociatedSwitches);
 
   // Set up the chips and interrupts
-  RPU_InitializeMPU();
+  RPU_InitializeMPU(
+        RPU_CMD_BOOT_ORIGINAL_IF_CREDIT_RESET | 
+        RPU_CMD_BOOT_ORIGINAL_IF_NOT_SWITCH_CLOSED |
+        RPU_CMD_PERFORM_MPU_TEST, SW_CREDIT_RESET  );
   // Clear saucers if ball left in there, just in case...
   RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
   RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
