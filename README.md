@@ -5,6 +5,8 @@ https://github.com/RetroPinUpgrade
 
 The base library is separated from this implementation so that it can be used by multiple projects without needing to be updated multiple times. For best results, always get all files (both the base library and the Wild Fyre Reignyted files) each time you build. Read on for basic instructions on how to build this code.
 
+## [Wild Fyre Reignyted Rules](RULES.md)
+## [Credits, Licenses, Acknowledgements](CREDITS.md)
 
 ### To use this code
 * Download the zip file (Code > Download ZIP) or clone the repository to your hard drive.  
