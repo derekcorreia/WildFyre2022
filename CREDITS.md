@@ -22,6 +22,7 @@ Ultimate thanks to Jordan Knights, who puts up with many pinball machines appear
 * Michael Murphy
 * Mitch Curtis
 * Scott Danesi
+* Wifijt, from the RPU Discord
 * And a very special thanks to all of the players at The Lower Playfield, who tested and provided feedback on many builds of this. It wouldn't have been possible without you.
 
 ## License
