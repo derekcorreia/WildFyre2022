@@ -152,6 +152,11 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_3BANKA1            38
 #define SOUND_EFFECT_3BANKA2            39
 #define SOUND_EFFECT_BALL_SAVE          40
+#define SOUND_EFFECT_BONUS_COLLECT      45
+#define SOUND_EFFECT_EJECT_1            46
+#define SOUND_EFFECT_EJECT_2            47
+#define SOUND_EFFECT_EJECT_3            48
+#define SOUND_EFFECT_LANE_COLLECT       49
 #define SOUND_EFFECT_FIRE               50
 
 #define SOUND_EFFECT_SLING_SHOT         34
@@ -1488,11 +1493,11 @@ void HandleTopEjectHit (byte switchHit){
       PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
       CurrentScores[CurrentPlayer] += 10000;
     } else {
-      PlaySoundEffect(SOUND_EFFECT_FIRE);
+      PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
       CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
     }
   } else {
-    PlaySoundEffect(SOUND_EFFECT_FIRE);
+    PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
     CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
   }
 
@@ -2236,7 +2241,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_LEFT_RETURN:
           CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           LeftInlaneLastHitTime = CurrentTime;
-          PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
+          PlaySoundEffect(SOUND_EFFECT_FIRE);
           // TKTK: logic for special being lit needs to be added
           if (RPU_ReadLampState(LAMP_LEFT_RETURN_SPECIAL)) {
             AwardSpecial();
@@ -2263,7 +2268,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           // INFO: Playfield reads "5k and EB when lit"
           CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           RightInlaneLastHitTime = CurrentTime;
-          PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
+          PlaySoundEffect(SOUND_EFFECT_FIRE);
           ValidatePlayfield();
           if (RPU_ReadLampState(LAMP_EXTRA_BALL) == 1){
             AwardExtraBall();
@@ -2307,7 +2312,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             AddToBonusArrows(1);
             CurrentScores[CurrentPlayer] += (Bonus * 2000 * WildFyreMultiplier);
             // todo: bonus collect whoop below
-            PlaySoundEffect(SOUND_EFFECT_FIRE);
+            PlaySoundEffect(SOUND_EFFECT_LANE_COLLECT);
           } else {
             CurrentScores[CurrentPlayer] += (1000 * WildFyreMultiplier);
             if (BonusAdvanceArrows >=4 ) {CurrentScores[CurrentPlayer] += (4000 * WildFyreMultiplier);}
@@ -2339,7 +2344,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
             } else {
               //todo bonus collect whoop
-              PlaySoundEffect(SOUND_EFFECT_FIRE);
+              PlaySoundEffect(SOUND_EFFECT_BONUS_COLLECT);
             }
           }
           ValidatePlayfield();
