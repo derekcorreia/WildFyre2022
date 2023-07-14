@@ -327,7 +327,7 @@ unsigned long LastSpinnerHit;
 #define WIZARD_SWITCH_SCORE               5000
 #define WIZARD_MODE_REWARD_SCORE          250000
 #define WILDFYRE_DOUBLE_TIME              15000
-#define WILDFYRE_EXTEND_TIME              20000
+#define WILDFYRE_EXTEND_TIME              16000
 
 #define SPINNER_MAX_GOAL                  100
 
@@ -2335,6 +2335,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
             } else {
+              //todo bonus collect whoop
               PlaySoundEffect(SOUND_EFFECT_FIRE);
             }
           }
