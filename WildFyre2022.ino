@@ -335,6 +335,7 @@ boolean StallBallMode = false;
 unsigned long TopEjectHitTime;
 unsigned long BonusEjectHitTime;
 unsigned long BonusTargetHitTime;
+unsigned long FourBankCompleteTime;
 unsigned long RightInlaneLastHitTime = 0;
 unsigned long LeftInlaneLastHitTime = 0;
 
@@ -1485,20 +1486,22 @@ void Handle4BankDropSwitch (byte switchHit){
         RPU_ReadSingleSwitchState(SW_4DROP_3) &&
         RPU_ReadSingleSwitchState(SW_4DROP_4))
         {
-          //todo: "debounce" this
-          if (GameMode == GAME_MODE_WILDFYRE){
-            GameModeEndTime = (GameModeEndTime + WILDFYRE_EXTEND_TIME);
-            //todo change to time extended callout
-            PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
+          if (FourBankCompleteTime == 0 || (CurrentTime-FourBankCompleteTime)>1000){
+          FourBankCompleteTime = CurrentTime;
+            if (GameMode == GAME_MODE_WILDFYRE){
+              GameModeEndTime = (GameModeEndTime + WILDFYRE_EXTEND_TIME);
+              //todo change to time extended callout
+              PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
+            }
+            if (Num4BankCompletions < 1) {
+                PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);
+                SpinnerLit = 1;
+              };
+            if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
+            if (Num4BankCompletions == 4) {RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
+            
+            Num4BankCompletions++;
           }
-          if (Num4BankCompletions < 1) {
-              PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);
-              SpinnerLit = 1;
-            };
-          if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
-          if (Num4BankCompletions == 4) {RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
-          
-          Num4BankCompletions++;
           Reset4Bank();
 
           if (Num4BankCompletions == DropsUntilWildFyre) {SetGameMode(GAME_MODE_WILDFYRE);}
@@ -1708,6 +1711,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
 
     TopEjectHitTime = 0;
     BonusEjectHitTime = 0;
+    FourBankCompleteTime = 0;
     BonusTargetHitTime = 0;
 
     // Initialize game-specific start-of-ball lights & variables
