@@ -220,6 +220,15 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_BG_SOUND3          108
 #define SOUND_EFFECT_WF_BG              60
 #define SOUND_EFFECT_WF_END             61
+#define SOUND_EFFECT_WF_EXTEND          62
+#define SOUND_EFFECT_WF_START1          63
+#define SOUND_EFFECT_WF_START2          64
+#define SOUND_EFFECT_WF_START3          65
+#define SOUND_EFFECT_WF_EXIT1           66
+#define SOUND_EFFECT_WF_EXIT2           67
+#define SOUND_EFFECT_WF_EXIT3           68
+#define SOUND_EFFECT_WF_2BANKS_LEFT     69
+#define SOUND_EFFECT_WF_1BANK_LEFT     70
 
 #define MAX_DISPLAY_BONUS     15  // equates to 30k
 #define TILT_WARNING_DEBOUNCE_TIME      1000
@@ -1476,13 +1485,14 @@ void Handle4BankDropSwitch (byte switchHit){
         RPU_ReadSingleSwitchState(SW_4DROP_3) &&
         RPU_ReadSingleSwitchState(SW_4DROP_4))
         {
+          //todo: "debounce" this
           if (GameMode == GAME_MODE_WILDFYRE){
             GameModeEndTime = (GameModeEndTime + WILDFYRE_EXTEND_TIME);
             //todo change to time extended callout
-            PlaySoundEffect(SOUND_EFFECT_FIRE); 
+            PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
           }
           if (Num4BankCompletions < 1) {
-              PlaySoundEffect(SOUND_EFFECT_WILD4_COMPLETE);
+              PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);
               SpinnerLit = 1;
             };
           if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
@@ -1818,6 +1828,7 @@ int ManageGameMode() {
         GameModeStartTime = CurrentTime;
         GameModeEndTime = CurrentTime + WILDFYRE_DOUBLE_TIME;
         WildFyreMultiplier = 2;
+        PlaySoundEffect(SOUND_EFFECT_WF_START1 + CurrentTime%3);
         PlayBackgroundSong(SOUND_EFFECT_WF_BG);
       }
 
@@ -1841,6 +1852,7 @@ int ManageGameMode() {
     //todo light show and sound effect to end
       GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
       PlaySoundEffect(SOUND_EFFECT_WF_END);
+      PlaySoundEffect(SOUND_EFFECT_WF_EXIT1 + CurrentTime%3);
       DropsUntilWildFyre = (Num4BankCompletions + 3);
       PlayBackgroundSong(SOUND_EFFECT_BG_SOUND + BGSoundTracker);
       break;
@@ -2350,7 +2362,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             BonusEjectHitTime = CurrentTime;
             CurrentScores[CurrentPlayer] += (Bonus * 2000 * BonusX);
             Bonus = 1;
-            BonusX = 1;
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL + CurrentTime%4);
             } else {
