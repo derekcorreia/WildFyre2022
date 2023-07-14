@@ -209,6 +209,7 @@ boolean MachineStateChanged = true;
 #define MAX_DISPLAY_BONUS     15  // equates to 30k
 #define TILT_WARNING_DEBOUNCE_TIME      1000
 #define TILT_THROUGH_DEBOUNCE_TIME      8000
+#define MODE_START_DISPLAY_DURATION     1000
 
 
 /*********************************************************************
@@ -1467,13 +1468,14 @@ void Handle4BankDropSwitch (byte switchHit){
           if (Num4BankCompletions < 1) {
               PlaySoundEffect(SOUND_EFFECT_WILD4_COMPLETE);
               SpinnerLit = 1;
-              Reset4Bank();
             };
           if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
           if (Num4BankCompletions == 4) {RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
-            Num4BankCompletions++;
+          
+          Num4BankCompletions++;
+          Reset4Bank();
 
-          if (Num4BankCompletions == DropsUntilWildFyre) {GameMode = GAME_MODE_WILDFYRE;}
+          if (Num4BankCompletions == DropsUntilWildFyre) {SetGameMode(GAME_MODE_WILDFYRE);}
         }
 }
 
@@ -2112,9 +2114,11 @@ int ShowMatchSequence(boolean curStateChanged) {
 }
 
 void ValidatePlayfield (){
-  if (BallFirstSwitchHitTime == 0) BallFirstSwitchHitTime = CurrentTime;
-  TiltThroughTime = CurrentTime;
-  PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
+  if (BallFirstSwitchHitTime == 0) {
+    BallFirstSwitchHitTime = CurrentTime;
+    TiltThroughTime = CurrentTime;
+    PlayBackgroundSong(SOUND_EFFECT_BG_SOUND);
+  }
 }
 
 int RunGamePlayMode(int curState, boolean curStateChanged) {
@@ -2325,8 +2329,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           //CountdownBonus(false);
           if (BonusEjectHitTime==0 || (CurrentTime-BonusEjectHitTime)>500){
             BonusEjectHitTime = CurrentTime;
-            //CurrentScores[CurrentPlayer] += (Bonus * 2000);
-            CountdownBonus(false);
+            CurrentScores[CurrentPlayer] += (Bonus * 2000 * BonusX);
+            Bonus = 1;
+            BonusX = 1;
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL);
             } else {
