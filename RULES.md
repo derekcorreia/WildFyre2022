@@ -9,7 +9,7 @@ After the playfield has been validated by hitting a switch, the shoot again ligh
 ## Wild Fyre Drop Bank
 Dropping the targets on the Wild Fyre bank will light the spinner for 500 points per spin instead of the default 100 points.
 
-Completing the target bank twice in one ball will immediately start Wild Fyre scoring. For 15 seconds, all scoring is doubled with the exception of bonus collects. Dropping the bank again while in Wild Fyre Scoring will add an additional 20 seconds to double scoring for each completion.
+Completing the target bank twice in one ball will immediately start Wild Fyre scoring. For 20 seconds, all scoring is doubled with the exception of bonus collects. Dropping the bank again while in Wild Fyre Scoring will add an additional 20 seconds to double scoring for each completion.
 
 Wild Fyre scoring can be reachieved after it is extinguished in the same ball by completing an additional 3 drop target banks.
 

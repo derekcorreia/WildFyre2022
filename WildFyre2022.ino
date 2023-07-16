@@ -43,7 +43,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  714
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  716
 #define DEBUG_MESSAGES  1
 
 
@@ -352,8 +352,8 @@ unsigned long LastSpinnerHit;
 #define WIZARD_FINISHED_DURATION          5000
 #define WIZARD_SWITCH_SCORE               5000
 #define WIZARD_MODE_REWARD_SCORE          250000
-#define WILDFYRE_DOUBLE_TIME              15000
-#define WILDFYRE_EXTEND_TIME              16000
+#define WILDFYRE_DOUBLE_TIME              20000
+#define WILDFYRE_EXTEND_TIME              20000
 
 #define SPINNER_MAX_GOAL                  100
 
