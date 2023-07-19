@@ -11,19 +11,12 @@
   DCO Todo:
 
   What Next:
-          xxBonusCountdown needs to be implemented/lamps need to be reviewed
-          xxEB/Special Handling
-          xxDecide what to do with the 4 bank/reset
-          xxTop lane skill shots (and switch handling in general)
-    Sharpshooter Mode
-    Wild Fyre Spinner on 2x 4bank completions
-    Bonus collect saucer
-    Music/Sound Effect Creation
-    Music/Sound Effect Linking
+    Sharpshooter Mode Sound FX
+    Wild Fyre -> Sharpshooter mode handling
     Attract Mode
     Code Cleanup from prior game
     Copy most of ManageGame from Trident
-
+    Write ADJUSTMENTS.md
 */
 
 
@@ -1528,7 +1521,7 @@ void HandleTopEjectHit (byte switchHit){
     } else if (GameMode == GAME_MODE_SS){
       if (switchHit != EjectSwitchArray[SkillShotEject] && StallBallMode == false){
         PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
-        CurrentScores[CurrentPlayer] += 30000;
+        CurrentScores[CurrentPlayer] += 25000;
       } else {
         PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
         CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
