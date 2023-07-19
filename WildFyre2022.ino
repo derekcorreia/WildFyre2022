@@ -1499,6 +1499,7 @@ void Handle4BankDropSwitch (byte switchHit){
               //todo change to time extended callout
               PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
             }
+            //todo redefine so subsequent drops play noises
             if (Num4BankCompletions < 1) {
                 PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);
                 SpinnerLit = 1;
@@ -1553,7 +1554,7 @@ void HandleTopEjectHit (byte switchHit){
   if (CurrentEjectsHit==0x07){
     NumEjectSets++;
     CurrentEjectsHit = 0;
-    if (!HasPlayedSSThisBall) {
+    if (!HasPlayedSSThisBall && !StallBallMode) {
       HasPlayedSSThisBall = true;
       GameMode = GAME_MODE_SS_START;
       GameModeStartTime = 0;
@@ -1620,11 +1621,11 @@ void StartScoreAnimation(unsigned long scoreToAnimate) {
 }
 
 void Reset3Bank() {
-  RPU_PushToTimedSolenoidStack(SOL_3BANK_RESET, 2, CurrentTime + 400);
+  RPU_PushToTimedSolenoidStack(SOL_3BANK_RESET, 6, CurrentTime + 400);
 }
 
 void Reset4Bank() {
-  RPU_PushToTimedSolenoidStack(SOL_4BANK_RESET, 2, CurrentTime + 400);
+  RPU_PushToTimedSolenoidStack(SOL_4BANK_RESET, 6, CurrentTime + 400);
 }
 
 void EjectTopSaucers() {
