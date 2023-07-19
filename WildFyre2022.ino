@@ -1620,11 +1620,11 @@ void StartScoreAnimation(unsigned long scoreToAnimate) {
 }
 
 void Reset3Bank() {
-  RPU_PushToTimedSolenoidStack(SOL_3BANK_RESET, 6, CurrentTime + 400);
+  RPU_PushToTimedSolenoidStack(SOL_3BANK_RESET, 2, CurrentTime + 400);
 }
 
 void Reset4Bank() {
-  RPU_PushToTimedSolenoidStack(SOL_4BANK_RESET, 6, CurrentTime + 400);
+  RPU_PushToTimedSolenoidStack(SOL_4BANK_RESET, 2, CurrentTime + 400);
 }
 
 void EjectTopSaucers() {
