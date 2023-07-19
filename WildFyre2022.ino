@@ -1496,18 +1496,18 @@ void Handle4BankDropSwitch (byte switchHit){
           FourBankCompleteTime = CurrentTime;
             if (GameMode == GAME_MODE_WILDFYRE){
               GameModeEndTime = (GameModeEndTime + WILDFYRE_EXTEND_TIME);
-              //todo change to time extended callout
               PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
             }
             //todo redefine so subsequent drops play noises
             if (Num4BankCompletions < 1) {
-                PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);
                 SpinnerLit = 1;
               };
             if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
             if (Num4BankCompletions == 4) {RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
             
             Num4BankCompletions++;
+            if ( DropsUntilWildFyre-Num4BankCompletions == 2) {PlaySoundEffect(SOUND_EFFECT_WF_2BANKS_LEFT);}
+            if ( DropsUntilWildFyre-Num4BankCompletions == 1) {PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);}
           }
           Reset4Bank();
 
@@ -2034,6 +2034,7 @@ int CountdownBonus(boolean curStateChanged) {
   // If this is the first time through the countdown loop
   if (curStateChanged) {
     if (!StallBallMode) { PlayBackgroundSong(SOUND_EFFECT_BONUSCOUNTDOWN); }
+    if (StallBallMode) {Bonus = 1;}
     CountdownStartTime = CurrentTime;
     ShowBonusLamps();
 
@@ -2044,6 +2045,10 @@ int CountdownBonus(boolean curStateChanged) {
   //we want more slow jamz
   //unsigned long countdownDelayTime = 250 - (Bonus * 3);
   unsigned long countdownDelayTime = 350;
+  if (StallBallMode) { 
+    countdownDelayTime = 3000;
+    
+    }
 
   if ((CurrentTime - LastCountdownReportTime) > countdownDelayTime) {
 
@@ -2380,7 +2385,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (CurrentTime < LeftInlaneLastHitTime + 3000) {
             AddToBonusArrows(1);
             CurrentScores[CurrentPlayer] += (Bonus * 2000 * WildFyreMultiplier);
-            // todo: bonus collect whoop below
             PlaySoundEffect(SOUND_EFFECT_LANE_COLLECT);
           } else {
             CurrentScores[CurrentPlayer] += (1000 * WildFyreMultiplier);
@@ -2411,7 +2415,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL + CurrentTime%4);
             } else {
-              //todo bonus collect whoop
               PlaySoundEffect(SOUND_EFFECT_BONUS_COLLECT);
             }
           }
