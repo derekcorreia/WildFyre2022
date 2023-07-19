@@ -2008,7 +2008,7 @@ int ManageGameMode() {
               ShowPlayerScores(0xFF, false, false);
               PlayBackgroundSong(SOUND_EFFECT_NONE);
               StopAudio();
-              if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%7);
+              if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%6);
               if (CurrentBallInPlay < BallsPerGame) PlaySoundEffect(SOUND_EFFECT_BALL_OVER);
               returnState = MACHINE_STATE_COUNTDOWN_BONUS;
             }
