@@ -686,7 +686,7 @@ void ShowDropTargetLamps(){
   if (Num3BankCompletions > 1){
     RPU_SetLampState(LAMP_4K_3BANK, 1);
   } else {
-    RPU_SetLampState(LAMP_2X_BONUS_3BANK, 0);
+    RPU_SetLampState(LAMP_4K_3BANK, 0);
   }
 }
 
