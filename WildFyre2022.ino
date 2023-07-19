@@ -282,6 +282,7 @@ boolean ExtraBallCollected = false;
 boolean SpecialCollected = false;
 boolean ShowingModeStats = false;
 boolean HasPlayedSSThisBall = false;
+boolean RestartWildFyre = false;
 
 unsigned long CurrentScores[4];
 unsigned long BallFirstSwitchHitTime = 0;
@@ -294,9 +295,7 @@ unsigned long ScoreAdditionAnimationStartTime;
 unsigned long LastRemainingAnimatedScoreShown;
 unsigned long ScoreMultiplier;
 
-// byte DropTargetLampArray[] = {DROP_TARGET_1, DROP_TARGET_2, DROP_TARGET_3, DROP_TARGET_4, DROP_TARGET_5};
 byte DropTarget3BankSwitchArray[] = {SW_3DROP_1, SW_3DROP_2, SW_3DROP_3};
-
 byte DropTarget4BankSwitchArray[] = {SW_4DROP_1, SW_4DROP_2, SW_4DROP_3, SW_4DROP_4};
 byte DropTarget4BankWildLampArray [] = {LAMP_WILD_W, LAMP_WILD_I, LAMP_WILD_L, LAMP_WILD_D};
 byte DropTarget4BankFyreLampArray [] = {LAMP_FYRE_F, LAMP_FYRE_Y, LAMP_FYRE_R, LAMP_FYRE_E};
@@ -332,9 +331,6 @@ unsigned long BonusTargetHitTime;
 unsigned long FourBankCompleteTime;
 unsigned long RightInlaneLastHitTime = 0;
 unsigned long LeftInlaneLastHitTime = 0;
-
-
-boolean WizardScoring;
 
 unsigned long LastInlaneHitTime;
 unsigned long BonusXAnimationStart;
@@ -1750,6 +1746,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     ExtraBallCollected = false;
     SpecialCollected = false;
     HasPlayedSSThisBall = false;
+    RestartWildFyre = false;
 
     // Start appropriate mode music
     if (RPU_ReadSingleSwitchState(SW_OUTHOLE)) {
@@ -1779,9 +1776,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
     ScoreAdditionAnimationStartTime = 0;
     BonusXAnimationStart = 0;
     LastSpinnerHit = 0;
-    //    PlayBackgroundSongBasedOnLevel(StarLevel[CurrentPlayer]);
     TenPointPhase = 0;
-    WizardScoring = false;
   }
 
   Reset3Bank();
@@ -1861,6 +1856,10 @@ int ManageGameMode() {
       if (GameModeStartTime == 0) {
         GameModeStartTime = CurrentTime;
         GameModeEndTime = CurrentTime + WILDFYRE_DOUBLE_TIME;
+        if (RestartWildFyre) {
+          GameModeEndTime = CurrentTime + 30000;
+          RestartWildFyre = false;
+        }
         WildFyreMultiplier = 2;
         PlaySoundEffect(SOUND_EFFECT_WF_START1 + CurrentTime%3);
         PlayBackgroundSong(SOUND_EFFECT_WF_BG);
@@ -2196,7 +2195,12 @@ void ValidatePlayfield (){
     TiltThroughTime = CurrentTime;
     PlayBackgroundSong(SOUND_EFFECT_BG_SOUND + BGSoundTracker);
   }
-  if (GameMode == GAME_MODE_SS) {GameMode = GAME_MODE_UNSTRUCTURED_PLAY;}
+  if (GameMode == GAME_MODE_SS) {
+    if (WildFyreRestart){
+      GameMode = GAME_MODE_WILDFYRE;
+      GameModeStartTime = 0;
+    } else {GameMode = GAME_MODE_UNSTRUCTURED_PLAY;}
+  }
 }
 
 int RunGamePlayMode(int curState, boolean curStateChanged) {
@@ -2259,13 +2263,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         char buf[128];
         sprintf(buf, "Switch Hit = %d\n", switchHit);
         Serial.write(buf);
-      }
-
-      if (WizardScoring) {
-        if (switchHit != SW_SLAM && switchHit != SW_TILT) {
-          //          PlaySoundEffect(SOUND_EFFECT_WIZARD_SCORE);
-          CurrentScores[CurrentPlayer] += WIZARD_SWITCH_SCORE;
-        }
       }
 
       switch (switchHit) {
