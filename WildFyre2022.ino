@@ -1511,7 +1511,7 @@ void Handle4BankDropSwitch (byte switchHit){
           }
           Reset4Bank();
 
-          if (Num4BankCompletions == DropsUntilWildFyre) {SetGameMode(GAME_MODE_WILDFYRE);}
+          if (Num4BankCompletions == DropsUntilWildFyre && !StallBallMode) {SetGameMode(GAME_MODE_WILDFYRE);}
         }
 }
 
