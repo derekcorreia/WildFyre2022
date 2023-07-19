@@ -1,7 +1,7 @@
 # Wild Fyre Reignyted
 
 ## Skill Shot
-At the beginning of each ball, one of the top ejects will be pulsing. Hit the flashing eject before any other switches to score the skill shot for 15,000 points.
+At the beginning of each ball, one of the top ejects will be pulsing. Hit the flashing eject before any other switches to score the skill shot for 10,000 points.
 
 ## Ball Save
 After the playfield has been validated by hitting a switch, the shoot again light in the middle of the playfield will pulse to indicate ball save is available. If the player drains while the light is illuminated, the ball will be returned to the shooter lane. This effect can only happen one time per ball.
@@ -9,12 +9,17 @@ After the playfield has been validated by hitting a switch, the shoot again ligh
 ## Wild Fyre Drop Bank
 Dropping the targets on the Wild Fyre bank will light the spinner for 500 points per spin instead of the default 100 points.
 
-Completing the target bank twice in one ball will immediately start Wild Fyre scoring. For 15 seconds, all scoring is doubled with the exception of bonus collects. Dropping the bank again while in Wild Fyre Scoring will add an additional 20 seconds to double scoring for each completion.
+Completing the target bank twice in one ball will immediately start Wild Fyre scoring. For 20 seconds, all scoring is doubled with the exception of bonus collects. Dropping the bank again while in Wild Fyre Scoring will add an additional 20 seconds to double scoring for each completion.
 
 Wild Fyre scoring can be reachieved after it is extinguished in the same ball by completing an additional 3 drop target banks.
 
 A total of 3 completions of the Wild Fyre bank in a ball will light Extra Ball. 
 A total of 4 completions of the Wild Fyre bank in a ball will light special on the left return.
+
+## Top Ejects and Sharpshooter 
+Hitting any of the top ejects awards 3,000 points. The first time that 1-2-3 ejects are made in a single ball, the player will enter Sharpshooter mode. The ball will be forcibly drained and ejected back to the shooter lane. Two ejects at the top will be illuminated for 25,000 points. Shooting any eject or hitting any other switch will return the player to regular play. The top ejects will be worth 4,000 for the rest of the ball.
+
+Entering Sharpshooter mode while in Wild Fyre scoring will temporarily pause Wild Fyre scoring. You will be awarded 30 seconds of Wild Fyre scoring after exiting Sharpshooter.
 
 ## Bonus and Bonus Multipliers
 Bonus is earned by hitting any switch and target labeled advance bonus. Bonus value is maxed at 30,000 points.
@@ -26,9 +31,6 @@ Bonus multipliers can be earned by completing either of two tasks:
 Completing either of these objectives in a single ball will award 2x bonus, while completing both objectives in a single ball will award 5x bonus.
 
 Bonus is collected at the end of a ball provided a player hasn't tilted. Hitting the Collect Bonus eject at the top of the left loop will also collect bonus, inclusive of multipliers, at any point during the ball.
-
-## Top Ejects
-Completing each of the three top ejects will increase the value of the ejects from 3,000 points to 4,000 points for the remainder of the ball in play.
 
 ## Arrow Rollover
 The arrow rollover in the right loop will award 1,000 points and advance the arrow towards achieving double bonus. Once double bonus has been earned by advancing the arrow 3 times, the rollover is worth 5,000 points.
@@ -54,7 +56,8 @@ Wild Fyre Reignyted contains a mode to facilitate the play of Stallball. Stallba
 Wild Fyre Reignyted contains the following software support for stallball in the stallball mode:
 * Any time a ball is stalled into an eject, the machine will yell "STALL" loudly to help players identify stalls.
 * Other sound effects on the ejects are eliminated so the "STALL" sound can be heard clearly.
-* Ball save is disabled during Stallball mode
+* Ball save is disabled during Stallball mode.
+* Entering Wild Fyre scoring and Sharpshooter mode are not possible.
 * A cheeky soundclip is played upon draining to humiliate/remind your players that they aren't playing anymore this round.
 
 To enter Stallball Mode:
@@ -62,5 +65,5 @@ To enter Stallball Mode:
 * If done correctly, a sound effect will indicate the game is in Stallball Mode.
 
 To exit Stallball Mode:
-* Drain 40 times, or
+* Drain 12 times, or
 * Power cycle the machine

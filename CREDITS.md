@@ -26,7 +26,27 @@ Ultimate thanks to Jordan Knights, who puts up with many pinball machines appear
 * And a very special thanks to all of the players at The Lower Playfield, who tested and provided feedback on many builds of this. It wouldn't have been possible without you.
 
 ## License
-The code of Wild Fyre Reignyted is licensed under a Creative Commons Attribution-Noncommercial-Share Alike license. You are free to share and remix the work provided you attribute the author and do not use the work for commercial purposes. If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license.
+The code of Wild Fyre Reignyted is based on RetroPinUpgrade and Trident2020, modified from October 2022 to present, and as such, is distributed under the same license.
+
+RetroPinUpgrade ("RPU") is licensed under GPLv3. 
+
+    I, Dick Hamill, the author of this program disclaim all copyright
+    in order to make this program freely available in perpetuity to
+    anyone who would like to use it. Dick Hamill, 3/31/2023
+
+    RPU is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    RPU is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    See <https://www.gnu.org/licenses/>.
+
+For more information please see the included LICENSE file.
 
 Ghosts I-IV is licensed under a Creative Commons Attribution-Noncommercial-Share Alike license. You are free to share and remix the work provided you attribute the author and do not use the work for commercial purposes. If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license.
 

@@ -11,19 +11,12 @@
   DCO Todo:
 
   What Next:
-          xxBonusCountdown needs to be implemented/lamps need to be reviewed
-          xxEB/Special Handling
-          xxDecide what to do with the 4 bank/reset
-          xxTop lane skill shots (and switch handling in general)
-    Sharpshooter Mode
-    Wild Fyre Spinner on 2x 4bank completions
-    Bonus collect saucer
-    Music/Sound Effect Creation
-    Music/Sound Effect Linking
+    Sharpshooter Mode Sound FX
+    Wild Fyre -> Sharpshooter mode handling
     Attract Mode
     Code Cleanup from prior game
     Copy most of ManageGame from Trident
-
+    Write ADJUSTMENTS.md
 */
 
 
@@ -43,7 +36,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  714
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  718
 #define DEBUG_MESSAGES  1
 
 
@@ -87,7 +80,7 @@ boolean MachineStateChanged = true;
 #define GAME_MODE_UNSTRUCTURED_PLAY                 4
 #define GAME_MODE_WILDFYRE                          6
 #define GAME_MODE_WILDFYRE_END                      7
-#define GAME_MODE_SS_READY                          8
+#define GAME_MODE_SS_START                          8
 #define GAME_MODE_SS                                9
 #define GAME_MODE_SS_END                            10
 #define GAME_MODE_WIZARD_START                      32
@@ -288,6 +281,7 @@ boolean CurrentlyShowingBallSave = false;
 boolean ExtraBallCollected = false;
 boolean SpecialCollected = false;
 boolean ShowingModeStats = false;
+boolean HasPlayedSSThisBall = false;
 
 unsigned long CurrentScores[4];
 unsigned long BallFirstSwitchHitTime = 0;
@@ -352,8 +346,8 @@ unsigned long LastSpinnerHit;
 #define WIZARD_FINISHED_DURATION          5000
 #define WIZARD_SWITCH_SCORE               5000
 #define WIZARD_MODE_REWARD_SCORE          250000
-#define WILDFYRE_DOUBLE_TIME              15000
-#define WILDFYRE_EXTEND_TIME              16000
+#define WILDFYRE_DOUBLE_TIME              21000
+#define WILDFYRE_EXTEND_TIME              20000
 
 #define SPINNER_MAX_GOAL                  100
 
@@ -662,6 +656,10 @@ void ShowEjectLamps(){
     for (byte count=0; count<3; count++) {
       RPU_SetLampState(LAMP_TOP_EJECT_1 + count, (count == SkillShotEject), 0, (count == SkillShotEject)?200:0 );
     }
+  } else if (GameMode == GAME_MODE_SS){
+    for (byte count=0; count<3; count++) {
+      RPU_SetLampState(LAMP_TOP_EJECT_1 + count, (count != SkillShotEject), 0, (count != SkillShotEject)?200:0 );
+    }
   } else {
     //RPU_SetLampState(STAND_UP_PURPLE, CurrentStandupsHit&STANDUP_PURPLE_MASK);
     RPU_SetLampState(LAMP_TOP_EJECT_1, CurrentEjectsHit&EJECT_1_MASK);
@@ -684,7 +682,7 @@ void ShowDropTargetLamps(){
   if (Num3BankCompletions > 1){
     RPU_SetLampState(LAMP_4K_3BANK, 1);
   } else {
-    RPU_SetLampState(LAMP_2X_BONUS_3BANK, 0);
+    RPU_SetLampState(LAMP_4K_3BANK, 0);
   }
 }
 
@@ -1494,21 +1492,22 @@ void Handle4BankDropSwitch (byte switchHit){
           FourBankCompleteTime = CurrentTime;
             if (GameMode == GAME_MODE_WILDFYRE){
               GameModeEndTime = (GameModeEndTime + WILDFYRE_EXTEND_TIME);
-              //todo change to time extended callout
               PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
             }
+            //todo redefine so subsequent drops play noises
             if (Num4BankCompletions < 1) {
-                PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);
                 SpinnerLit = 1;
               };
             if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
             if (Num4BankCompletions == 4) {RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
             
             Num4BankCompletions++;
+            if ( DropsUntilWildFyre-Num4BankCompletions == 2) {PlaySoundEffect(SOUND_EFFECT_WF_2BANKS_LEFT);}
+            if ( DropsUntilWildFyre-Num4BankCompletions == 1) {PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);}
           }
           Reset4Bank();
 
-          if (Num4BankCompletions == DropsUntilWildFyre) {SetGameMode(GAME_MODE_WILDFYRE);}
+          if (Num4BankCompletions == DropsUntilWildFyre && !StallBallMode) {SetGameMode(GAME_MODE_WILDFYRE);}
         }
 }
 
@@ -1517,18 +1516,28 @@ void HandleTopEjectHit (byte switchHit){
     if (GameMode == GAME_MODE_SKILL_SHOT){
       if (switchHit == EjectSwitchArray[SkillShotEject] && StallBallMode == false){
         PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
-        CurrentScores[CurrentPlayer] += 15000;
+        CurrentScores[CurrentPlayer] += 10000;
       } else {
         PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
         CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
       }
-    } else {
+    } else if (GameMode == GAME_MODE_SS){
+      if (switchHit != EjectSwitchArray[SkillShotEject] && StallBallMode == false){
+        PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
+        CurrentScores[CurrentPlayer] += 25000;
+      } else {
+        PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
+        CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
+      }
+      GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
+    }
+    else {
       PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
       CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
     }
 
-    if (switchHit == SW_EJECT_1 && NumEjectSets > 0 ){
-      CurrentScores[CurrentPlayer] += (4000 * WildFyreMultiplier);
+    if (NumEjectSets > 0 ){
+      CurrentScores[CurrentPlayer] += (1000 * WildFyreMultiplier);
     }  
   }
   byte switchMask = (1<<(switchHit-21));
@@ -1541,6 +1550,11 @@ void HandleTopEjectHit (byte switchHit){
   if (CurrentEjectsHit==0x07){
     NumEjectSets++;
     CurrentEjectsHit = 0;
+    if (!HasPlayedSSThisBall && !StallBallMode) {
+      HasPlayedSSThisBall = true;
+      GameMode = GAME_MODE_SS_START;
+      GameModeStartTime = 0;
+    }
   }
   EjectTopSaucers();
 }
@@ -1735,6 +1749,7 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
 
     ExtraBallCollected = false;
     SpecialCollected = false;
+    HasPlayedSSThisBall = false;
 
     // Start appropriate mode music
     if (RPU_ReadSingleSwitchState(SW_OUTHOLE)) {
@@ -1829,6 +1844,16 @@ int ManageGameMode() {
       // If this is the first time in this mode
       if (GameModeStartTime == 0) {
         GameModeStartTime = CurrentTime;
+      }
+      break;
+
+    case GAME_MODE_SS_START:
+      if (GameModeStartTime == 0) {
+        GameModeStartTime = CurrentTime;
+        RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
+        RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
+        RPU_DisableSolenoidStack();
+        RPU_SetDisableFlippers(true);
       }
       break;
     
@@ -1950,32 +1975,39 @@ int ManageGameMode() {
       // Make sure the ball stays on the sensor for at least
       // 0.5 seconds to be sure that it's not bouncing
       if ((CurrentTime - BallTimeInTrough) > 500) {
-
         if (BallFirstSwitchHitTime == 0 && NumTiltWarnings <= MaxTiltWarnings) {
           // Nothing hit yet, so return the ball to the player
           RPU_PushToTimedSolenoidStack(SOL_OUTHOLE, 4, CurrentTime);
           BallTimeInTrough = 0;
           returnState = MACHINE_STATE_NORMAL_GAMEPLAY;
         } else {
-          CurrentScores[CurrentPlayer] += ScoreAdditionAnimation;
-          ScoreAdditionAnimationStartTime = 0;
-          ScoreAdditionAnimation = 0;
-          ShowPlayerScores(0xFF, false, false);
-          // if we haven't used the ball save, and we're under the time limit, then save the ball
-          if (!BallSaveUsed && !StallBallMode && ((CurrentTime - BallFirstSwitchHitTime)) < ((unsigned long)BallSaveNumSeconds * 1000)) {
-            RPU_PushToTimedSolenoidStack(SOL_OUTHOLE, 4, CurrentTime + 100);
-            BallSaveUsed = true;
-            PlaySoundEffect(SOUND_EFFECT_BALL_SAVE);
-            RPU_SetLampState(LAMP_SHOOT_AGAIN, 0);
-            BallTimeInTrough = CurrentTime;
-            returnState = MACHINE_STATE_NORMAL_GAMEPLAY;
+          if (GameMode == GAME_MODE_SS_START){
+            RPU_EnableSolenoidStack();
+            RPU_SetDisableFlippers(false);
+            RPU_PushToTimedSolenoidStack(SOL_OUTHOLE, 4, CurrentTime);
+            BallFirstSwitchHitTime = 0;
+            GameMode = GAME_MODE_SS;
           } else {
+            CurrentScores[CurrentPlayer] += ScoreAdditionAnimation;
+            ScoreAdditionAnimationStartTime = 0;
+            ScoreAdditionAnimation = 0;
             ShowPlayerScores(0xFF, false, false);
-            PlayBackgroundSong(SOUND_EFFECT_NONE);
-            StopAudio();
-            if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%7);
-            if (CurrentBallInPlay < BallsPerGame) PlaySoundEffect(SOUND_EFFECT_BALL_OVER);
-            returnState = MACHINE_STATE_COUNTDOWN_BONUS;
+            // if we haven't used the ball save, and we're under the time limit, then save the ball
+            if (!BallSaveUsed && !StallBallMode && ((CurrentTime - BallFirstSwitchHitTime)) < ((unsigned long)BallSaveNumSeconds * 1000)) {
+              RPU_PushToTimedSolenoidStack(SOL_OUTHOLE, 4, CurrentTime + 100);
+              BallSaveUsed = true;
+              PlaySoundEffect(SOUND_EFFECT_BALL_SAVE);
+              RPU_SetLampState(LAMP_SHOOT_AGAIN, 0);
+              BallTimeInTrough = CurrentTime;
+              returnState = MACHINE_STATE_NORMAL_GAMEPLAY;
+            } else {
+              ShowPlayerScores(0xFF, false, false);
+              PlayBackgroundSong(SOUND_EFFECT_NONE);
+              StopAudio();
+              if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%6);
+              if (CurrentBallInPlay < BallsPerGame) PlaySoundEffect(SOUND_EFFECT_BALL_OVER);
+              returnState = MACHINE_STATE_COUNTDOWN_BONUS;
+            }
           }
         }
       }
@@ -1998,6 +2030,7 @@ int CountdownBonus(boolean curStateChanged) {
   // If this is the first time through the countdown loop
   if (curStateChanged) {
     if (!StallBallMode) { PlayBackgroundSong(SOUND_EFFECT_BONUSCOUNTDOWN); }
+    if (StallBallMode) {Bonus = 1;}
     CountdownStartTime = CurrentTime;
     ShowBonusLamps();
 
@@ -2008,6 +2041,10 @@ int CountdownBonus(boolean curStateChanged) {
   //we want more slow jamz
   //unsigned long countdownDelayTime = 250 - (Bonus * 3);
   unsigned long countdownDelayTime = 350;
+  if (StallBallMode) { 
+    countdownDelayTime = 3000;
+    
+    }
 
   if ((CurrentTime - LastCountdownReportTime) > countdownDelayTime) {
 
@@ -2159,6 +2196,7 @@ void ValidatePlayfield (){
     TiltThroughTime = CurrentTime;
     PlayBackgroundSong(SOUND_EFFECT_BG_SOUND + BGSoundTracker);
   }
+  if (GameMode == GAME_MODE_SS) {GameMode = GAME_MODE_UNSTRUCTURED_PLAY;}
 }
 
 int RunGamePlayMode(int curState, boolean curStateChanged) {
@@ -2343,7 +2381,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (CurrentTime < LeftInlaneLastHitTime + 3000) {
             AddToBonusArrows(1);
             CurrentScores[CurrentPlayer] += (Bonus * 2000 * WildFyreMultiplier);
-            // todo: bonus collect whoop below
             PlaySoundEffect(SOUND_EFFECT_LANE_COLLECT);
           } else {
             CurrentScores[CurrentPlayer] += (1000 * WildFyreMultiplier);
@@ -2374,7 +2411,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL + CurrentTime%4);
             } else {
-              //todo bonus collect whoop
               PlaySoundEffect(SOUND_EFFECT_BONUS_COLLECT);
             }
           }
