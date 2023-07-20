@@ -12,7 +12,7 @@
 
   What Next:
     Sharpshooter Mode Sound FX
-    Wild Fyre -> Sharpshooter mode handling
+        xxWild Fyre -> Sharpshooter mode handling
     Attract Mode
     Code Cleanup from prior game
     Copy most of ManageGame from Trident
@@ -30,13 +30,11 @@
 #define USE_SCORE_OVERRIDES
 
 #if defined(RPU_OS_USE_WAV_TRIGGER) || defined(RPU_OS_USE_WAV_TRIGGER_1p3)
-//#include "SendOnlyWavTrigger.h"
-//wavTrigger wTrig;             // Our WAV Trigger object
 AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  718
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  719
 #define DEBUG_MESSAGES  1
 
 
@@ -308,7 +306,6 @@ byte EjectLampArray[] = {LAMP_TOP_EJECT_1, LAMP_TOP_EJECT_2, LAMP_TOP_EJECT_3};
 
 *********************************************************************/
 byte TotalSpins[4];
-byte LanePhase;
 byte RolloverPhase;
 byte TenPointPhase;
 byte LastAwardShotCalloutPlayed;
@@ -625,9 +622,6 @@ void ShowBonusXLamps() {
       RPU_SetLampState(LAMP_2X_BONUS, 0);
       RPU_SetLampState(LAMP_5X_BONUS, 0);
     }
-    //    RPU_SetLampState(LAMP_BONUS_2X, BonusX[CurrentPlayer]==2);
-    //    RPU_SetLampState(LAMP_BONUS_3X, BonusX[CurrentPlayer]==2);
-    //    RPU_SetLampState(LAMP_BONUS_5X, BonusX[CurrentPlayer]==2);
   }
 }
 
@@ -648,7 +642,6 @@ void ShowSpinnerLamp(){
 
 void ShowEjectLamps(){
   if (GameMode == GAME_MODE_SKILL_SHOT){
-    //RPU_SetLampState(DROP_TARGET_1, RPU_ReadSingleSwitchState(SW_DROP_TARGET_1)?0:1);
     for (byte count=0; count<3; count++) {
       RPU_SetLampState(LAMP_TOP_EJECT_1 + count, (count == SkillShotEject), 0, (count == SkillShotEject)?200:0 );
     }
@@ -657,7 +650,6 @@ void ShowEjectLamps(){
       RPU_SetLampState(LAMP_TOP_EJECT_1 + count, (count != SkillShotEject), 0, (count != SkillShotEject)?200:0 );
     }
   } else {
-    //RPU_SetLampState(STAND_UP_PURPLE, CurrentStandupsHit&STANDUP_PURPLE_MASK);
     RPU_SetLampState(LAMP_TOP_EJECT_1, CurrentEjectsHit&EJECT_1_MASK);
     RPU_SetLampState(LAMP_TOP_EJECT_2, CurrentEjectsHit&EJECT_2_MASK);
     RPU_SetLampState(LAMP_TOP_EJECT_3, CurrentEjectsHit&EJECT_3_MASK);
@@ -692,18 +684,6 @@ void ShowBonusXArrowLamps(){
   }
   RPU_SetLampState(LAMP_10K_ROLLOVER, (BonusAdvanceArrows >= 3)?1:0);
 }
-
-
-void ShowLaneAndRolloverLamps() {
-  if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
-  } else {
-    //    RPU_SetLampState(LAMP_LEFT_INLANE, LanePhase&0x01);
-    //    RPU_SetLampState(LAMP_LEFT_OUTLANE, LanePhase&0x02);
-    //    RPU_SetLampState(LAMP_RIGHT_INLANE, LanePhase&0x01);
-    //    RPU_SetLampState(LAMP_RIGHT_OUTLANE, LanePhase&0x02);
-  }
-}
-
 
 void ShowShootAgainLamps() {
 
@@ -931,21 +911,6 @@ void ShowFlybyValue(byte numToShow, unsigned long timeBase) {
   RPU_SetDisplayBlank(CurrentPlayer, ~(~curMask | rightSideBlank));
 }
 
-/*
-
-  XXdddddd---
-           10
-          100
-         1000
-        10000
-       10x000
-      10xx000
-     10xxx000
-    10xxxx000
-   10xxxxx000
-  10xxxxxx000
-*/
-
 ////////////////////////////////////////////////////////////////////////////
 //
 //  Machine State Helper functions
@@ -1032,9 +997,8 @@ void AwardExtraBall() {
     SamePlayerShootsAgain = true;
     RPU_SetLampState(LAMP_SHOOT_AGAIN, SamePlayerShootsAgain);
     StopAudio();
+    //todo: need sound effect here?
     PlaySoundEffect(SOUND_EFFECT_EXTRA_BALL);
-    //    PlayBackgroundSongBasedOnLevel(StarLevel[CurrentPlayer]);
-    //ResumeBackgroundSong();
   }
 }
 
@@ -1770,7 +1734,6 @@ int InitNewBall(bool curStateChanged, byte playerNum, int ballNum) {
 
 
     ScoreMultiplier = 1;
-    LanePhase = 0;
     LastInlaneHitTime = 0;
     ScoreAdditionAnimation = 0;
     ScoreAdditionAnimationStartTime = 0;
@@ -1903,7 +1866,6 @@ int ManageGameMode() {
     RPU_DataRead(0);
 #endif
     ShowShootAgainLamps();
-    ShowLaneAndRolloverLamps();
   }
 
 
