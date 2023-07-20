@@ -15,7 +15,6 @@
         xxWild Fyre -> Sharpshooter mode handling
     Attract Mode
     Code Cleanup from prior game
-    Copy most of ManageGame from Trident
     Write ADJUSTMENTS.md
 */
 
