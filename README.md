@@ -6,6 +6,7 @@ https://github.com/RetroPinUpgrade
 
 ## [Wild Fyre Reignyted Rules](RULES.md)
 ## [Credits, Licenses, Acknowledgements](CREDITS.md)
+## [Adjustments Guide](ADJUSTMENTS.md)
 
 ### To use this code
 * Download the zip file (Code > Download ZIP) or clone the repository to your hard drive.  
