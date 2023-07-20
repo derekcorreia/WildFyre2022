@@ -1,7 +1,11 @@
 ## Wild Fyre Reignyted
 
+Wild Fyre Reignyted is a revised ruleset for the 1978 Stern Electronics pinball game "Wild Fyre". The code runs on an Ardunio board attached to the MPU utilizing RetroPinUpgrade to control the solenoids, lamps, and scoring. The code provided is clean re-implementation of rules that tries to add some modern sensibilities, improve the game for tournament/competitive play, add some fun new modes of play, and provide an idealized "Early Solid State" game "remastered".
+
 Note: This code has a dependency on Retro Pin Upgrade - it won't build without those files. A version is included in this repository, however, you may consider starting with the most recent library. More information is here:
 https://github.com/RetroPinUpgrade
+
+In order to use this on a pinball machine, a RPU-compatible hardware board is needed. It needs to be revision 3 capable or higher. More information on building or buying a board can be found at the RPU wiki: pinballindex.com
 
 
 ## [Wild Fyre Reignyted Rules](RULES.md)
