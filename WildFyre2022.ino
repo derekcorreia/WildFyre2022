@@ -80,9 +80,6 @@ boolean MachineStateChanged = true;
 #define GAME_MODE_SS_START                          8
 #define GAME_MODE_SS                                9
 #define GAME_MODE_SS_END                            10
-#define GAME_MODE_WIZARD_START                      32
-#define GAME_MODE_WIZARD                            33
-#define GAME_MODE_WIZARD_FINISHED                   34
 #define GAME_BASE_MODE                              0x0F
 
 
