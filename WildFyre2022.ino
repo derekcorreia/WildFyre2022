@@ -199,6 +199,10 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_STALLBALL_ELIM_5   170
 #define SOUND_EFFECT_STALLBALL_ELIM_6   171
 
+#define SOUND_EFFECT_SS_START           180
+#define SOUND_EFFECT_SS_SUCCESS         181
+#define SOUND_EFFECT_SS_FAIL            182
+
 #define SOUND_EFFECT_SHOOTER_GROOVE     101
 #define SOUND_EFFECT_SHOOTER_GROOVE2    102
 #define SOUND_EFFECT_SHOOTER_GROOVE3    103
@@ -1479,7 +1483,7 @@ void HandleTopEjectHit (byte switchHit){
       }
     } else if (GameMode == GAME_MODE_SS){
       if (switchHit != EjectSwitchArray[SkillShotEject] && StallBallMode == false){
-        PlaySoundEffect(SOUND_EFFECT_SKILL_SHOT + CurrentTime%5);
+        PlaySoundEffect(SOUND_EFFECT_SS_SUCCESS);
         CurrentScores[CurrentPlayer] += 25000;
       } else {
         PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
@@ -1507,6 +1511,7 @@ void HandleTopEjectHit (byte switchHit){
     NumEjectSets++;
     CurrentEjectsHit = 0;
     if (!HasPlayedSSThisBall && !StallBallMode) {
+      if (GameMode == GAME_MODE_WILDFYRE) {RestartWildFyre = true;}
       HasPlayedSSThisBall = true;
       GameMode = GAME_MODE_SS_START;
       GameModeStartTime = 0;
@@ -1804,6 +1809,8 @@ int ManageGameMode() {
     case GAME_MODE_SS_START:
       if (GameModeStartTime == 0) {
         GameModeStartTime = CurrentTime;
+        Audio.StopAllAudio();
+        PlaySoundEffect(SOUND_EFFECT_SS_START);
         RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
         RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
         RPU_DisableSolenoidStack();
@@ -2154,7 +2161,10 @@ void ValidatePlayfield (){
     PlayBackgroundSong(SOUND_EFFECT_BG_SOUND + BGSoundTracker);
   }
   if (GameMode == GAME_MODE_SS) {
-    if (WildFyreRestart){
+    BallSaveUsed = false;
+    BallFirstSwitchHitTime = CurrentTime;
+    TiltThroughTime = CurrentTime;
+    if (RestartWildFyre){
       GameMode = GAME_MODE_WILDFYRE;
       GameModeStartTime = 0;
     } else {GameMode = GAME_MODE_UNSTRUCTURED_PLAY;}
