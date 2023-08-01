@@ -2273,43 +2273,42 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         //DCO CODE INLANES 
         case SW_LEFT_OUTLANE:
         case SW_RIGHT_OUTLANE:
+          ValidatePlayfield();
           CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           AddToBonus(2);
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
-          ValidatePlayfield();
           break;
         case SW_LEFT_RETURN:
+          ValidatePlayfield();
           CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           LeftInlaneLastHitTime = CurrentTime;
           PlaySoundEffect(SOUND_EFFECT_FIRE);
-          // TKTK: logic for special being lit needs to be added
           if (RPU_ReadLampState(LAMP_LEFT_RETURN_SPECIAL)) {
             AwardSpecial();
             RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 0);
           }
-          ValidatePlayfield();
           break;
         case SW_LEFT_MID_LANE:
           // INFO: Playfield reads "Reset Bottom Targets"
+          ValidatePlayfield();
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           if (Num4BankCompletions > 1) {
             Reset4Bank();
           }
-          ValidatePlayfield();
           break;
         case SW_RIGHT_MID_LANE:
+          ValidatePlayfield();
           CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           AddToBonus(1);
-          ValidatePlayfield();
           break;
         case SW_RIGHT_RETURN:
+          ValidatePlayfield();
           // INFO: Playfield reads "5k and EB when lit"
           CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
           RightInlaneLastHitTime = CurrentTime;
           PlaySoundEffect(SOUND_EFFECT_FIRE);
-          ValidatePlayfield();
           if (RPU_ReadLampState(LAMP_EXTRA_BALL) == 1){
             AwardExtraBall();
             RPU_SetLampState(LAMP_EXTRA_BALL, 0);
@@ -2319,34 +2318,35 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_1:
         case SW_EJECT_2:
         case SW_EJECT_3:
+          ValidatePlayfield();
           //if (SaucerHitTime==0 || (CurrentTime-SaucerHitTime)>500) {
           if (TopEjectHitTime==0 || (CurrentTime-TopEjectHitTime)>500){
             TopEjectHitTime = CurrentTime;
             HandleTopEjectHit(switchHit);
           }
-          ValidatePlayfield();
           break;
 
         case SW_AB_LEFT:
         case SW_AB_TOP:
+          ValidatePlayfield();
           AddToBonus(1);
           CurrentScores[CurrentPlayer] += (10 * WildFyreMultiplier);
-          ValidatePlayfield();
           break;
 
         case SW_ADVANCE_TARGET:
           // INFO: Playfield reads "1000 and advance arrow"
+          ValidatePlayfield();
           if (BonusTargetHitTime == 0 || (CurrentTime-BonusTargetHitTime)>500) {
             if (CurrentTime < LeftInlaneLastHitTime + 3000) {AddToBonusArrows(1);}
             BonusTargetHitTime = CurrentTime;
             AddToBonusArrows(1);
             CurrentScores[CurrentPlayer] += (1000 * WildFyreMultiplier);
           }
-          ValidatePlayfield();
           break;
 
         case SW_ADVANCE_ARROW:
           // INFO: Playfield reads "1000 and advance arrow"
+          ValidatePlayfield();
           AddToBonusArrows(1);
           if (CurrentTime < LeftInlaneLastHitTime + 3000) {
             AddToBonusArrows(1);
@@ -2356,11 +2356,10 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             CurrentScores[CurrentPlayer] += (1000 * WildFyreMultiplier);
             if (BonusAdvanceArrows >=4 ) {CurrentScores[CurrentPlayer] += (4000 * WildFyreMultiplier);}
           }
-          ValidatePlayfield();
           break;
 
         case SW_SPINNER:
-          //byte inlaneMultiplier = 1;
+          ValidatePlayfield();
           if (CurrentTime < RightInlaneLastHitTime + 3000) {inlaneMultiplier = 2;} else {inlaneMultiplier = 1;}
           PlaySoundEffect(SOUND_EFFECT_SPINNER);
           if (SpinnerLit == 1){
@@ -2368,12 +2367,11 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           } else {
             CurrentScores[CurrentPlayer] += ( 100 * inlaneMultiplier * WildFyreMultiplier);
           }
-          ValidatePlayfield();
           break;
 
         case SW_EJECT_BONUS:
           //For now, let's add bonus and eject until we can get some thought around rules
-          //CountdownBonus(false);
+          ValidatePlayfield();
           if (BonusEjectHitTime==0 || (CurrentTime-BonusEjectHitTime)>500){
             BonusEjectHitTime = CurrentTime;
             CurrentScores[CurrentPlayer] += (Bonus * 2000 * BonusX);
@@ -2384,39 +2382,38 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
               PlaySoundEffect(SOUND_EFFECT_BONUS_COLLECT);
             }
           }
-          ValidatePlayfield();
           RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
           break;
 
         case SW_3DROP_1:
         case SW_3DROP_2:
         case SW_3DROP_3:
-          Handle3BankDropSwitch(switchHit);
           ValidatePlayfield();
+          Handle3BankDropSwitch(switchHit);
           break;
 
         case SW_4DROP_1:
         case SW_4DROP_2:
         case SW_4DROP_3:
         case SW_4DROP_4:
-          Handle4BankDropSwitch(switchHit);
           ValidatePlayfield();
+          Handle4BankDropSwitch(switchHit);
           break;
 
         case SW_LEFT_BUMPER:
         case SW_CENTER_BUMPER:
         case SW_RIGHT_BUMPER:
+          ValidatePlayfield();
           PlaySoundEffect(SOUND_EFFECT_POP + CurrentTime%4);
           //PlaySoundEffect(SOUND_EFFECT_POP3);
           CurrentScores[CurrentPlayer] += (100 * WildFyreMultiplier);
-          ValidatePlayfield();
           break;
 
         case SW_LEFT_SLINGSHOT:
         case SW_RIGHT_SLINGSHOT:
+          ValidatePlayfield();
           CurrentScores[CurrentPlayer] += (10 * WildFyreMultiplier);
           PlaySoundEffect(SOUND_EFFECT_SLING_SHOT);
-          ValidatePlayfield();
           break;
         case SW_COIN_1:
         case SW_COIN_2:
