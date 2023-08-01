@@ -2167,7 +2167,12 @@ void ValidatePlayfield (){
     if (RestartWildFyre){
       GameMode = GAME_MODE_WILDFYRE;
       GameModeStartTime = 0;
-    } else {GameMode = GAME_MODE_UNSTRUCTURED_PLAY;}
+      PlayBackgroundSong(SOUND_EFFECT_WF_BG);
+
+    } else {
+      GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
+      PlayBackgroundSong(SOUND_EFFECT_BG_SOUND + BGSoundTracker);
+      }
   }
 }
 
