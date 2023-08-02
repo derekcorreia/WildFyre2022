@@ -69,7 +69,9 @@ boolean MachineStateChanged = true;
 #define MACHINE_STATE_ADJUST_EXTRA_BALL_AWARD   -25
 #define MACHINE_STATE_ADJUST_SPECIAL_AWARD      -26
 #define MACHINE_STATE_ADJUST_DIM_LEVEL          -27
-#define MACHINE_STATE_ADJUST_DONE               -28
+#define MACHINE_STATE_ADJUST_WF_TIMER           -28
+#define MACHINE_STATE_ADJUST_SS_AWARD           -29
+#define MACHINE_STATE_ADJUST_DONE               -30
 
 // The lower 4 bits of the Game Mode are modes, the upper 4 are for frenzies
 // and other flags that carry through different modes
@@ -98,6 +100,8 @@ boolean MachineStateChanged = true;
 #define EEPROM_TOURNAMENT_SCORING_BYTE  107
 #define EEPROM_SCROLLING_SCORES_BYTE    110
 #define EEPROM_DIM_LEVEL_BYTE           113
+#define EEPROM_WILDFYRE_TIMER_BYTE      114
+#define EEPROM_SHARPSHOOTER_AWARD_BYTE  115
 #define EEPROM_EXTRA_BALL_SCORE_BYTE    140
 #define EEPROM_SPECIAL_SCORE_BYTE       144
 
@@ -180,8 +184,6 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_SHOOT_AGAIN        60
 #define SOUND_EFFECT_TILT               61
 #define SOUND_EFFECT_VOICE_EXTRA_BALL             81
-#define SOUND_EFFECT_WIZARD_MODE_START            88
-#define SOUND_EFFECT_WIZARD_MODE_FINISHED         89
 #define SOUND_EFFECT_BACKGROUND_1       90
 #define SOUND_EFFECT_BACKGROUND_2       91
 #define SOUND_EFFECT_BACKGROUND_3       92
@@ -292,6 +294,9 @@ unsigned long ScoreAdditionAnimation;
 unsigned long ScoreAdditionAnimationStartTime;
 unsigned long LastRemainingAnimatedScoreShown;
 unsigned long ScoreMultiplier;
+unsigned long SharpshooterAwardValue = 25000;
+unsigned long WildfyreDoubleTime = 25000;
+unsigned long WildfyreExtendTime = 21000;
 
 byte DropTarget3BankSwitchArray[] = {SW_3DROP_1, SW_3DROP_2, SW_3DROP_3};
 byte DropTarget4BankSwitchArray[] = {SW_4DROP_1, SW_4DROP_2, SW_4DROP_3, SW_4DROP_4};
@@ -333,17 +338,6 @@ unsigned long LastInlaneHitTime;
 unsigned long BonusXAnimationStart;
 unsigned long LastSpinnerHit;
 
-#define WIZARD_START_DURATION             5000
-#define WIZARD_DURATION                   39000
-#define WIZARD_DURATION_SECONDS           39
-#define WIZARD_FINISHED_DURATION          5000
-#define WIZARD_SWITCH_SCORE               5000
-#define WIZARD_MODE_REWARD_SCORE          250000
-#define WILDFYRE_DOUBLE_TIME              21000
-#define WILDFYRE_EXTEND_TIME              20000
-
-#define SPINNER_MAX_GOAL                  100
-
 void ReadStoredParameters() {
   HighScore = RPU_ReadULFromEEProm(RPU_HIGHSCORE_EEPROM_START_BYTE, 10000);
   Credits = RPU_ReadByteFromEEProm(RPU_CREDITS_EEPROM_BYTE);
@@ -378,10 +372,16 @@ void ReadStoredParameters() {
   ScrollingScores = (ReadSetting(EEPROM_SCROLLING_SCORES_BYTE, 1)) ? true : false;
 
   ExtraBallValue = RPU_ReadULFromEEProm(EEPROM_EXTRA_BALL_SCORE_BYTE);
-  if (ExtraBallValue % 1000 || ExtraBallValue > 100000) ExtraBallValue = 20000;
+  if (ExtraBallValue % 1000 || ExtraBallValue > 100000) ExtraBallValue = 25000;
 
   SpecialValue = RPU_ReadULFromEEProm(EEPROM_SPECIAL_SCORE_BYTE);
-  if (SpecialValue % 1000 || SpecialValue > 100000) SpecialValue = 40000;
+  if (SpecialValue % 1000 || SpecialValue > 100000) SpecialValue = 35000;
+
+  WildfyreDoubleTime = RPU_ReadULFromEEProm(EEPROM_WILDFYRE_TIMER_BYTE);
+  //TKTK: more to do here?
+
+  SharpshooterAwardValue = RPU_ReadULFromEEProm(EEPROM_SHARPSHOOTER_AWARD_BYTE);
+  if (SharpshooterAwardValue % 1000 || SharpshooterAwardValue > 100000) SharpshooterAwardValue = 25000;
 
   DimLevel = ReadSetting(EEPROM_DIM_LEVEL_BYTE, 2);
   if (DimLevel < 2 || DimLevel > 3) DimLevel = 2;
@@ -1068,6 +1068,7 @@ int RunSelfTest(int curState, boolean curStateChanged) {
         case MACHINE_STATE_ADJUST_BALL_SAVE:
           AdjustmentType = ADJ_TYPE_LIST;
           NumAdjustmentValues = 5;
+          AdjustmentValues[0] = 0;
           AdjustmentValues[1] = 5;
           AdjustmentValues[2] = 8;
           AdjustmentValues[3] = 10;
@@ -1086,9 +1087,10 @@ int RunSelfTest(int curState, boolean curStateChanged) {
           CurrentAdjustmentStorageByte = EEPROM_TOURNAMENT_SCORING_BYTE;
           break;
         case MACHINE_STATE_ADJUST_TILT_WARNING:
-          NumAdjustmentValues = 2;
+          NumAdjustmentValues = 3;
           AdjustmentValues[1] = 1;
           AdjustmentValues[2] = 2;
+          AdjustmentValues[3] = 0;
           CurrentAdjustmentByte = &MaxTiltWarnings;
           CurrentAdjustmentStorageByte = EEPROM_TILT_WARNING_BYTE;
           break;
@@ -1122,6 +1124,24 @@ int RunSelfTest(int curState, boolean curStateChanged) {
           AdjustmentType = ADJ_TYPE_SCORE_WITH_DEFAULT;
           CurrentAdjustmentUL = &SpecialValue;
           CurrentAdjustmentStorageByte = EEPROM_SPECIAL_SCORE_BYTE;
+          break;
+
+        case MACHINE_STATE_ADJUST_WF_TIMER:
+          AdjustmentType = ADJ_TYPE_LIST;
+          NumAdjustmentValues = 5;
+          AjustmentValues[0] = 0;
+          AjustmentValues[1] = 15000;
+          AjustmentValues[2] = 30000;
+          AjustmentValues[3] = 45000;
+          AjustmentValues[0] = 60000;
+          CurrentAdjustmentUL = &WildfyreDoubleTime;
+          CurrentAdjustmentStorageByte = EEPROM_WILDFYRE_TIMER_BYTE;
+          break;
+
+        case MACHINE_STATE_ADJUST_SS_AWARD:
+          AdjustmentType = ADJ_TYPE_SCORE_WITH_DEFAULT;
+          CurrentAdjustmentUL = &SharpshooterAwardValue;
+          CurrentAdjustmentStorageByte = EEPROM_SHARPSHOOTER_AWARD_BYTE;
           break;
 
         case MACHINE_STATE_ADJUST_DIM_LEVEL:
@@ -1451,7 +1471,7 @@ void Handle4BankDropSwitch (byte switchHit){
           if (FourBankCompleteTime == 0 || (CurrentTime-FourBankCompleteTime)>1000){
           FourBankCompleteTime = CurrentTime;
             if (GameMode == GAME_MODE_WILDFYRE){
-              GameModeEndTime = (GameModeEndTime + WILDFYRE_EXTEND_TIME);
+              GameModeEndTime = (GameModeEndTime + WildfyreExtendTime);
               PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
             }
             //todo redefine so subsequent drops play noises
@@ -1821,7 +1841,7 @@ int ManageGameMode() {
     case GAME_MODE_WILDFYRE:
       if (GameModeStartTime == 0) {
         GameModeStartTime = CurrentTime;
-        GameModeEndTime = CurrentTime + WILDFYRE_DOUBLE_TIME;
+        GameModeEndTime = CurrentTime + WildfyreDoubleTime;
         if (RestartWildFyre) {
           GameModeEndTime = CurrentTime + 30000;
           RestartWildFyre = false;

@@ -30,6 +30,7 @@ In order to use this on a pinball machine, a RPU-compatible hardware board is ne
     * #define RPU_OS_USE_WAV_TRIGGER_1p3 
   * The WAV files for the Wav Trigger board can be found here:  
     * Currently unavailable, this will be available at full release  
+* Review the Adjustments guide and set relevant settings, including free play if desired.
     
   
 Refer to the RPU Wiki for instructions on how to build the hardware.  
