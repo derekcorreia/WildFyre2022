@@ -135,7 +135,7 @@ Pressing the Start button will toggle this value.
 
 If tournament scoring is enabled, this will control the scoring value given to a player who collects an extra ball from the left inlane when lit.
 
-In this mode, the score is changed with the Credit/Reset button. Pressing the button once increases the score by 1,000 points. Pressing and holding the Credit/ Reset button will gradually increase the score. Double-clicking the Credit/Reset button will return the given score to zero.
+In this mode, the score is changed with the Start button. Pressing the button once increases the score by 1,000 points. Pressing and holding the Credit/ Reset button will gradually increase the score. Double-clicking the Start button will return the given score to zero.
 
 Recommended Value: 25000
 
@@ -144,7 +144,7 @@ Recommended Value: 25000
 
 If tournament scoring is enabled, this will control the scoring value given to a player who collects a lit Special award.
 
-In this mode, the score is changed with the Credit/Reset button. Pressing the button once increases the score by 1,000 points. Pressing and holding the Credit/ Reset button will gradually increase the score. Double-clicking the Credit/Reset button will return the given score to zero.
+In this mode, the score is changed with the Start button. Pressing the button once increases the score by 1,000 points. Pressing and holding the Credit/ Reset button will gradually increase the score. Double-clicking the Start button will return the given score to zero.
 
 Recommended Value: 35000
 
@@ -155,7 +155,7 @@ The Dim Level adjustment allows the operator to choose the duty cycle of â€œdimâ
 
 When in this mode, the bonus lamps will toggle between the dim value and the full-lit value (every second). This allows the operator to see the contrast between the two.
 
-Pressing the Credit/Reset button will toggle the dim level between 2 & 3.
+Pressing the Start button will toggle the dim level between 2 & 3.
 
 ## Wild Fyre Time Award
 **Credit display: 23**
@@ -170,6 +170,6 @@ Recommended Value: 30
 
 Controls the value awarded to a player who plunges a lit Eject during the Sharpshooter mode.
 
-In this mode, the score is changed with the Credit/Reset button. Pressing the button once increases the score by 1,000 points. Pressing and holding the Credit/ Reset button will gradually increase the score. Double-clicking the Credit/Reset button will return the given score to zero.
+In this mode, the score is changed with the Start button. Pressing the button once increases the score by 1,000 points. Pressing and holding the Credit/ Reset button will gradually increase the score. Double-clicking the Start button will return the given score to zero.
 
 Recommended Value: 25000
