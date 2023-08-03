@@ -33,7 +33,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  731
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  802
 #define DEBUG_MESSAGES  1
 
 
@@ -58,20 +58,20 @@ boolean MachineStateChanged = true;
 #define MACHINE_STATE_BALL_OVER       100
 #define MACHINE_STATE_MATCH_MODE      110
 
-#define MACHINE_STATE_ADJUST_FREEPLAY           -17
-#define MACHINE_STATE_ADJUST_BALL_SAVE          -18
-#define MACHINE_STATE_ADJUST_MUSIC_LEVEL        -19
-#define MACHINE_STATE_ADJUST_TOURNAMENT_SCORING -20
-#define MACHINE_STATE_ADJUST_TILT_WARNING       -21
-#define MACHINE_STATE_ADJUST_AWARD_OVERRIDE     -22
-#define MACHINE_STATE_ADJUST_BALLS_OVERRIDE     -23
-#define MACHINE_STATE_ADJUST_SCROLLING_SCORES   -24
-#define MACHINE_STATE_ADJUST_EXTRA_BALL_AWARD   -25
-#define MACHINE_STATE_ADJUST_SPECIAL_AWARD      -26
-#define MACHINE_STATE_ADJUST_DIM_LEVEL          -27
-#define MACHINE_STATE_ADJUST_WF_TIMER           -28
-#define MACHINE_STATE_ADJUST_SS_AWARD           -29
-#define MACHINE_STATE_ADJUST_DONE               -30
+#define MACHINE_STATE_ADJUST_FREEPLAY           -18
+#define MACHINE_STATE_ADJUST_BALL_SAVE          -19
+#define MACHINE_STATE_ADJUST_MUSIC_LEVEL        -20
+#define MACHINE_STATE_ADJUST_TOURNAMENT_SCORING -21
+#define MACHINE_STATE_ADJUST_TILT_WARNING       -22
+#define MACHINE_STATE_ADJUST_AWARD_OVERRIDE     -23
+#define MACHINE_STATE_ADJUST_BALLS_OVERRIDE     -24
+#define MACHINE_STATE_ADJUST_SCROLLING_SCORES   -25
+#define MACHINE_STATE_ADJUST_EXTRA_BALL_AWARD   -26
+#define MACHINE_STATE_ADJUST_SPECIAL_AWARD      -27
+#define MACHINE_STATE_ADJUST_DIM_LEVEL          -28
+#define MACHINE_STATE_ADJUST_WF_TIMER           -29
+#define MACHINE_STATE_ADJUST_SS_AWARD           -30
+#define MACHINE_STATE_ADJUST_DONE               -31
 
 // The lower 4 bits of the Game Mode are modes, the upper 4 are for frenzies
 // and other flags that carry through different modes
@@ -100,7 +100,7 @@ boolean MachineStateChanged = true;
 #define EEPROM_TOURNAMENT_SCORING_BYTE  107
 #define EEPROM_SCROLLING_SCORES_BYTE    110
 #define EEPROM_DIM_LEVEL_BYTE           113
-#define EEPROM_WILDFYRE_TIMER_BYTE      114
+#define EEPROM_WILDFYRE_TIMER_BYTE      150
 #define EEPROM_SHARPSHOOTER_AWARD_BYTE  115
 #define EEPROM_EXTRA_BALL_SCORE_BYTE    140
 #define EEPROM_SPECIAL_SCORE_BYTE       144
@@ -295,7 +295,7 @@ unsigned long ScoreAdditionAnimationStartTime;
 unsigned long LastRemainingAnimatedScoreShown;
 unsigned long ScoreMultiplier;
 unsigned long SharpshooterAwardValue = 25000;
-unsigned long WildfyreDoubleTime = 25000;
+byte WildfyreDoubleTime = 30;
 unsigned long WildfyreExtendTime = 21000;
 
 byte DropTarget3BankSwitchArray[] = {SW_3DROP_1, SW_3DROP_2, SW_3DROP_3};
@@ -377,7 +377,7 @@ void ReadStoredParameters() {
   SpecialValue = RPU_ReadULFromEEProm(EEPROM_SPECIAL_SCORE_BYTE);
   if (SpecialValue % 1000 || SpecialValue > 100000) SpecialValue = 35000;
 
-  WildfyreDoubleTime = RPU_ReadULFromEEProm(EEPROM_WILDFYRE_TIMER_BYTE);
+  WildfyreDoubleTime = ReadSetting(EEPROM_WILDFYRE_TIMER_BYTE, 30);
   //TKTK: more to do here?
 
   SharpshooterAwardValue = RPU_ReadULFromEEProm(EEPROM_SHARPSHOOTER_AWARD_BYTE);
@@ -1060,6 +1060,11 @@ int RunSelfTest(int curState, boolean curStateChanged) {
       AdjustmentValues[1] = 1;
       TempValue = 0;
 
+      if (DEBUG_MESSAGES) {
+        char buf[129];
+        sprintf(buf, "State # %d\n", curState);
+        Serial.write(buf);
+      }
       switch (curState) {
         case MACHINE_STATE_ADJUST_FREEPLAY:
           CurrentAdjustmentByte = (byte *)&FreePlayMode;
@@ -1076,6 +1081,19 @@ int RunSelfTest(int curState, boolean curStateChanged) {
           CurrentAdjustmentByte = &BallSaveNumSeconds;
           CurrentAdjustmentStorageByte = EEPROM_BALL_SAVE_BYTE;
           break;
+
+        case MACHINE_STATE_ADJUST_WF_TIMER:
+          AdjustmentType = ADJ_TYPE_LIST;
+          NumAdjustmentValues = 5;
+          AdjustmentValues[0] = 0;
+          AdjustmentValues[1] = 15;
+          AdjustmentValues[2] = 30;
+          AdjustmentValues[3] = 45;
+          AdjustmentValues[4] = 60;
+          CurrentAdjustmentByte = &WildfyreDoubleTime;
+          CurrentAdjustmentStorageByte = EEPROM_WILDFYRE_TIMER_BYTE;
+          break;
+
         case MACHINE_STATE_ADJUST_MUSIC_LEVEL:
           AdjustmentType = ADJ_TYPE_MIN_MAX_DEFAULT;
           AdjustmentValues[1] = 3;
@@ -1087,10 +1105,11 @@ int RunSelfTest(int curState, boolean curStateChanged) {
           CurrentAdjustmentStorageByte = EEPROM_TOURNAMENT_SCORING_BYTE;
           break;
         case MACHINE_STATE_ADJUST_TILT_WARNING:
+          AdjustmentType = ADJ_TYPE_LIST;
           NumAdjustmentValues = 3;
-          AdjustmentValues[1] = 1;
-          AdjustmentValues[2] = 2;
-          AdjustmentValues[3] = 0;
+          AdjustmentValues[0] = 1;
+          AdjustmentValues[1] = 2;
+          AdjustmentValues[2] = 0;
           CurrentAdjustmentByte = &MaxTiltWarnings;
           CurrentAdjustmentStorageByte = EEPROM_TILT_WARNING_BYTE;
           break;
@@ -1124,18 +1143,6 @@ int RunSelfTest(int curState, boolean curStateChanged) {
           AdjustmentType = ADJ_TYPE_SCORE_WITH_DEFAULT;
           CurrentAdjustmentUL = &SpecialValue;
           CurrentAdjustmentStorageByte = EEPROM_SPECIAL_SCORE_BYTE;
-          break;
-
-        case MACHINE_STATE_ADJUST_WF_TIMER:
-          AdjustmentType = ADJ_TYPE_LIST;
-          NumAdjustmentValues = 5;
-          AjustmentValues[0] = 0;
-          AjustmentValues[1] = 15000;
-          AjustmentValues[2] = 30000;
-          AjustmentValues[3] = 45000;
-          AjustmentValues[0] = 60000;
-          CurrentAdjustmentUL = &WildfyreDoubleTime;
-          CurrentAdjustmentStorageByte = EEPROM_WILDFYRE_TIMER_BYTE;
           break;
 
         case MACHINE_STATE_ADJUST_SS_AWARD:
@@ -1504,12 +1511,12 @@ void HandleTopEjectHit (byte switchHit){
     } else if (GameMode == GAME_MODE_SS){
       if (switchHit != EjectSwitchArray[SkillShotEject] && StallBallMode == false){
         PlaySoundEffect(SOUND_EFFECT_SS_SUCCESS);
-        CurrentScores[CurrentPlayer] += 25000;
+        CurrentScores[CurrentPlayer] += SharpshooterAwardValue;
       } else {
         PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
         CurrentScores[CurrentPlayer] += (3000 * WildFyreMultiplier);
       }
-      GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
+      //GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
     }
     else {
       PlaySoundEffect(SOUND_EFFECT_EJECT_1 + CurrentTime%3);
@@ -1829,7 +1836,7 @@ int ManageGameMode() {
     case GAME_MODE_SS_START:
       if (GameModeStartTime == 0) {
         GameModeStartTime = CurrentTime;
-        Audio.StopAllAudio();
+        StopAudio();
         PlaySoundEffect(SOUND_EFFECT_SS_START);
         RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
         RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
@@ -1841,7 +1848,7 @@ int ManageGameMode() {
     case GAME_MODE_WILDFYRE:
       if (GameModeStartTime == 0) {
         GameModeStartTime = CurrentTime;
-        GameModeEndTime = CurrentTime + WildfyreDoubleTime;
+        GameModeEndTime = CurrentTime + (WildfyreDoubleTime * 1000);
         if (RestartWildFyre) {
           GameModeEndTime = CurrentTime + 30000;
           RestartWildFyre = false;
@@ -2338,12 +2345,12 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_1:
         case SW_EJECT_2:
         case SW_EJECT_3:
-          ValidatePlayfield();
           //if (SaucerHitTime==0 || (CurrentTime-SaucerHitTime)>500) {
           if (TopEjectHitTime==0 || (CurrentTime-TopEjectHitTime)>500){
             TopEjectHitTime = CurrentTime;
             HandleTopEjectHit(switchHit);
           }
+          ValidatePlayfield();
           break;
 
         case SW_AB_LEFT:

@@ -7,7 +7,7 @@ Note that many items do NOT have default overrides, so it's *highly advised* tha
 # Tests
 
 ## Lamps
-**Credit display: 00, Ball in Play: 01**
+**Credit display: 00, Ball in Play: 02**
 
 Upon entering, all lamps will flash. Pressing the start button will cycle through the individual lamps and change the player 1 score to the lamp flashing.
 
@@ -40,7 +40,7 @@ In these three setting modes (1, 2, and 3), the scores are changed with the Cred
 The Award Score Override (Self Test mode 17) can be set to 0-7, or 99. A value of 0-7 overrides the setting of the DIP switches to award either an extra ball or a credit for the given score. A value of 99 turns off the override so the DIP switch (Switch 6) setting will be used.
 
 ## High Score to Date
-**Credit display: 04**
+**Credit display: 01**
 
 When a player’s score exceeds the High Score to Date, the new High Score is recorded and shown during the Attract Mode. Depending on the DIP switch setting (Switch 15), the game will award 3 Credits when a high score is reached.
 
@@ -83,19 +83,19 @@ If off, the machine will require a positive credit count in order to start a gam
 If Free Play is on, hitting the Start button will start a game (if in Attract mode), add a player (if ball 1 is in play), or restart the game if ball 2 or more is in play.
 
 ## Ball Save
-**Credit display: 13**
+**Credit display: 17**
 
 Player 1 score display will show the current number of seconds of ball save given to a player after validating the playfield. 
 
 Options: 0, 5, 8, 10, 15. Recommended setting: 8
 
 ## Music Level
-**Credit display: 14**
+**Credit display: 18**
 
 Not currently implemented.
 
 ## Tournament Scoring Mode
-**Credit display: 15**
+**Credit display: 19**
 
 Controls if extra balls and specials are awarded, or are instead awarded as points. 0 in the player 1 display indicates that Tournament Scoring is off, and the game will award Extra Balls or Credits for special. A 1 will award points instead.
 
