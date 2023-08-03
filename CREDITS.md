@@ -9,6 +9,7 @@
     * 5 Ghosts I by Nine Inch Nails (Reznor/Ross)
     * 12 Ghosts II by Nine Inch Nails (Reznor/Ross)
     * 22 Ghosts III by Nine Inch Nails (Reznor/Ross/Cortini/Viglione)
+    * 33 Ghosts IV by Nine Inch Nails (Reznor/Ross/Cortini)
 
 ## Thanks and Acknowlegements
 This project is really the culmination of conversations with many folks to make the ruleset better. What started as a simple "Make it possible to light 5x on any ball" and "Lighting the Spinner via player control" grew to a ruleset that adds some great ideas but keeps the overall scoring features of the game intact. I hope you enjoy it.
