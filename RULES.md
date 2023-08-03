@@ -9,17 +9,21 @@ After the playfield has been validated by hitting a switch, the shoot again ligh
 ## Wild Fyre Drop Bank
 Dropping all the targets on the Wild Fyre drop target bank will light the spinner for 500 points per spin instead of the default 100 points.
 
-Completing the target bank twice in one ball will immediately start Wild Fyre scoring. For 20 seconds, all scoring is doubled with the exception of bonus collects. Dropping the bank again while in Wild Fyre Scoring will add an additional 20 seconds to double scoring for each completion.
+Completing the target bank twice in one ball will immediately start Wild Fyre scoring. For 30 seconds, all scoring is doubled with the exception of bonus collects. Dropping the bank again while in Wild Fyre Scoring will add an additional 20 seconds to double scoring for each completion.
 
 Wild Fyre scoring can be reachieved after it is extinguished in the same ball by completing an additional 3 drop target banks.
 
 A total of 3 completions of the Wild Fyre bank in a ball will light Extra Ball. 
 A total of 4 completions of the Wild Fyre bank in a ball will light special on the left return.
 
+Wild Fyre Scoring time can be modified in the operator adjustments.
+
 ## Top Ejects and Sharpshooter 
 Hitting any of the top ejects awards 3,000 points. The first time that all of the 1-2-3 ejects are made in a single ball, the player will enter Sharpshooter mode. The ball will be immediately and forcibly drained, then returned to the shooter lane. Two ejects at the top will be illuminated for 25,000 points. Shooting any eject or hitting any other switch will return the player to regular play. The top ejects will be worth 4,000 for the rest of the ball.
 
 Entering Sharpshooter mode while in Wild Fyre scoring will temporarily pause Wild Fyre scoring. You will be awarded 30 seconds of Wild Fyre scoring after exiting Sharpshooter.
+
+The value awarded for a successful Sharpshooter plunge can be modified in the operator adjustments.
 
 ## Bonus and Bonus Multipliers
 Bonus is earned by hitting any switch, lane, and target labeled advance bonus. Bonus value is maxed at 30,000 points.
