@@ -1550,13 +1550,13 @@ void HandleTopEjectHit (byte switchHit){
 void Show4BankLamps(){
   if (Num4BankCompletions < 1){
     for (byte count=0; count<4; count++) {
-      RPU_SetLampState(DropTarget4BankWildLampArray[count], RPU_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?0:1);
+      RPU_SetLampState(DropTarget4BankWildLampArray[count], RPU_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?1:0);
     }
   }
   if (Num4BankCompletions >= 1){
     for (byte count=0; count<4; count++) {
       RPU_SetLampState(DropTarget4BankWildLampArray[count], 1);
-      RPU_SetLampState(DropTarget4BankFyreLampArray[count], RPU_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?0:1);
+      RPU_SetLampState(DropTarget4BankFyreLampArray[count], RPU_ReadSingleSwitchState(DropTarget4BankSwitchArray[count])?1:0);
     }
   }
 }
