@@ -33,7 +33,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  802
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  811
 #define DEBUG_MESSAGES  1
 
 
@@ -2401,7 +2401,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (BonusEjectHitTime==0 || (CurrentTime-BonusEjectHitTime)>500){
             BonusEjectHitTime = CurrentTime;
             int BonusToCount = (Bonus * 2000);
-            CurrentScores[CurrentPlayer] += (BonusToCount * BonusX);
+            CurrentScores[CurrentPlayer] += (BonusToCount * ((unsigned long)BonusX));
             Bonus = 1;
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL + CurrentTime%4);
