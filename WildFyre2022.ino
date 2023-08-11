@@ -2397,11 +2397,11 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
 
         case SW_EJECT_BONUS:
-          //For now, let's add bonus and eject until we can get some thought around rules
           ValidatePlayfield();
           if (BonusEjectHitTime==0 || (CurrentTime-BonusEjectHitTime)>500){
             BonusEjectHitTime = CurrentTime;
-            CurrentScores[CurrentPlayer] += (Bonus * 2000 * BonusX);
+            int BonusToCount = (Bonus * 2000);
+            CurrentScores[CurrentPlayer] += (BonusToCount * BonusX);
             Bonus = 1;
             if (StallBallMode) {
               PlaySoundEffect(SOUND_EFFECT_STALLBALL_STALL + CurrentTime%4);
