@@ -120,7 +120,8 @@
 #define RPU_OS_TIMING_LOOP_PADDING_IN_MICROSECONDS  70
 
 // Fast boards might need a slower lamp strobe
-#define RPU_OS_SLOW_DOWN_LAMP_STROBE  0
+// commenting out per dickhamill
+//#define RPU_OS_SLOW_DOWN_LAMP_STROBE  0
 
 #ifdef RPU_OS_USE_AUX_LAMPS
 #define RPU_NUM_LAMP_BANKS 11
