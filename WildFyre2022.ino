@@ -371,16 +371,16 @@ void ReadStoredParameters() {
 
   ScrollingScores = (ReadSetting(EEPROM_SCROLLING_SCORES_BYTE, 1)) ? true : false;
 
-  ExtraBallValue = RPU_ReadULFromEEProm(EEPROM_EXTRA_BALL_SCORE_BYTE);
+  ExtraBallValue = RPU_ReadULFromEEProm(EEPROM_EXTRA_BALL_SCORE_BYTE, 25000);
   if (ExtraBallValue % 1000 || ExtraBallValue > 100000) ExtraBallValue = 25000;
 
-  SpecialValue = RPU_ReadULFromEEProm(EEPROM_SPECIAL_SCORE_BYTE);
+  SpecialValue = RPU_ReadULFromEEProm(EEPROM_SPECIAL_SCORE_BYTE, 35000);
   if (SpecialValue % 1000 || SpecialValue > 100000) SpecialValue = 35000;
 
   WildfyreDoubleTime = ReadSetting(EEPROM_WILDFYRE_TIMER_BYTE, 30);
   //TKTK: more to do here?
 
-  SharpshooterAwardValue = RPU_ReadULFromEEProm(EEPROM_SHARPSHOOTER_AWARD_BYTE);
+  SharpshooterAwardValue = RPU_ReadULFromEEProm(EEPROM_SHARPSHOOTER_AWARD_BYTE, 25000);
   if (SharpshooterAwardValue % 1000 || SharpshooterAwardValue > 100000) SharpshooterAwardValue = 25000;
 
   DimLevel = ReadSetting(EEPROM_DIM_LEVEL_BYTE, 2);
