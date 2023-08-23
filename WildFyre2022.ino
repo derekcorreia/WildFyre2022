@@ -305,6 +305,8 @@ byte DropTarget4BankFyreLampArray [] = {LAMP_FYRE_F, LAMP_FYRE_Y, LAMP_FYRE_R, L
 byte EjectSwitchArray[] = {SW_EJECT_1, SW_EJECT_2, SW_EJECT_3};
 byte EjectLampArray[] = {LAMP_TOP_EJECT_1, LAMP_TOP_EJECT_2, LAMP_TOP_EJECT_3};
 
+#define GLOBAL_GRACE_PERIOD  2000
+
 /*********************************************************************
 
     Game Specific State Variables
@@ -1984,7 +1986,7 @@ int ManageGameMode() {
             ScoreAdditionAnimation = 0;
             ShowPlayerScores(0xFF, false, false);
             // if we haven't used the ball save, and we're under the time limit, then save the ball
-            if (!BallSaveUsed && !StallBallMode && ((CurrentTime - BallFirstSwitchHitTime)) < ((unsigned long)BallSaveNumSeconds * 1000)) {
+            if (!BallSaveUsed && !StallBallMode && ((CurrentTime - BallFirstSwitchHitTime)) < ((unsigned long)BallSaveNumSeconds * 1000)+GLOBAL_GRACE_PERIOD) {
               RPU_PushToTimedSolenoidStack(SOL_OUTHOLE, 4, CurrentTime + 100);
               BallSaveUsed = true;
               PlaySoundEffect(SOUND_EFFECT_BALL_SAVE);
