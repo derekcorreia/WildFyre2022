@@ -33,7 +33,7 @@
 // Hardware Rev 100 (different order of magnitude because it's a different approach) plugs into the CPU socket
 // Hardware Rev 101 - first RPU CPU interposer release board
 // Hardware Rev 102 - second RPU (with display and WIFI socket)
-#define RPU_OS_HARDWARE_REV   3
+#define RPU_OS_HARDWARE_REV   102
 
 // Available Architectures (0-9 is for B/S Boards, 10-19 is for W)
 //  RPU_MPU_ARCHITECTURE 1 = -17, -35, 100, 200, or compatible
@@ -120,8 +120,8 @@
 #define RPU_OS_TIMING_LOOP_PADDING_IN_MICROSECONDS  70
 
 // Fast boards might need a slower lamp strobe
-// commenting out per dickhamill
-//#define RPU_OS_SLOW_DOWN_LAMP_STROBE  0
+// commenting out per dickhamill debugging r3
+#define RPU_OS_SLOW_DOWN_LAMP_STROBE  0
 
 #ifdef RPU_OS_USE_AUX_LAMPS
 #define RPU_NUM_LAMP_BANKS 11
