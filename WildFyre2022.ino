@@ -33,7 +33,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  822
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  829
 #define DEBUG_MESSAGES  1
 
 
@@ -306,6 +306,7 @@ byte EjectSwitchArray[] = {SW_EJECT_1, SW_EJECT_2, SW_EJECT_3};
 byte EjectLampArray[] = {LAMP_TOP_EJECT_1, LAMP_TOP_EJECT_2, LAMP_TOP_EJECT_3};
 
 #define GLOBAL_GRACE_PERIOD  2000
+#define BANK_DEBOUNCE 250
 
 /*********************************************************************
 
@@ -326,6 +327,7 @@ byte AdvancedViaArrows = 0;
 byte inlaneMultiplier = 1;
 byte StartButtonHits = 0;
 byte BGSoundTracker = 0;
+byte Last4BankHit = 0;
 
 boolean StallBallMode = false;
 
@@ -333,6 +335,7 @@ unsigned long TopEjectHitTime;
 unsigned long BonusEjectHitTime;
 unsigned long BonusTargetHitTime;
 unsigned long FourBankCompleteTime;
+unsigned long FourBankLastHitTime = 0;
 unsigned long RightInlaneLastHitTime = 0;
 unsigned long LeftInlaneLastHitTime = 0;
 
@@ -1467,37 +1470,41 @@ void AddToBonusArrows(byte amountToAdd = 1) {
 }
 
 void Handle4BankDropSwitch (byte switchHit){
-  CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
-  PlaySoundEffect(SOUND_EFFECT_4BANK + Num4BankTargets%4);
-  Num4BankTargets++;
-  // Lights for drops? Gotta check that
-  // we want to light the spinner if the 4 bank has been completed
-  if (  RPU_ReadSingleSwitchState(SW_4DROP_1) &&
-        RPU_ReadSingleSwitchState(SW_4DROP_2) &&
-        RPU_ReadSingleSwitchState(SW_4DROP_3) &&
-        RPU_ReadSingleSwitchState(SW_4DROP_4))
-        {
-          if (FourBankCompleteTime == 0 || (CurrentTime-FourBankCompleteTime)>1000){
-          FourBankCompleteTime = CurrentTime;
-            if (GameMode == GAME_MODE_WILDFYRE){
-              GameModeEndTime = (GameModeEndTime + WildfyreExtendTime);
-              PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
+  if ((switchHit != Last4BankHit) || FourBankLastHitTime < (CurrentTime + BANK_DEBOUNCE)){
+    Last4BankHit = switchHit;
+    FourBankLastHitTime = CurrentTime;
+    CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
+    PlaySoundEffect(SOUND_EFFECT_4BANK + Num4BankTargets%4);
+    Num4BankTargets++;
+    // Lights for drops? Gotta check that
+    // we want to light the spinner if the 4 bank has been completed
+    if (  RPU_ReadSingleSwitchState(SW_4DROP_1) &&
+          RPU_ReadSingleSwitchState(SW_4DROP_2) &&
+          RPU_ReadSingleSwitchState(SW_4DROP_3) &&
+          RPU_ReadSingleSwitchState(SW_4DROP_4))
+          {
+            if (FourBankCompleteTime == 0 || (CurrentTime-FourBankCompleteTime)>1000){
+            FourBankCompleteTime = CurrentTime;
+              if (GameMode == GAME_MODE_WILDFYRE){
+                GameModeEndTime = (GameModeEndTime + WildfyreExtendTime);
+                PlaySoundEffect(SOUND_EFFECT_WF_EXTEND); 
+              }
+              //todo redefine so subsequent drops play noises
+              if (Num4BankCompletions < 1) {
+                  SpinnerLit = 1;
+                };
+              if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
+              if (Num4BankCompletions == 4) {RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
+              
+              Num4BankCompletions++;
+              if ( DropsUntilWildFyre-Num4BankCompletions == 2) {PlaySoundEffect(SOUND_EFFECT_WF_2BANKS_LEFT);}
+              if ( DropsUntilWildFyre-Num4BankCompletions == 1) {PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);}
             }
-            //todo redefine so subsequent drops play noises
-            if (Num4BankCompletions < 1) {
-                SpinnerLit = 1;
-              };
-            if (Num4BankCompletions == 3) {RPU_SetLampState(LAMP_EXTRA_BALL, 1);}
-            if (Num4BankCompletions == 4) {RPU_SetLampState(LAMP_LEFT_RETURN_SPECIAL, 1);}
-            
-            Num4BankCompletions++;
-            if ( DropsUntilWildFyre-Num4BankCompletions == 2) {PlaySoundEffect(SOUND_EFFECT_WF_2BANKS_LEFT);}
-            if ( DropsUntilWildFyre-Num4BankCompletions == 1) {PlaySoundEffect(SOUND_EFFECT_WF_1BANK_LEFT);}
-          }
-          Reset4Bank();
+            Reset4Bank();
 
-          if (Num4BankCompletions == DropsUntilWildFyre && !StallBallMode) {SetGameMode(GAME_MODE_WILDFYRE);}
-        }
+            if (Num4BankCompletions == DropsUntilWildFyre && !StallBallMode) {SetGameMode(GAME_MODE_WILDFYRE);}
+          }
+  }
 }
 
 void HandleTopEjectHit (byte switchHit){
@@ -2322,7 +2329,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           ValidatePlayfield();
           PlaySoundEffect(SOUND_EFFECT_LANES + CurrentTime%3);
           CurrentScores[CurrentPlayer] += (500 * WildFyreMultiplier);
-          if (Num4BankCompletions > 1) {
+          if (Num4BankCompletions > 1 && GameMode != GAME_MODE_WILDFYRE) {
             Reset4Bank();
           }
           break;

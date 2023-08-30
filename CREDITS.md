@@ -16,12 +16,16 @@ This project is really the culmination of conversations with many folks to make 
 
 Ultimate thanks to Jordan Knights, who puts up with many pinball machines appearing at home and long nights of screaming at them. 
 
+Special Thanks: 
+
 * Allison O'Neill
 * Brian O'Neill
+* David Owen
 * Dick Hamill
 * Jonathan Coulton
 * Michael Murphy
 * Mitch Curtis
+* Nate Straz
 * Ryan O'Donnell
 * Scott Danesi
 * Wifijt, from the RPU Discord
