@@ -33,7 +33,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  901
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  902
 #define DEBUG_MESSAGES  1
 
 
@@ -312,6 +312,7 @@ byte AttractVA0[] = {19, 40, 46, 23, 47};
 byte AttractVA1[] = {4, 5, 2, 3, 0, 1, 14, 13};
 byte AttractVA2[] = {18, 22, 17, 21, 25, 26, 8, 9, 27};
 byte AttractVA3[] = {10, 11, 35, 43, 31, 8, 9, 10, 28, 29, 30};
+byte AttractWFA[] = {14, 18, 22, 26, 13, 17, 21, 25}
 
 
 #define GLOBAL_GRACE_PERIOD  1500
@@ -1454,9 +1455,11 @@ int RunAttractMode(int curState, boolean curStateChanged) {
       AttractLastLadderTime = CurrentTime;
     }
   } else if (attractPlayfieldPhase == 2) {
-    if ((CurrentTime - AttractLastLadderTime) > 200) {
+    if ((CurrentTime - AttractLastLadderTime) > 300) {
+      RPU_TurnOffAllLamps();
       Bonus = AttractLastLadderBonus;
       ShowBonusLamps();
+      RPU_SetLampState(AttractLastLadderBonus % 8, 1);
       AttractLastLadderBonus += 1;
       if (AttractLastLadderBonus > 20) AttractLastLadderBonus = 0;
       AttractLastLadderTime = CurrentTime;
