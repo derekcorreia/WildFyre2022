@@ -33,7 +33,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  829
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  901
 #define DEBUG_MESSAGES  1
 
 
@@ -304,6 +304,18 @@ byte DropTarget4BankWildLampArray [] = {LAMP_WILD_W, LAMP_WILD_I, LAMP_WILD_L, L
 byte DropTarget4BankFyreLampArray [] = {LAMP_FYRE_F, LAMP_FYRE_Y, LAMP_FYRE_R, LAMP_FYRE_E};
 byte EjectSwitchArray[] = {SW_EJECT_1, SW_EJECT_2, SW_EJECT_3};
 byte EjectLampArray[] = {LAMP_TOP_EJECT_1, LAMP_TOP_EJECT_2, LAMP_TOP_EJECT_3};
+
+//Attract Mode Lamp Arrays
+byte AttractOddArray[] = {47, 46, 40, 1, 2, 5, 13, 17, 21, 25, 9, 11, 35, 28, 31};
+byte AttractEvenArray[] = {19, 23, 0, 3, 4, 14, 18, 22, 26, 8, 10, 43, 29, 30, 27 };
+byte AttractVA0[] = {19, 40};
+byte AttractVA1[] = {46, 23, 47};
+byte AttractVA2[] = {4, 5, 2, 3};
+byte AttractVA3[] = {0, 1, 14, 13};
+byte AttractVA4[] = {18, 22, 17, 21};
+byte AttractVA5[] = {25, 26, 8, 9, 27};
+byte AttractVA6[] = {10, 11, 35};
+byte AttractVA7[] = {43, 31, 8, 9, 10};
 
 #define GLOBAL_GRACE_PERIOD  2000
 #define BANK_DEBOUNCE 250
@@ -1001,7 +1013,7 @@ void AwardExtraBall() {
   } else {
     SamePlayerShootsAgain = true;
     RPU_SetLampState(LAMP_SHOOT_AGAIN, SamePlayerShootsAgain);
-    StopAudio();
+    //StopAudio();
     //todo: need sound effect here?
     PlaySoundEffect(SOUND_EFFECT_EXTRA_BALL);
   }
@@ -1396,8 +1408,95 @@ int RunAttractMode(int curState, boolean curStateChanged) {
 
   if (attractPlayfieldPhase < 2) {
     //ShowLampAnimation(1, 40, CurrentTime, 14, false, false);
-  } else if (attractPlayfieldPhase == 3) {
+    if ((CurrentTime - AttractLastLadderTime) > 200) {
+      RPU_TurnOffAllLamps();
+      
+      int rowToIlluminate = AttractLastLadderBonus % 8;
+      if (DEBUG_MESSAGES) {
+        char buf[129];
+        sprintf(buf, "Attract rem %d\n", rowToIlluminate);
+        Serial.write(buf);
+      }
+
+      switch (rowToIlluminate){
+        case 0:
+          for (byte l : AttractVA0){
+            RPU_SetLampState(l, 1);
+          }
+          for (byte l : AttractVA7){
+            //RPU_SetLampState(l, 1, 1);
+          }
+        case 1:
+          for (byte l : AttractVA1){
+            RPU_SetLampState(l, 1);
+          }
+          for (byte l : AttractVA0){
+            //RPU_SetLampState(l, 1, 1);
+          }
+        case 2:
+          for (byte l : AttractVA2){
+            RPU_SetLampState(l, 1);
+          }
+          for (byte l : AttractVA1){
+            //RPU_SetLampState(l, 1, 1);
+          }
+        case 3:
+          for (byte l : AttractVA3){
+            RPU_SetLampState(l, 1);
+          }
+          for (byte l : AttractVA2){
+            //RPU_SetLampState(l, 1, 1);
+          }
+        case 4:
+          for (byte l : AttractVA4){
+            RPU_SetLampState(l, 1);
+          }
+          for (byte l : AttractVA3){
+            //RPU_SetLampState(l, 1, 1);
+          }
+        case 5:
+          for (byte l : AttractVA5){
+            RPU_SetLampState(l, 1);
+          }
+          for (byte l : AttractVA4){
+            //RPU_SetLampState(l, 1, 1);
+          }
+        case 6:
+          for (byte l : AttractVA6){
+            RPU_SetLampState(l, 1);
+          }
+          for (byte l : AttractVA5){
+            //RPU_SetLampState(l, 1, 1);
+          }
+        case 7:
+          for (byte l : AttractVA7){
+            RPU_SetLampState(l, 1);
+          }
+          for (byte l : AttractVA6){
+            //RPU_SetLampState(l, 1, 1);
+          }
+      }
+      AttractLastLadderBonus += 1;
+      if (AttractLastLadderBonus > 8) AttractLastLadderBonus = 1;
+      AttractLastLadderTime = CurrentTime;
+    }
+  } else if (attractPlayfieldPhase > 2) {
     //ShowLampAnimation(0, 40, CurrentTime, 11, false, false);
+    if ((CurrentTime - AttractLastLadderTime) > 600) {
+      RPU_TurnOffAllLamps();
+      if (AttractLastLadderBonus % 2 == 1){
+        for (byte l : AttractOddArray){
+          RPU_SetLampState(l, 1);
+        }
+      } else {
+        for (byte l : AttractEvenArray){
+          RPU_SetLampState(l, 1);
+        }
+      }
+      AttractLastLadderBonus += 1;
+      if (AttractLastLadderBonus > 20) AttractLastLadderBonus = 1;
+      AttractLastLadderTime = CurrentTime;
+    }
   } else if (attractPlayfieldPhase == 2) {
     if ((CurrentTime - AttractLastLadderTime) > 200) {
       Bonus = AttractLastLadderBonus;
