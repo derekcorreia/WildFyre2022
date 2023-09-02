@@ -308,14 +308,11 @@ byte EjectLampArray[] = {LAMP_TOP_EJECT_1, LAMP_TOP_EJECT_2, LAMP_TOP_EJECT_3};
 //Attract Mode Lamp Arrays
 byte AttractOddArray[] = {47, 46, 40, 1, 2, 5, 13, 17, 21, 25, 9, 11, 35, 28, 31};
 byte AttractEvenArray[] = {19, 23, 0, 3, 4, 14, 18, 22, 26, 8, 10, 43, 29, 30, 27 };
-byte AttractVA0[] = {19, 40};
-byte AttractVA1[] = {46, 23, 47};
-byte AttractVA2[] = {4, 5, 2, 3};
-byte AttractVA3[] = {0, 1, 14, 13};
-byte AttractVA4[] = {18, 22, 17, 21};
-byte AttractVA5[] = {25, 26, 8, 9, 27};
-byte AttractVA6[] = {10, 11, 35};
-byte AttractVA7[] = {43, 31, 8, 9, 10};
+byte AttractVA0[] = {19, 40, 46, 23, 47};
+byte AttractVA1[] = {4, 5, 2, 3, 0, 1, 14, 13};
+byte AttractVA2[] = {18, 22, 17, 21, 25, 26, 8, 9, 27};
+byte AttractVA3[] = {10, 11, 35, 43, 31, 8, 9, 10, 28, 29, 30};
+
 
 #define GLOBAL_GRACE_PERIOD  2000
 #define BANK_DEBOUNCE 250
@@ -1395,86 +1392,45 @@ int RunAttractMode(int curState, boolean curStateChanged) {
     AttractLastHeadMode = 3;
   }
 
-  byte attractPlayfieldPhase = ((CurrentTime / 5000) % 5);
+  byte attractPlayfieldPhase = ((CurrentTime / 11000) % 5);
 
   if (attractPlayfieldPhase != AttractLastPlayfieldMode) {
     RPU_TurnOffAllLamps();
     AttractLastPlayfieldMode = attractPlayfieldPhase;
-    if (attractPlayfieldPhase == 2) GameMode = GAME_MODE_SKILL_SHOT;
-    else GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
+    //if (attractPlayfieldPhase == 2) GameMode = GAME_MODE_SKILL_SHOT;
+    //else GameMode = GAME_MODE_UNSTRUCTURED_PLAY;
     AttractLastLadderBonus = 1;
     AttractLastLadderTime = CurrentTime;
   }
 
   if (attractPlayfieldPhase < 2) {
     //ShowLampAnimation(1, 40, CurrentTime, 14, false, false);
-    if ((CurrentTime - AttractLastLadderTime) > 200) {
+    if ((CurrentTime - AttractLastLadderTime) > 500) {
       RPU_TurnOffAllLamps();
       
-      int rowToIlluminate = AttractLastLadderBonus % 8;
+      int rowToIlluminate = AttractLastLadderBonus % 4;
       if (DEBUG_MESSAGES) {
         char buf[129];
         sprintf(buf, "Attract rem %d\n", rowToIlluminate);
         Serial.write(buf);
       }
 
-      switch (rowToIlluminate){
-        case 0:
-          for (byte l : AttractVA0){
-            RPU_SetLampState(l, 1);
-          }
-          for (byte l : AttractVA7){
-            //RPU_SetLampState(l, 1, 1);
-          }
-        case 1:
-          for (byte l : AttractVA1){
-            RPU_SetLampState(l, 1);
-          }
-          for (byte l : AttractVA0){
-            //RPU_SetLampState(l, 1, 1);
-          }
-        case 2:
-          for (byte l : AttractVA2){
-            RPU_SetLampState(l, 1);
-          }
-          for (byte l : AttractVA1){
-            //RPU_SetLampState(l, 1, 1);
-          }
-        case 3:
-          for (byte l : AttractVA3){
-            RPU_SetLampState(l, 1);
-          }
-          for (byte l : AttractVA2){
-            //RPU_SetLampState(l, 1, 1);
-          }
-        case 4:
-          for (byte l : AttractVA4){
-            RPU_SetLampState(l, 1);
-          }
-          for (byte l : AttractVA3){
-            //RPU_SetLampState(l, 1, 1);
-          }
-        case 5:
-          for (byte l : AttractVA5){
-            RPU_SetLampState(l, 1);
-          }
-          for (byte l : AttractVA4){
-            //RPU_SetLampState(l, 1, 1);
-          }
-        case 6:
-          for (byte l : AttractVA6){
-            RPU_SetLampState(l, 1);
-          }
-          for (byte l : AttractVA5){
-            //RPU_SetLampState(l, 1, 1);
-          }
-        case 7:
-          for (byte l : AttractVA7){
-            RPU_SetLampState(l, 1);
-          }
-          for (byte l : AttractVA6){
-            //RPU_SetLampState(l, 1, 1);
-          }
+      if (AttractLastLadderBonus % 4 == 0){
+        for (byte l : AttractVA0){
+          RPU_SetLampState(l, 1);
+        }
+      } else if (AttractLastLadderBonus % 4 == 1) {
+        for (byte l : AttractVA1){
+          RPU_SetLampState(l, 1);
+        }
+      } else if (AttractLastLadderBonus % 4 == 2) {
+        for (byte l : AttractVA2){
+          RPU_SetLampState(l, 1);
+        }
+      } else if (AttractLastLadderBonus % 4 == 3) {
+        for (byte l : AttractVA3){
+          RPU_SetLampState(l, 1);
+        }
       }
       AttractLastLadderBonus += 1;
       if (AttractLastLadderBonus > 8) AttractLastLadderBonus = 1;

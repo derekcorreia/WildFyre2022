@@ -28,8 +28,8 @@ Upon entering will show any closed switches in the player score boxes 1-4, in th
 
 # Adjustments
 
-## Award Score Levels 
-**Credit display: 01 through 03**
+## Award Score Levels
+**Credit display: 02 through 04**
 
 The game keeps three Award Score Levels. They are set using the Self Test switch (modes 1, 2, and 3). If an Award Score is set to zero, there is no award given. Otherwise, the award is controlled by the DIP switches (Switch 6) or the Award Score Override (Self Test mode 17). The current Award Score (0, 1, or 2) is shown in the Player 1 score box.
 
@@ -74,7 +74,7 @@ score has been beaten since this value was reset.
 **11 - Chute #3 coins**
 
 ## Free Play
-**Credit display: 12**
+**Credit display: 17**
 
 Player 1 score display will show a “0” meaning Free Play is OFF, or a “1” meaning Free Play is ON. The 0 and 1 are toggled by pressing the Start button. As soon as the value is toggled, it is written to memory and the machine can be reset into Free Play mode.
 
@@ -83,31 +83,31 @@ If off, the machine will require a positive credit count in order to start a gam
 If Free Play is on, hitting the Start button will start a game (if in Attract mode), add a player (if ball 1 is in play), or restart the game if ball 2 or more is in play.
 
 ## Ball Save
-**Credit display: 17**
+**Credit display: 18**
 
 Player 1 score display will show the current number of seconds of ball save given to a player after validating the playfield. 
 
 Options: 0, 5, 8, 10, 15. Recommended setting: 8
 
 ## Music Level
-**Credit display: 18**
+**Credit display: 19**
 
 Not currently implemented.
 
 ## Tournament Scoring Mode
-**Credit display: 19**
+**Credit display: 20**
 
 Controls if extra balls and specials are awarded, or are instead awarded as points. 0 in the player 1 display indicates that Tournament Scoring is off, and the game will award Extra Balls or Credits for special. A 1 will award points instead.
 
 ## Tilt Warnings
-**Credit display: 16**
+**Credit display: 21**
 
 Sets the number of times the tilt bob can touch the tilt ring and award a danger before tilting. Player 1 display shows the current value, hitting Start will cycle through the values. 
 
 Options: 0, 1, 2. Recommended setting: 1
 
 ## Award Score Override
-**Credit display: 17**
+**Credit display: 22**
 
 Normally, DIP switch 6 controls what the player gets for achieving an Award Score. DIP switch 6 set to “0” awards an extra ball, and “1” awards a credit. This override lets the operator set extra ball or credit for each of the 3 award scores (set in modes 1, 2, and 3) individually.
 
@@ -116,14 +116,14 @@ The Start button cycles through the values 0-7 and then jumps to 99. If set to 9
 TO BE DOCUMENTED
 
 ## Balls Per Game
-**Credit display: 18**
+**Credit display: 23**
 
 Normally, the balls per game (3 or 5) is controlled by DIP switch 7. This setting allows that to be overridden so the operator doesn’t have to go inside the head of the machine to change the value.
 
 Pressing the Start button cycles through 3, 5, and 99. A setting of 99 means that the balls per game will be set by DIP switch 7. Otherwise, the balls per game comes from this setting.
 
 ## Scrolling Scores
-**Credit display: 19**
+**Credit display: 24**
 
 When the player’s score exceeds 999,999, the scores will either wrap around to 0
 or they will begin to scroll. A setting of “0” in this parameter will make the scores wrap to 0. A setting of “1” will allow the scores to scroll through the 6-digit displays.
@@ -131,7 +131,7 @@ or they will begin to scroll. A setting of “0” in this parameter will make t
 Pressing the Start button will toggle this value.
 
 ## Extra Ball Award Value
-**Credit display: 20**
+**Credit display: 25**
 
 If tournament scoring is enabled, this will control the scoring value given to a player who collects an extra ball from the left inlane when lit.
 
@@ -140,7 +140,7 @@ In this mode, the score is changed with the Start button. Pressing the button on
 Recommended Value: 25000
 
 ## Special Award Value
-**Credit display: 21**
+**Credit display: 26**
 
 If tournament scoring is enabled, this will control the scoring value given to a player who collects a lit Special award.
 
@@ -149,7 +149,7 @@ In this mode, the score is changed with the Start button. Pressing the button on
 Recommended Value: 35000
 
 ## Dim Level
-**Credit display: 22**
+**Credit display: 27**
 
 The Dim Level adjustment allows the operator to choose the duty cycle of “dim” lights. At a level of 2, a dim bulb will be lit 50% of the time. At a level of 3, a dim bulb will be lit 33% of the time. With some bulbs, a noticeable flash will be present at a duty cycle of 33%. With other bulbs, a 50% duty cycle will appear nearly the same as a fully-lit lamp. This adjustment should be re-checked on new machines or if the bulbs are changed.
 
@@ -158,7 +158,7 @@ When in this mode, the bonus lamps will toggle between the dim value and the ful
 Pressing the Start button will toggle the dim level between 2 & 3.
 
 ## Wild Fyre Time Award
-**Credit display: 23**
+**Credit display: 28**
 
 This setting controls the amount of Wild Fyre double scoring time that the player is awarded for completing the 4-bank drop targets and achieving Wild Fyre Scoring. Use the start button to toggle through the values on the Player 1 display.
 
@@ -166,7 +166,7 @@ Options: 0, 15, 30, 45, 60
 Recommended Value: 30
 
 ## Sharpshooter Award Value
-**Credit display: 24**
+**Credit display: 29**
 
 Controls the value awarded to a player who plunges a lit Eject during the Sharpshooter mode.
 
