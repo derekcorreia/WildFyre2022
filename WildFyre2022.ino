@@ -314,7 +314,7 @@ byte AttractVA2[] = {18, 22, 17, 21, 25, 26, 8, 9, 27};
 byte AttractVA3[] = {10, 11, 35, 43, 31, 8, 9, 10, 28, 29, 30};
 
 
-#define GLOBAL_GRACE_PERIOD  2000
+#define GLOBAL_GRACE_PERIOD  1500
 #define BANK_DEBOUNCE 250
 
 /*********************************************************************
