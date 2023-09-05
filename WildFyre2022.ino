@@ -694,7 +694,7 @@ void ShowBonusXArrowLamps(){
     if (CurrentTime < LeftInlaneLastHitTime + 3000){
       RPU_SetLampState(LAMP_SAUCER_ARROW_1 + count, 1, 0, 100);
     } else {
-      RPU_SetLampState(LAMP_SAUCER_ARROW_1 + count, (BonusAdvanceArrows == count)?1:0);
+      RPU_SetLampState(LAMP_SAUCER_ARROW_1 + count, (BonusAdvanceArrows >= count)?1:0);
     }
   }
   RPU_SetLampState(LAMP_10K_ROLLOVER, (BonusAdvanceArrows >= 3)?1:0);
