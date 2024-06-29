@@ -644,7 +644,7 @@ void ShowBonusXLamps() {
 void ShowSpinnerLamp(){
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
   } else {
-    if (CurrentTime < RightInlaneLastHitTime + 3000){
+    if (CurrentTime < (RightInlaneLastHitTime + 3000)){
       RPU_SetLampState(LAMP_SPINNER, 1, 0, 100);
     } else {
       if (SpinnerLit){
