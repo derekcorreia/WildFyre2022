@@ -297,6 +297,7 @@ unsigned long ScoreMultiplier;
 unsigned long SharpshooterAwardValue = 25000;
 byte WildfyreDoubleTime = 30;
 unsigned long WildfyreExtendTime = 21000;
+unsigned long LastTopEjectHandled = 0;
 
 byte DropTarget3BankSwitchArray[] = {SW_3DROP_1, SW_3DROP_2, SW_3DROP_3};
 byte DropTarget4BankSwitchArray[] = {SW_4DROP_1, SW_4DROP_2, SW_4DROP_3, SW_4DROP_4};
@@ -1566,6 +1567,8 @@ void Handle4BankDropSwitch (byte switchHit){
 }
 
 void HandleTopEjectHit (byte switchHit){
+  if (CurrentTime < (LastTopEjectHandled+500)) return;
+  LastTopEjectHandled = CurrentTime;
   if (!StallBallMode){
     if (GameMode == GAME_MODE_SKILL_SHOT){
       if (switchHit == EjectSwitchArray[SkillShotEject] && StallBallMode == false){
