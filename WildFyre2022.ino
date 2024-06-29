@@ -2421,7 +2421,6 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_1:
         case SW_EJECT_2:
         case SW_EJECT_3:
-          //if (SaucerHitTime==0 || (CurrentTime-SaucerHitTime)>500) {
           if (TopEjectHitTime==0 || (CurrentTime-TopEjectHitTime)>500){
             TopEjectHitTime = CurrentTime;
             HandleTopEjectHit(switchHit);
@@ -2568,6 +2567,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_2:
         case SW_EJECT_3:
           EjectTopSaucers();
+          break;
         case SW_COIN_1:
         case SW_COIN_2:
         case SW_COIN_3:
