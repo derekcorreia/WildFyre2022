@@ -2465,9 +2465,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (CurrentTime < RightInlaneLastHitTime + 3000) {inlaneMultiplier = 2;} else {inlaneMultiplier = 1;}
           PlaySoundEffect(SOUND_EFFECT_SPINNER);
           if (SpinnerLit == 1){
-            CurrentScores[CurrentPlayer] += ( 500 * inlaneMultiplier * WildFyreMultiplier);  
+            CurrentScores[CurrentPlayer] += ( 500 * (unsigned long)inlaneMultiplier * (unsigned long)WildFyreMultiplier);  
           } else {
-            CurrentScores[CurrentPlayer] += ( 100 * inlaneMultiplier * WildFyreMultiplier);
+            CurrentScores[CurrentPlayer] += ( 100 * (unsigned long)inlaneMultiplier * (unsigned long)WildFyreMultiplier);
           }
           break;
 
