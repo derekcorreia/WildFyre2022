@@ -665,7 +665,13 @@ void ShowEjectLamps(){
     for (byte count=0; count<3; count++) {
       RPU_SetLampState(LAMP_TOP_EJECT_1 + count, (count != SkillShotEject), 0, (count != SkillShotEject)?200:0 );
     }
-  } else {
+  } else if (GameMode == GAME_MODE_SS_START){
+    RPU_TurnOffAllLamps();
+    for (byte count=0; count<3; count++) {
+      RPU_SetLampState(LAMP_TOP_EJECT_1 + count, 1, 0, 100 );
+    }
+  } 
+  else {
     RPU_SetLampState(LAMP_TOP_EJECT_1, CurrentEjectsHit&EJECT_1_MASK);
     RPU_SetLampState(LAMP_TOP_EJECT_2, CurrentEjectsHit&EJECT_2_MASK);
     RPU_SetLampState(LAMP_TOP_EJECT_3, CurrentEjectsHit&EJECT_3_MASK);
