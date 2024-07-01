@@ -1915,8 +1915,8 @@ int ManageGameMode() {
         GameModeStartTime = CurrentTime;
         StopAudio();
         PlaySoundEffect(SOUND_EFFECT_SS_START);
-        RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
-        RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
+        RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 1000);
+        RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 1300);
         RPU_DisableSolenoidStack();
         RPU_SetDisableFlippers(true);
       }
@@ -2426,6 +2426,12 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             TopEjectHitTime = CurrentTime;
             HandleTopEjectHit(switchHit);
           }
+          if (GameMode == GAME_MODE_SS_START){
+            RPU_EnableSolenoidStack();
+            RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
+            RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
+            RPU_DisableSolenoidStack();
+          }
           ValidatePlayfield();
           break;
 
@@ -2484,6 +2490,12 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             } else {
               PlaySoundEffect(SOUND_EFFECT_BONUS_COLLECT);
             }
+          }
+          if (GameMode == GAME_MODE_SS_START){
+            RPU_EnableSolenoidStack();
+            RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
+            RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
+            RPU_DisableSolenoidStack();
           }
           RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
           break;
