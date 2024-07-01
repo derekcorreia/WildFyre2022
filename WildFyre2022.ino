@@ -7,18 +7,6 @@
     See <https://www.gnu.org/licenses/>.
 */
 
-/*
-  DCO Todo:
-
-  What Next:
-    Sharpshooter Mode Sound FX
-        xxWild Fyre -> Sharpshooter mode handling
-    Attract Mode
-    Code Cleanup from prior game
-    Write ADJUSTMENTS.md
-*/
-
-
 #include "RPU_Config.h"
 #include "RPU.h"
 #include "WildFyre2022.h"
