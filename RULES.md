@@ -7,7 +7,7 @@ At the beginning of each ball, one of the top ejects will be pulsing. Hit the fl
 After the playfield has been validated by hitting a switch, the shoot again light in the middle of the playfield will pulse to indicate ball save is available. If the player drains while the light is illuminated, the ball will be returned to the shooter lane. This effect can only happen one time per ball.
 
 ## Wild Fyre Drop Bank
-Dropping all the targets on the Wild Fyre drop target bank will light the spinner for 500 points per spin instead of the default 100 points.
+Dropping all the targets on the Wild Fyre drop target bank will light the spinner for 500 points per spin (not 1,000 as indicated on the playfield) instead of the default value of 100 points.
 
 Completing the target bank twice in one ball will immediately start Wild Fyre scoring. For 30 seconds, all scoring is doubled with the exception of bonus collects. Dropping the bank again while in Wild Fyre Scoring will add an additional 20 seconds to double scoring for each completion.
 
