@@ -19,7 +19,7 @@ A total of 4 completions of the Wild Fyre bank in a ball will light special on t
 Wild Fyre Scoring time can be modified in the operator adjustments.
 
 ## Top Ejects and Sharpshooter 
-Hitting any of the top ejects awards 3,000 points. The first time that all of the 1-2-3 ejects are made in a single ball, the player will enter Sharpshooter mode. The ball will be immediately and forcibly drained, then returned to the shooter lane. Two ejects at the top will be illuminated for 25,000 points. Shooting any eject or hitting any other switch will return the player to regular play. The top ejects will be worth 4,000 for the rest of the ball.
+Hitting any of the top ejects awards 3,000 points. The first time that all of the 1-2-3 ejects are made in a single ball, the player will enter Sharpshooter mode. The flippers will die, the ball will be immediately and forcibly drained, then returned to the shooter lane. Two ejects at the top will be illuminated for 25,000 points. Shooting any eject or hitting any other switch will return the player to regular play. The top ejects will be worth 4,000 for the rest of the ball.
 
 Entering Sharpshooter mode while in Wild Fyre scoring will temporarily pause Wild Fyre scoring. You will be awarded 30 seconds of Wild Fyre scoring after exiting Sharpshooter.
 
