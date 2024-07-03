@@ -7,18 +7,6 @@
     See <https://www.gnu.org/licenses/>.
 */
 
-/*
-  DCO Todo:
-
-  What Next:
-    Sharpshooter Mode Sound FX
-        xxWild Fyre -> Sharpshooter mode handling
-    Attract Mode
-    Code Cleanup from prior game
-    Write ADJUSTMENTS.md
-*/
-
-
 #include "RPU_Config.h"
 #include "RPU.h"
 #include "WildFyre2022.h"
@@ -32,8 +20,8 @@
 AudioHandler Audio;
 #endif
 
-#define PINBALL_MACHINE_BASE_MAJOR_VERSION  2023
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  905
+#define PINBALL_MACHINE_BASE_MAJOR_VERSION  2024
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  702
 #define DEBUG_MESSAGES  1
 
 
@@ -200,6 +188,8 @@ boolean MachineStateChanged = true;
 #define SOUND_EFFECT_STALLBALL_ELIM_4   169
 #define SOUND_EFFECT_STALLBALL_ELIM_5   170
 #define SOUND_EFFECT_STALLBALL_ELIM_6   171
+#define SOUND_EFFECT_STALLBALL_ELIM_7   171
+#define SOUND_EFFECT_STALLBALL_ELIM_8   172
 
 #define SOUND_EFFECT_SS_START           180
 #define SOUND_EFFECT_SS_SUCCESS         181
@@ -297,6 +287,7 @@ unsigned long ScoreMultiplier;
 unsigned long SharpshooterAwardValue = 25000;
 byte WildfyreDoubleTime = 30;
 unsigned long WildfyreExtendTime = 21000;
+unsigned long LastTopEjectHandled = 0;
 
 byte DropTarget3BankSwitchArray[] = {SW_3DROP_1, SW_3DROP_2, SW_3DROP_3};
 byte DropTarget4BankSwitchArray[] = {SW_4DROP_1, SW_4DROP_2, SW_4DROP_3, SW_4DROP_4};
@@ -482,7 +473,7 @@ void SetPlayerLamps(byte numPlayers, byte playerOffset = 0, int flashPeriod = 0)
 
 void ShowBonusLamps() {
   // if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
-
+  if (GameMode == GAME_MODE_SS_START) return;
   // } else {
     /* DCO this is a mess and crap hack, clean up
       Since lamp value/names are ints, can use ex: LAMP_BONUS_2K+Bonus or something instead of caseing everything
@@ -629,6 +620,7 @@ void ShowBonusLamps() {
 
 
 void ShowBonusXLamps() {
+  if (GameMode == GAME_MODE_SS_START) return;
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
   } else {
     if (BonusX == 2) {RPU_SetLampState(LAMP_2X_BONUS, 1); }
@@ -643,7 +635,7 @@ void ShowBonusXLamps() {
 void ShowSpinnerLamp(){
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
   } else {
-    if (CurrentTime < RightInlaneLastHitTime + 3000){
+    if (CurrentTime < (RightInlaneLastHitTime + 3000)){
       RPU_SetLampState(LAMP_SPINNER, 1, 0, 100);
     } else {
       if (SpinnerLit){
@@ -664,7 +656,12 @@ void ShowEjectLamps(){
     for (byte count=0; count<3; count++) {
       RPU_SetLampState(LAMP_TOP_EJECT_1 + count, (count != SkillShotEject), 0, (count != SkillShotEject)?200:0 );
     }
-  } else {
+  } else if (GameMode == GAME_MODE_SS_START){
+    for (byte count=0; count<3; count++) {
+      RPU_SetLampState(LAMP_TOP_EJECT_1 + count, 1, 0, 100 );
+    }
+  } 
+  else {
     RPU_SetLampState(LAMP_TOP_EJECT_1, CurrentEjectsHit&EJECT_1_MASK);
     RPU_SetLampState(LAMP_TOP_EJECT_2, CurrentEjectsHit&EJECT_2_MASK);
     RPU_SetLampState(LAMP_TOP_EJECT_3, CurrentEjectsHit&EJECT_3_MASK);
@@ -677,6 +674,7 @@ void ShowEjectLamps(){
 }
 
 void ShowDropTargetLamps(){
+  if (GameMode == GAME_MODE_SS_START) return;
   if (Num3BankCompletions == 1){
     RPU_SetLampState(LAMP_2X_BONUS_3BANK, 1);
   } else {
@@ -690,6 +688,7 @@ void ShowDropTargetLamps(){
 }
 
 void ShowBonusXArrowLamps(){
+  if (GameMode == GAME_MODE_SS_START) return;
   for (byte count=0; count<4; count++) {
     if (CurrentTime < LeftInlaneLastHitTime + 3000){
       RPU_SetLampState(LAMP_SAUCER_ARROW_1 + count, 1, 0, 100);
@@ -701,7 +700,7 @@ void ShowBonusXArrowLamps(){
 }
 
 void ShowShootAgainLamps() {
-
+  if (GameMode == GAME_MODE_SS_START) return;
   if (!BallSaveUsed && !StallBallMode && BallSaveNumSeconds > 0 && (CurrentTime - BallFirstSwitchHitTime) < ((unsigned long)(BallSaveNumSeconds - 1) * 1000)) {
     unsigned long msRemaining = ((unsigned long)(BallSaveNumSeconds - 1) * 1000) - (CurrentTime - BallFirstSwitchHitTime);
     RPU_SetLampState(LAMP_SHOOT_AGAIN, 1, 0, (msRemaining < 1000) ? 100 : 500);
@@ -1566,6 +1565,8 @@ void Handle4BankDropSwitch (byte switchHit){
 }
 
 void HandleTopEjectHit (byte switchHit){
+  if (CurrentTime < (LastTopEjectHandled+500)) return;
+  LastTopEjectHandled = CurrentTime;
   if (!StallBallMode){
     if (GameMode == GAME_MODE_SKILL_SHOT){
       if (switchHit == EjectSwitchArray[SkillShotEject] && StallBallMode == false){
@@ -1605,6 +1606,7 @@ void HandleTopEjectHit (byte switchHit){
     NumEjectSets++;
     CurrentEjectsHit = 0;
     if (!HasPlayedSSThisBall && !StallBallMode) {
+      RPU_TurnOffAllLamps();
       if (GameMode == GAME_MODE_WILDFYRE) {RestartWildFyre = true;}
       HasPlayedSSThisBall = true;
       GameMode = GAME_MODE_SS_START;
@@ -1905,9 +1907,8 @@ int ManageGameMode() {
         GameModeStartTime = CurrentTime;
         StopAudio();
         PlaySoundEffect(SOUND_EFFECT_SS_START);
-        RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
-        RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
-        RPU_DisableSolenoidStack();
+        //RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 800);
+        //RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 500);
         RPU_SetDisableFlippers(true);
       }
       break;
@@ -2062,7 +2063,7 @@ int ManageGameMode() {
               ShowPlayerScores(0xFF, false, false);
               PlayBackgroundSong(SOUND_EFFECT_NONE);
               StopAudio();
-              if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%6);
+              if (StallBallMode) PlaySoundEffect(SOUND_EFFECT_STALLBALL_ELIM + CurrentTime%8);
               if (CurrentBallInPlay < BallsPerGame) PlaySoundEffect(SOUND_EFFECT_BALL_OVER);
               returnState = MACHINE_STATE_COUNTDOWN_BONUS;
             }
@@ -2412,10 +2413,13 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_1:
         case SW_EJECT_2:
         case SW_EJECT_3:
-          //if (SaucerHitTime==0 || (CurrentTime-SaucerHitTime)>500) {
           if (TopEjectHitTime==0 || (CurrentTime-TopEjectHitTime)>500){
             TopEjectHitTime = CurrentTime;
             HandleTopEjectHit(switchHit);
+          }
+          if (GameMode == GAME_MODE_SS_START){
+            RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 500);
+            RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 500);
           }
           ValidatePlayfield();
           break;
@@ -2457,9 +2461,9 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           if (CurrentTime < RightInlaneLastHitTime + 3000) {inlaneMultiplier = 2;} else {inlaneMultiplier = 1;}
           PlaySoundEffect(SOUND_EFFECT_SPINNER);
           if (SpinnerLit == 1){
-            CurrentScores[CurrentPlayer] += ( 500 * inlaneMultiplier * WildFyreMultiplier);  
+            CurrentScores[CurrentPlayer] += ( 500 * (unsigned long)inlaneMultiplier * (unsigned long)WildFyreMultiplier);  
           } else {
-            CurrentScores[CurrentPlayer] += ( 100 * inlaneMultiplier * WildFyreMultiplier);
+            CurrentScores[CurrentPlayer] += ( 100 * (unsigned long)inlaneMultiplier * (unsigned long)WildFyreMultiplier);
           }
           break;
 
@@ -2475,6 +2479,10 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             } else {
               PlaySoundEffect(SOUND_EFFECT_BONUS_COLLECT);
             }
+          }
+          if (GameMode == GAME_MODE_SS_START){
+            RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
+            RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
           }
           RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
           break;
@@ -2559,6 +2567,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
         case SW_EJECT_2:
         case SW_EJECT_3:
           EjectTopSaucers();
+          break;
         case SW_COIN_1:
         case SW_COIN_2:
         case SW_COIN_3:
