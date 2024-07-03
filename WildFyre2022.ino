@@ -21,7 +21,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2024
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  701
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  702
 #define DEBUG_MESSAGES  1
 
 
@@ -473,7 +473,7 @@ void SetPlayerLamps(byte numPlayers, byte playerOffset = 0, int flashPeriod = 0)
 
 void ShowBonusLamps() {
   // if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
-
+  if (GameMode == GAME_MODE_SS_START) return;
   // } else {
     /* DCO this is a mess and crap hack, clean up
       Since lamp value/names are ints, can use ex: LAMP_BONUS_2K+Bonus or something instead of caseing everything
@@ -620,6 +620,7 @@ void ShowBonusLamps() {
 
 
 void ShowBonusXLamps() {
+  if (GameMode == GAME_MODE_SS_START) return;
   if ((GameMode & GAME_BASE_MODE) == GAME_MODE_SKILL_SHOT) {
   } else {
     if (BonusX == 2) {RPU_SetLampState(LAMP_2X_BONUS, 1); }
@@ -656,7 +657,6 @@ void ShowEjectLamps(){
       RPU_SetLampState(LAMP_TOP_EJECT_1 + count, (count != SkillShotEject), 0, (count != SkillShotEject)?200:0 );
     }
   } else if (GameMode == GAME_MODE_SS_START){
-    RPU_TurnOffAllLamps();
     for (byte count=0; count<3; count++) {
       RPU_SetLampState(LAMP_TOP_EJECT_1 + count, 1, 0, 100 );
     }
@@ -674,6 +674,7 @@ void ShowEjectLamps(){
 }
 
 void ShowDropTargetLamps(){
+  if (GameMode == GAME_MODE_SS_START) return;
   if (Num3BankCompletions == 1){
     RPU_SetLampState(LAMP_2X_BONUS_3BANK, 1);
   } else {
@@ -687,6 +688,7 @@ void ShowDropTargetLamps(){
 }
 
 void ShowBonusXArrowLamps(){
+  if (GameMode == GAME_MODE_SS_START) return;
   for (byte count=0; count<4; count++) {
     if (CurrentTime < LeftInlaneLastHitTime + 3000){
       RPU_SetLampState(LAMP_SAUCER_ARROW_1 + count, 1, 0, 100);
@@ -698,7 +700,7 @@ void ShowBonusXArrowLamps(){
 }
 
 void ShowShootAgainLamps() {
-
+  if (GameMode == GAME_MODE_SS_START) return;
   if (!BallSaveUsed && !StallBallMode && BallSaveNumSeconds > 0 && (CurrentTime - BallFirstSwitchHitTime) < ((unsigned long)(BallSaveNumSeconds - 1) * 1000)) {
     unsigned long msRemaining = ((unsigned long)(BallSaveNumSeconds - 1) * 1000) - (CurrentTime - BallFirstSwitchHitTime);
     RPU_SetLampState(LAMP_SHOOT_AGAIN, 1, 0, (msRemaining < 1000) ? 100 : 500);
@@ -1604,6 +1606,7 @@ void HandleTopEjectHit (byte switchHit){
     NumEjectSets++;
     CurrentEjectsHit = 0;
     if (!HasPlayedSSThisBall && !StallBallMode) {
+      RPU_TurnOffAllLamps();
       if (GameMode == GAME_MODE_WILDFYRE) {RestartWildFyre = true;}
       HasPlayedSSThisBall = true;
       GameMode = GAME_MODE_SS_START;
@@ -1904,9 +1907,8 @@ int ManageGameMode() {
         GameModeStartTime = CurrentTime;
         StopAudio();
         PlaySoundEffect(SOUND_EFFECT_SS_START);
-        RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 1000);
-        RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 1300);
-        RPU_DisableSolenoidStack();
+        //RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 800);
+        //RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 500);
         RPU_SetDisableFlippers(true);
       }
       break;
@@ -2416,10 +2418,8 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             HandleTopEjectHit(switchHit);
           }
           if (GameMode == GAME_MODE_SS_START){
-            RPU_EnableSolenoidStack();
-            RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
-            RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
-            RPU_DisableSolenoidStack();
+            RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 500);
+            RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 500);
           }
           ValidatePlayfield();
           break;
@@ -2481,10 +2481,8 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             }
           }
           if (GameMode == GAME_MODE_SS_START){
-            RPU_EnableSolenoidStack();
             RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
             RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
-            RPU_DisableSolenoidStack();
           }
           RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 1500);
           break;
