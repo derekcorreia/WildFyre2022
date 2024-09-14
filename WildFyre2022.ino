@@ -700,13 +700,15 @@ void ShowBonusXArrowLamps(){
 }
 
 void ShowShootAgainLamps() {
-  if (GameMode == GAME_MODE_SS_START) return;
   if (!BallSaveUsed && !StallBallMode && BallSaveNumSeconds > 0 && (CurrentTime - BallFirstSwitchHitTime) < ((unsigned long)(BallSaveNumSeconds - 1) * 1000)) {
     unsigned long msRemaining = ((unsigned long)(BallSaveNumSeconds - 1) * 1000) - (CurrentTime - BallFirstSwitchHitTime);
     RPU_SetLampState(LAMP_SHOOT_AGAIN, 1, 0, (msRemaining < 1000) ? 100 : 500);
   } else {
     RPU_SetLampState(LAMP_SHOOT_AGAIN, SamePlayerShootsAgain);
   }
+    if (GameMode == GAME_MODE_SS_START || GAME_MODE_SS){
+      RPU_SetLampState(LAMP_SHOOT_AGAIN, 1, 0, 500);
+  } 
 }
 
 
@@ -1611,6 +1613,7 @@ void HandleTopEjectHit (byte switchHit){
       HasPlayedSSThisBall = true;
       GameMode = GAME_MODE_SS_START;
       GameModeStartTime = 0;
+      ShowShootAgainLamps();
     }
   }
   EjectTopSaucers();
@@ -2561,12 +2564,16 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           SetLastSelfTestChangedTime(CurrentTime);
           break;
         case SW_EJECT_BONUS:
+          RPU_EnableSolenoidStack();
           RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 200);
+          RPU_DisableSolenoidStack();
           break;
         case SW_EJECT_1:
         case SW_EJECT_2:
         case SW_EJECT_3:
+          RPU_EnableSolenoidStack();
           EjectTopSaucers();
+          RPU_DisableSolenoidStack();
           break;
         case SW_COIN_1:
         case SW_COIN_2:
