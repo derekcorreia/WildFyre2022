@@ -21,7 +21,7 @@ AudioHandler Audio;
 #endif
 
 #define PINBALL_MACHINE_BASE_MAJOR_VERSION  2024
-#define PINBALL_MACHINE_BASE_MINOR_VERSION  702
+#define PINBALL_MACHINE_BASE_MINOR_VERSION  914
 #define DEBUG_MESSAGES  1
 
 
@@ -706,7 +706,7 @@ void ShowShootAgainLamps() {
   } else {
     RPU_SetLampState(LAMP_SHOOT_AGAIN, SamePlayerShootsAgain);
   }
-    if (GameMode == GAME_MODE_SS_START || GAME_MODE_SS){
+    if (GameMode == GAME_MODE_SS_START || GameMode == GAME_MODE_SS){
       RPU_SetLampState(LAMP_SHOOT_AGAIN, 1, 0, 500);
   } 
 }
@@ -2421,6 +2421,7 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
             HandleTopEjectHit(switchHit);
           }
           if (GameMode == GAME_MODE_SS_START){
+            delay(250);
             RPU_PushToTimedSolenoidStack(SOL_EJECT_TOP, 4, CurrentTime + 500);
             RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 500);
           }
@@ -2565,14 +2566,16 @@ int RunGamePlayMode(int curState, boolean curStateChanged) {
           break;
         case SW_EJECT_BONUS:
           RPU_EnableSolenoidStack();
-          RPU_PushToTimedSolenoidStack(SOL_EJECT_BONUS, 4, CurrentTime + 200);
+          RPU_PushToSolenoidStack(SOL_EJECT_BONUS, 4, false);
+          delay(100);
           RPU_DisableSolenoidStack();
           break;
         case SW_EJECT_1:
         case SW_EJECT_2:
         case SW_EJECT_3:
           RPU_EnableSolenoidStack();
-          EjectTopSaucers();
+          RPU_PushToSolenoidStack(SOL_EJECT_TOP, 4, false);
+          delay(100);
           RPU_DisableSolenoidStack();
           break;
         case SW_COIN_1:
